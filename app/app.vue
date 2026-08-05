@@ -4,10 +4,6 @@ import { useBrandLd } from '~/composables/jsonLd/useBrandLd'
 /**
  * App root — Vue setup (required for useI18n / brand JSON-LD).
  * useLocaleHead: hreflang alternates, html lang, OG locales, locale canonical.
- *
- * No NuxtPage Vue Transition — with Suspense it throws
- * `Cannot read properties of null (reading 'children')` after hydrate
- * (SSR HTML flashes, then client error page). Motion: viewTransition in nuxt.config.
  */
 const i18nHead = useLocaleHead({
   dir: true,
@@ -36,7 +32,12 @@ useBrandLd()
     />
     <NuxtRouteAnnouncer />
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage
+        :transition="{
+          name: 'page',
+          mode: 'out-in',
+        }"
+      />
     </NuxtLayout>
   </UApp>
 </template>

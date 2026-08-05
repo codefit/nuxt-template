@@ -42,7 +42,10 @@ export async function verifyRecaptcha(input: {
     'https://www.google.com/recaptcha/api/siteverify',
     {
       method: 'POST',
-      body,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body.toString(),
     },
   )
 
@@ -51,6 +54,17 @@ export async function verifyRecaptcha(input: {
   const minScore = input.minScore ?? 0.5
   const actionOk = action === input.action
   const scoreOk = score >= minScore
+  const errorCodes = raw['error-codes'] || []
+
+  if (!raw.success || errorCodes.length > 0) {
+    console.warn('[recaptcha] siteverify failed', {
+      success: raw.success,
+      score,
+      action,
+      hostname: raw.hostname,
+      errorCodes,
+    })
+  }
 
   return {
     success: Boolean(raw.success) && actionOk && scoreOk,
@@ -58,6 +72,6 @@ export async function verifyRecaptcha(input: {
     action,
     hostname: raw.hostname || '',
     challengeTs: raw.challenge_ts,
-    errorCodes: raw['error-codes'],
+    errorCodes,
   }
 }
