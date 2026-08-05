@@ -6,13 +6,15 @@ export function useActiveLanguages() {
 }
 
 /**
- * Fill state once; later callers reuse the same array.
- * Uses `useRequestFetch` so SSR keeps the incoming host/cookies
- * (plain `$fetch` on Railway often 500s the first document request).
+ * Active languages for UI + locale middleware.
+ * - SSR: fill once per request (payload → hydration).
+ * - Client: refresh on every call so dashboard language changes
+ *   apply on the next in-app navigation (no F5).
  */
 export async function ensureActiveLanguages(): Promise<LanguageOption[]> {
   const state = useActiveLanguages()
-  if (state.value.length > 0) {
+
+  if (import.meta.server && state.value.length > 0) {
     return state.value
   }
 
@@ -21,7 +23,7 @@ export async function ensureActiveLanguages(): Promise<LanguageOption[]> {
     state.value = await requestFetch<LanguageOption[]>('/api/languages/options')
   }
   catch {
-    return []
+    return state.value
   }
 
   return state.value
