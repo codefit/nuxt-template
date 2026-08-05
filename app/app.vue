@@ -22,26 +22,13 @@ useHead(() => ({
 useBrandLd()
 
 /**
- * Enable page transition only after hydration.
- * `out-in` during SSR/hydrate hits Vue Transition with a null vnode
- * → TypeError: Cannot read properties of null (reading 'children').
- * Client navigations keep the animation.
+ * Keep transition object stable (never toggle false → object after mount).
+ * Do not use `mode: 'out-in'` with NuxtPage/Suspense — Vue Transition then
+ * hits null vnodes → TypeError: Cannot read properties of null (reading 'children').
  */
-const ready = ref(false)
-onMounted(() => {
-  ready.value = true
-})
-
-const pageTransition = computed(() => {
-  if (!ready.value) {
-    return false
-  }
-
-  return {
-    name: 'page',
-    mode: 'out-in' as const,
-  }
-})
+const pageTransition = {
+  name: 'page',
+}
 </script>
 
 <template>

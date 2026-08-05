@@ -355,7 +355,7 @@
   transform: scale(1.03);
 }
 
-/* ── Page transition ── */
+/* ── Page transition (no out-in — overlaps briefly, avoids Vue null children) ── */
 .page-enter-active,
 .page-leave-active {
   transition:
@@ -371,6 +371,13 @@
 .page-leave-to {
   opacity: 0;
   transform: translateY(-6px);
+}
+
+/* View Transitions API (Nuxt experimental.viewTransition) — out-in feel */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {

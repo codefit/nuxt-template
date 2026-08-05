@@ -68,7 +68,12 @@ export default defineNuxtConfig({
     },
   },
   hub: {
-    db: 'postgresql',
+    db: {
+      dialect: 'postgresql',
+      // Railway: DATABASE_URL uses *.railway.internal — reachable at runtime only.
+      // SQLite could migrate during build (local file); Postgres cannot.
+      applyMigrationsDuringBuild: false,
+    },
   },
   colorMode: {
     classSuffix: '',
@@ -233,6 +238,9 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/site.webmanifest' },
       ],
     },
+  },
+  experimental: {
+    viewTransition: true,
   },
   nitro: {
     experimental: {
