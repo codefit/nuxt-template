@@ -17,31 +17,19 @@ async function ensureLanguages(): Promise<void> {
   const stamp = now()
 
   for (const lang of SEED_LANGUAGES) {
-    const row = byExisting.get(lang.code)
-    if (!row) {
-      await db.insert(schema.languages).values({
-        code: lang.code,
-        name: lang.name,
-        icon: lang.icon,
-        isActive: 1,
-        isDefault: lang.isDefault,
-        createdAt: stamp,
-        updatedAt: stamp,
-      })
+    if (byExisting.has(lang.code)) {
       continue
     }
 
-    if (row.icon !== lang.icon || row.name !== lang.name) {
-      await db
-        .update(schema.languages)
-        .set({
-          name: lang.name,
-          icon: lang.icon,
-          isActive: 1,
-          updatedAt: stamp,
-        })
-        .where(eq(schema.languages.id, row.id))
-    }
+    await db.insert(schema.languages).values({
+      code: lang.code,
+      name: lang.name,
+      icon: lang.icon,
+      isActive: 1,
+      isDefault: lang.isDefault,
+      createdAt: stamp,
+      updatedAt: stamp,
+    })
   }
 }
 

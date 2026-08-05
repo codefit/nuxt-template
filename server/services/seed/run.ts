@@ -25,34 +25,20 @@ async function seedLanguages(db: Db, schema: Schema): Promise<number> {
   const now = stamp()
 
   for (const lang of SEED_LANGUAGES) {
-    const row = byCode.get(lang.code)
-    if (!row) {
-      await db.insert(schema.languages).values({
-        code: lang.code,
-        name: lang.name,
-        icon: lang.icon,
-        isActive: 1,
-        isDefault: lang.isDefault,
-        createdAt: now,
-        updatedAt: now,
-      })
-      touched++
+    if (byCode.has(lang.code)) {
       continue
     }
 
-    if (row.icon !== lang.icon || row.name !== lang.name || row.isDefault !== lang.isDefault) {
-      await db
-        .update(schema.languages)
-        .set({
-          name: lang.name,
-          icon: lang.icon,
-          isDefault: lang.isDefault,
-          isActive: 1,
-          updatedAt: now,
-        })
-        .where(eq(schema.languages.id, row.id))
-      touched++
-    }
+    await db.insert(schema.languages).values({
+      code: lang.code,
+      name: lang.name,
+      icon: lang.icon,
+      isActive: 1,
+      isDefault: lang.isDefault,
+      createdAt: now,
+      updatedAt: now,
+    })
+    touched++
   }
 
   return touched

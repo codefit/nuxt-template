@@ -138,12 +138,14 @@ onMounted(() => {
 
     <template v-else>
       <FormInput
-        :model-value="code"
+        v-model="code"
         :label="t('dashboard.languages.fieldCode')"
         name="code"
         disabled
-        :description="t('dashboard.languages.codeHint')"
       />
+      <p class="text-sm text-muted -mt-2">
+        {{ t('dashboard.languages.codeHint') }}
+      </p>
 
       <FormInput
         v-model="form.name"
@@ -158,8 +160,10 @@ onMounted(() => {
         v-model="form.icon"
         :label="t('dashboard.languages.fieldIcon')"
         name="icon"
-        :description="t('dashboard.languages.iconHint')"
       />
+      <p class="text-sm text-muted -mt-2">
+        {{ t('dashboard.languages.iconHint') }}
+      </p>
 
       <div
         v-if="form.icon"

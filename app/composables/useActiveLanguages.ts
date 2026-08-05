@@ -5,13 +5,24 @@ export function useActiveLanguages() {
   return useState<LanguageOption[]>('active-languages', () => [])
 }
 
-/** Fill state once; later callers reuse the same array. */
+/**
+ * Fill state once; later callers reuse the same array.
+ * Uses `useRequestFetch` so SSR keeps the incoming host/cookies
+ * (plain `$fetch` on Railway often 500s the first document request).
+ */
 export async function ensureActiveLanguages(): Promise<LanguageOption[]> {
   const state = useActiveLanguages()
   if (state.value.length > 0) {
     return state.value
   }
 
-  state.value = await $fetch<LanguageOption[]>('/api/languages/options')
+  try {
+    const requestFetch = useRequestFetch()
+    state.value = await requestFetch<LanguageOption[]>('/api/languages/options')
+  }
+  catch {
+    return []
+  }
+
   return state.value
 }

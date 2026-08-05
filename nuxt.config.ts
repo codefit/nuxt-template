@@ -59,6 +59,11 @@ export default defineNuxtConfig({
         'lucide:pencil',
         // Composable-only icons (not found by Vue SFC scan).
         'lucide:layout-dashboard',
+        'lucide:languages',
+        'lucide:star',
+        'lucide:eye-off',
+        'lucide:globe',
+        'lucide:download',
       ],
     },
   },
