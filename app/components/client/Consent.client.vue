@@ -155,5 +155,10 @@ if (import.meta.hot) {
 </script>
 
 <template>
-  <!-- Banner mounts on document.body via vanilla-cookieconsent -->
+  <!--
+    Must render a real node: `.client.vue` is wrapped by Nuxt createClientOnly,
+    which does `res.children` and crashes if render returns null
+    (empty template / comment-only → TypeError after hydrate).
+  -->
+  <span class="hidden" hidden aria-hidden="true" />
 </template>
