@@ -18,7 +18,7 @@ logs
 .fleet
 .idea
 
-# Local env files
+# Local env files (committed template only)
 .env
 .env.*
 !.env.example

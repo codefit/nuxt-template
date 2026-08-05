@@ -10,22 +10,38 @@
     "postinstall": "nuxt prepare",
     "db:generate": "nuxt db generate",
     "db:migrate": "nuxt db migrate",
-    "db:sql": "nuxt db sql"
+    "db:sql": "nuxt db sql",
+    "db:seed": "node scripts/db-seed.mjs",
+    "feed:generate": "node scripts/feed-generate.mjs",
+    "sitemap:generate": "node scripts/sitemap-generate.mjs"
   },
   "dependencies": {
+    "@hugerte/hugerte-vue": "^2.0.2",
     "@libsql/client": "^0.17.4",
+    "@nuxt/image": "^2.1.0",
+    "@nuxt/ui": "^4.10.0",
     "@nuxthub/core": "^0.10.8",
-    "@nuxtjs/color-mode": "^4.0.1",
+    "@nuxtjs/i18n": "^10.6.0",
+    "@pinia/nuxt": "^1.0.1",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
+    "fast-xml-parser": "^5.10.1",
+    "hugerte": "^1.0.12",
     "nuxt": "^4.5.1",
+    "nuxt-easy-lightbox": "^1.1.0",
+    "nuxt-jsonld": "^2.2.1",
+    "pinia": "^4.0.2",
+    "resend": "^6.18.1",
     "swiper": "^14.0.7",
+    "tailwindcss": "^4.3.3",
+    "vanilla-cookieconsent": "^3.1.0",
     "vue": "^3.5.40",
-    "vue-router": "^5.2.0"
+    "vue-router": "^5.2.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3"
+    "@iconify-json/lucide": "^1.2.121",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.9"
   }
 }

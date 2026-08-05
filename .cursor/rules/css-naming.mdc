@@ -1,0 +1,70 @@
+---
+description: Styling with Nuxt UI + Tailwind; legacy BEM only where it already exists
+alwaysApply: true
+---
+
+# CSS / UI Standard
+
+This project uses **Nuxt UI** (`@nuxt/ui`) and **Tailwind CSS** as the primary styling system.
+
+Prefer Nuxt UI components (`UButton`, `USlideover`, `UInput`, …) and Tailwind utilities in new and touched UI.
+
+---
+
+## Preferred (new work)
+
+```vue
+<UButton label="Open" color="neutral" variant="subtle" />
+<div class="flex items-center gap-4 p-4">…</div>
+```
+
+- Use Nuxt UI components when they fit the need (forms, overlays, navigation, feedback).
+- Use Tailwind utilities for layout and one-off spacing/typography.
+- Theme / design tokens: Nuxt UI (`app.config.ts` → `ui`) and Tailwind `@theme` in `app/assets/css/main.css`.
+- Dark mode: `.dark` from `@nuxtjs/color-mode` (registered by Nuxt UI). Keep `colorMode.classSuffix: ''`.
+
+---
+
+## Legacy BEM (existing only)
+
+Older screens still use BEM blocks in `app/assets/css/main.css` (e.g. `site`, `nav`, `page-header`, `btn`).
+
+When editing those areas:
+
+- Do not expand BEM for new features — migrate the touched piece to Nuxt UI / Tailwind when practical.
+- If you must keep a BEM class temporarily, keep kebab-case and flat BEM (`block__element`, `block--modifier`, `is-state`).
+- Avoid mixing Tailwind utilities onto the same node as a large BEM block unless migrating that block.
+
+```
+.block
+.block__element
+.block--modifier
+.is-state
+```
+
+---
+
+## Where styles live
+
+1. **Components / pages** → Nuxt UI props + Tailwind classes (and `ui` / `class` overrides).
+2. **Global theme** → `app/assets/css/main.css` (`@import "tailwindcss"`, `@import "@nuxt/ui"`, optional `@theme`).
+3. **Nuxt UI defaults** → `app.config.ts` under `ui`.
+4. **Legacy BEM** → only remaining rules in `main.css`; do not add new BEM blocks.
+
+No inline `style` for layout/skin unless the value must be dynamic.
+
+---
+
+## Naming conflicts
+
+- Prefer Tailwind / Nuxt UI class names for new UI.
+- Project legacy `.container` coexists with Tailwind’s `container` — when migrating, prefer explicit max-width utilities (`max-w-*` + `mx-auto` + padding) or Nuxt UI layout patterns instead of relying on ambiguous `container`.
+
+---
+
+## Checklist
+
+1. Can this be a Nuxt UI component? Use it.
+2. New layout/spacing → Tailwind utilities.
+3. Global token change → `@theme` / `app.config.ts`, not a new BEM block.
+4. Touching legacy BEM → migrate that slice when reasonable; don’t grow BEM.

@@ -1,0 +1,558 @@
+{
+  "site": {
+    "tagline": "Univerzálny Nuxt starter pre prezentačné a predajné weby.",
+    "description": "Univerzálny Nuxt starter pre prezentačné a predajné weby."
+  },
+  "nav": {
+    "home": "Domov",
+    "articles": "Články",
+    "messages": "Správy",
+    "gallery": "Galéria",
+    "about": "O nás",
+    "contact": "Kontakt",
+    "gdpr": "GDPR",
+    "terms": "Obchodné podmienky",
+    "cookies": "Cookies",
+    "main": "Hlavná navigácia",
+    "footer": "Pätička",
+    "menu": "Menu"
+  },
+  "theme": {
+    "toLight": "Prepnúť na svetlý režim",
+    "toDark": "Prepnúť na tmavý režim",
+    "light": "Svetlý režim",
+    "dark": "Tmavý režim",
+    "toggle": "Prepnúť svetlý / tmavý režim"
+  },
+  "locale": {
+    "label": "Jazyk",
+    "cs": "Čeština",
+    "sk": "Slovenčina",
+    "en": "English"
+  },
+  "home": {
+    "ctaArticles": "Články",
+    "ctaContact": "Kontakt",
+    "ctaAbout": "O nás",
+    "hero": {
+      "title": "Vaše ciele. Naše skúsenosti — spoločný úspech",
+      "lead": "Univerzálny Nuxt starter. Upravte texty a sekcie podľa projektu.",
+      "search": "Hľadať",
+      "searchPlaceholder": "Hľadať v článkoch…"
+    },
+    "banners": {
+      "cta": "Viac informácií",
+      "b1": {
+        "label": "Akcia týždňa",
+        "title": "Ukážkový produkt so zľavou 50 %",
+        "price": "499 Kč",
+        "oldPrice": "999 Kč"
+      },
+      "b2": {
+        "label": "Novinka",
+        "title": "Defaultná ponuka — upravte text",
+        "price": "299 Kč",
+        "oldPrice": "449 Kč"
+      },
+      "b3": {
+        "label": "Odporúčame",
+        "title": "Placeholder banner pre projekt",
+        "price": "799 Kč",
+        "oldPrice": "1 199 Kč"
+      },
+      "b4": {
+        "label": "Best seller",
+        "title": "Ďalšia ukážková karta",
+        "price": "199 Kč",
+        "oldPrice": "349 Kč"
+      },
+      "b5": {
+        "label": "Limitovaná ponuka",
+        "title": "Piaty banner — východiskový text",
+        "price": "599 Kč",
+        "oldPrice": "899 Kč"
+      },
+      "b6": {
+        "label": "Tip redakcie",
+        "title": "Šiesty banner — nahraďte obsahom",
+        "price": "149 Kč",
+        "oldPrice": "249 Kč"
+      }
+    },
+    "stats": {
+      "title": "Čísla, ktoré hovoria za nás",
+      "s1": { "value": "120+", "label": "Spokojných klientov" },
+      "s2": { "value": "1.3k+", "label": "Dokončených projektov" },
+      "s3": { "value": "730+", "label": "Konzultácií ročne" }
+    },
+    "values": {
+      "v1": {
+        "title": "Dôvera a istota",
+        "body": "Transparentný prístup a zrozumiteľná komunikácia od prvého kontaktu."
+      },
+      "v2": {
+        "title": "Merateľné výsledky",
+        "body": "Rozhodnutia podložené dátami a jasným plánom ďalšieho kroku."
+      },
+      "v3": {
+        "title": "Partnerstvo na mieru",
+        "body": "Prispôsobíme sa vášmu tempu a dlhodobým cieľom."
+      }
+    },
+    "split": {
+      "title": "Jednoduchý rámec pre váš rast",
+      "body": "Sekcie, komponenty a farebný systém pripravené na úpravy. Berte to ako východiskovú kostru — obsah aj vizuál si každý projekt prerobí.",
+      "cta": "Viac o nás",
+      "badge": "Pripravené na úpravu",
+      "m1": { "value": "1.2×", "label": "Rýchlejší štart" },
+      "m2": { "value": "100 %", "label": "Váš obsah" }
+    },
+    "services": {
+      "title": "Čo ponúkame",
+      "lead": "Ukážkové služby — nahraďte vlastným katalógom.",
+      "s1": {
+        "title": "Plánovanie",
+        "body": "Strategický prehľad a jasné priority pre ďalšie obdobie."
+      },
+      "s2": {
+        "title": "Správa",
+        "body": "Priebežná starostlivosť o kľúčové procesy a komunikáciu."
+      },
+      "s3": {
+        "title": "Analýza",
+        "body": "Prehľadné reporty a odporúčania na základe dát."
+      },
+      "s4": {
+        "title": "Poradenstvo",
+        "body": "Praktické tipy a sprievod pri dôležitých rozhodnutiach."
+      }
+    },
+    "testimonials": {
+      "title": "Čo hovoria klienti",
+      "lead": "Ukážkové referencie — nahraďte skutočnými príbehmi.",
+      "t1": {
+        "quote": "Spolupráca bola prehľadná a výsledky prišli rýchlejšie, než sme čakali.",
+        "name": "Jana Nováková",
+        "role": "CEO, Example"
+      },
+      "t2": {
+        "quote": "Konečne máme web, ktorý sa dá ľahko rozvíjať a spravovať.",
+        "name": "Peter Svoboda",
+        "role": "Produktový manažér"
+      },
+      "t3": {
+        "quote": "Dizajn aj technické riešenie sedia — tím rozumie biznisu aj kódu.",
+        "name": "Eva Horáková",
+        "role": "Marketing lead"
+      },
+      "t4": {
+        "quote": "Šablóna nám ušetrila týždne práce na základnom frameworku.",
+        "name": "Martin Dvořák",
+        "role": "Founder"
+      }
+    },
+    "projects": {
+      "title": "Úspešné projekty",
+      "lead": "Ukážkové case studies — prepojte s reálnym portfóliom.",
+      "cta": "Zobraziť projekt",
+      "prev": "Predchádzajúci",
+      "next": "Ďalší",
+      "p1": {
+        "title": "Digitálna transformácia",
+        "body": "Kompletný redesign prezentácie a napojenie na obsahový systém."
+      },
+      "p2": {
+        "title": "Rast značky",
+        "body": "Nová štruktúra webu, SEO základy a jasná cesta ku konverzii."
+      },
+      "p3": {
+        "title": "Interné nástroje",
+        "body": "Dashboard a správa obsahu na mieru tímu klienta."
+      }
+    },
+    "insights": {
+      "title": "Novinky a tipy",
+      "lead": "Najnovšie články z blogu.",
+      "all": "Všetky články",
+      "tag": "Novinka",
+      "empty": "Zatiaľ žiadne publikované články."
+    },
+    "cta": {
+      "title": "Chcete si pohovoriť? Ozvite sa nášmu tímu.",
+      "action": "Kontaktovať"
+    }
+  },
+  "error": {
+    "404": {
+      "seoTitle": "Stránka nenájdená",
+      "title": "Stránka nenájdená",
+      "description": "Ospravedlňujeme sa, ale adresa, ktorú hľadáte, neexistuje alebo bola presunutá. Skúste sa vrátiť na úvod, alebo pokračujte na niektorú z užitočných stránok nižšie.",
+      "home": "Späť na úvod",
+      "contact": "Kontaktovať nás",
+      "hint": "Možno hľadáte:"
+    },
+    "default": {
+      "seoTitle": "Niečo sa pokazilo",
+      "title": "Niečo sa pokazilo",
+      "description": "Došlo k neočakávanej chybe. Skúste to prosím znova, alebo sa vráťte na úvodnú stránku.",
+      "home": "Späť na úvod",
+      "retry": "Skúsiť znova"
+    }
+  },
+
+  "table": {
+    "search": "Hľadať…",
+    "filters": "Filtrovať",
+    "clearFilters": "Zrušiť filtre",
+    "clearFilter": "Odstrániť filter",
+    "columns": "Stĺpce",
+    "perPage": "Na stránku",
+    "showing": "Zobrazené {from} – {to} z {total} záznamov",
+    "showingEmpty": "Zobrazené 0 záznamov",
+    "selected": "Vybrané: {count}",
+    "dateFrom": "Od",
+    "dateTo": "Do",
+    "filterUnset": "Nevybrané",
+    "applyFilters": "Hotovo"
+  },
+  "messages": {
+    "seoTitle": "Správy",
+    "seoDescription": "Prehľad prijatých správ z kontaktného formulára.",
+    "title": "Správy",
+    "lead": "Správa kontaktných správ — hľadanie, filtre, radenie a stránkovanie sú v URL.",
+    "searchHint": "Hľadať v mene, e-maile a správe…",
+    "filterCreated": "Dátum",
+    "colName": "Meno",
+    "colEmail": "E-mail",
+    "colMessage": "Správa",
+    "colCreated": "Vytvorené",
+    "actions": "Akcie",
+    "actionCopyId": "Kopírovať ID",
+    "actionExpand": "Rozbaliť",
+    "actionCollapse": "Zbaliť",
+    "actionView": "Zobraziť",
+    "actionDelete": "Zmazať",
+    "bulkExportReport": "Export + report",
+    "bulkExport": "Export",
+    "bulkMarkRead": "Označiť ako prečítané",
+    "bulkArchive": "Archivovať",
+    "bulkDelete": "Zmazať",
+    "bulkDeleteTitle": "Zmazať správy",
+    "bulkDeleteDesc": "Naozaj zmazať {count} položiek? Túto akciu nemožno vrátiť.",
+    "exportTitle": "Export dokončený",
+    "exportDesc": "Report pre {count} vybraných správ je pripravený na stiahnutie.",
+    "exportItems": "Položky",
+    "exportEmails": "E-maily",
+    "exportSize": "Veľkosť",
+    "exportDownload": "Stiahnuť CSV"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "nav": {
+      "rail": "Hlavné menu dashboardu",
+      "sidebar": "Bočný panel",
+      "home": "Prehľad",
+      "articles": "Články",
+      "messages": "Správy",
+      "media": "Médiá",
+      "users": "Používatelia",
+      "settings": "Nastavenia",
+      "sections": "Sekcie",
+      "more": "Ďalšie",
+      "recent": "Nedávne",
+      "search": "Hľadať",
+      "searchHint": "Hľadať v dashboarde…",
+      "newArticle": "Nový článok",
+      "backToSite": "Späť na web",
+      "openMenu": "Otvoriť menu"
+    },
+    "header": {
+      "badge": "Admin",
+      "config": "Konfigurácia",
+      "share": "Zdieľať"
+    },
+    "home": {
+      "seoTitle": "Dashboard",
+      "seoDescription": "Prehľad a správa obsahu.",
+      "greeting": "Ahoj 👋",
+      "lead": "Povedzte, čo potrebujete — články, správy aj ďalšie sekcie máte po ruke.",
+      "cardAssistantTitle": "Asistent",
+      "cardAssistantBody": "Placeholder — čoskoro tu bude rýchly prehľad stavu webu a tipy.",
+      "cardTasksTitle": "Úlohy",
+      "task1": "Skontrolovať nové správy",
+      "task2": "Doplniť meta pri článkoch",
+      "task3": "Pripraviť media knižnicu",
+      "viewAll": "Zobraziť všetko",
+      "cardPromptTitle": "Návrh",
+      "cardPromptBody": "Placeholder — sem patria tipy, checklisty alebo rýchle akcie.",
+      "actionArticles": "Články",
+      "actionMessages": "Správy",
+      "actionMedia": "Médiá",
+      "actionUsers": "Používatelia",
+      "searchPlaceholder": "Rýchle hľadanie… (zatiaľ placeholder)",
+      "selectSource": "Zdroj",
+      "attach": "Príloha",
+      "voice": "Hlas",
+      "send": "Odoslať",
+      "disclaimer": "Niektoré prvky sú zatiaľ len placeholdery a pripravíme ich neskôr.",
+      "recentPlaceholder1": "Návrh článku…",
+      "recentPlaceholder2": "Nová správa z webu",
+      "recentPlaceholder3": "Koncept prekladu"
+    },
+    "articles": {
+      "seoTitle": "Články — Dashboard",
+      "seoDescription": "Správa článkov v dashboarde.",
+      "title": "Články",
+      "lead": "Správa článkov — hľadanie, filtre, radenie a stránkovanie sú v URL.",
+      "searchHint": "Hľadať v názve a slugu…",
+      "filterCreated": "Dátum vytvorenia",
+      "filterPublished": "Stav",
+      "publishedYes": "Publikované",
+      "publishedNo": "Koncept",
+      "colTitle": "Názov",
+      "colAuthor": "Autor",
+      "colSlug": "Slug",
+      "colPublished": "Stav",
+      "colPublishedAt": "Publikované",
+      "colCreated": "Vytvorené",
+      "actions": "Akcie",
+      "actionCopyId": "Kopírovať ID",
+      "actionExpand": "Rozbaliť",
+      "actionCollapse": "Zbaliť",
+      "actionView": "Upraviť",
+      "actionCopy": "Kopírovať",
+      "actionDelete": "Zmazať",
+      "addRecord": "Pridať záznam",
+      "fieldPublished": "Publikované",
+      "fieldPublishedAt": "Dátum publikácie",
+      "fieldTitle": "Názov",
+      "fieldSlug": "Slug",
+      "fieldExcerpt": "Perex",
+      "fieldBody": "Obsah",
+      "fieldMetaTitle": "Meta title",
+      "fieldMetaDescription": "Meta description",
+      "fieldMetaKeywords": "Meta keywords",
+      "fieldAuthor": "Autor",
+      "authorHint": "Vyberte autora…",
+      "toastCreated": "Článok bol vytvorený.",
+      "toastUpdated": "Článok bol uložený.",
+      "bulkExport": "Export",
+      "bulkPublish": "Publikovať",
+      "bulkUnpublish": "Koncept",
+      "bulkArchive": "Archivovať",
+      "bulkArchiveTitle": "Archivovať články",
+      "bulkArchiveDesc": "Naozaj archivovať {count} položiek?",
+      "bulkDelete": "Zmazať",
+      "bulkDeleteTitle": "Zmazať články",
+      "bulkDeleteDesc": "Naozaj zmazať {count} položiek? Túto akciu nemožno vrátiť."
+    },
+    "form": {
+      "createTitle": "Nový záznam",
+      "editTitle": "Upraviť záznam",
+      "copyTitle": "Kopírovať záznam",
+      "sharedSection": "Spoločné údaje",
+      "translationsSection": "Preklady",
+      "cancel": "Zrušiť",
+      "save": "Uložiť",
+      "create": "Vytvoriť",
+      "required": "Povinné pole",
+      "validationFailed": "Opravte chyby vo formulári.",
+      "saveFailed": "Uloženie zlyhalo.",
+      "mediaLabel": "Médiá",
+      "mediaDrop": "Presuňte súbory sem",
+      "mediaHint": "Nahrávanie na server pripravíme neskôr — súbory sa zatiaľ len pripravia.",
+      "mediaRemove": "Odstrániť"
+    },
+    "authors": {
+      "createTitle": "Nový autor",
+      "addAuthor": "Pridať autora",
+      "fieldName": "Meno",
+      "fieldEmail": "E-mail",
+      "fieldPhone": "Telefón",
+      "invalidEmail": "Zadajte platný e-mail",
+      "invalidPhone": "Zadajte platný telefón",
+      "toastCreated": "Autor bol vytvorený."
+    }
+  },
+  "about": {
+    "seoTitle": "O nás",
+    "seoDescription": "Predstavenie značky, tímu a projektu.",
+    "eyebrow": "O nás",
+    "title": "Stručne o projekte",
+    "lead": "Doplňte vlastný text. Táto stránka je súčasťou univerzálneho základu.",
+    "body": "Sem patrí predstavenie značky, tímu alebo služby. Obsah a vizuál rieši každý projekt zvlášť — starter drží len štruktúru.",
+    "toContact": "Prejsť na kontakt →"
+  },
+  "gallery": {
+    "seoTitle": "Galéria",
+    "seoDescription": "Ukážková galéria s lightboxom — kliknutím otvoríte náhľad.",
+    "eyebrow": "Galéria",
+    "title": "Vybrané snímky",
+    "lead": "Kliknite na obrázok pre otvorenie lightboxu so zoomom a posúvaním.",
+    "open": "Otvoriť {title}",
+    "items": {
+      "atelier": "Ateliér",
+      "detail": "Detail",
+      "space": "Priestor",
+      "material": "Materiál",
+      "light": "Svetlo",
+      "process": "Proces"
+    }
+  },
+  "contact": {
+    "seoTitle": "Kontakt",
+    "seoDescription": "Napíšte nám — ozveme sa späť.",
+    "eyebrow": "Kontakt",
+    "title": "Napíšte nám",
+    "lead": "Krátka správa stačí. Ozveme sa späť.",
+    "aside": "Preferujete priamy kontakt? Ozvite sa e-mailom alebo telefónom.",
+    "name": "Meno",
+    "email": "E-mail",
+    "phone": "Telefón",
+    "address": "Adresa",
+    "message": "Správa",
+    "submit": "Odoslať",
+    "pending": "Odosielam…",
+    "success": "Ďakujeme — správa je odoslaná.",
+    "error": "Odoslanie sa nepodarilo. Skúste to znova.",
+    "gdprLabel": "Súhlasím so spracovaním osobných údajov podľa",
+    "gdprRequired": "Na odoslanie je potrebný súhlas s GDPR.",
+    "recaptchaNotice": "Tento formulár je chránený reCAPTCHA a platia",
+    "recaptchaPrivacy": "Zásady ochrany osobných údajov",
+    "recaptchaAnd": " a ",
+    "recaptchaTerms": "Zmluvné podmienky",
+    "recaptchaSuffix": " Google.",
+    "recaptchaConfig": "reCAPTCHA nie je nakonfigurovaná."
+  },
+  "articles": {
+    "seoTitle": "Články",
+    "seoDescription": "Prehľad článkov a noviniek. Výpis používa schema.org microdata v HTML.",
+    "eyebrow": "Blog",
+    "title": "Články",
+    "lead": "Ukážková sekcia článkov — microdata na výpise, JSON-LD na detaile.",
+    "tag": "Novinka",
+    "empty": "Zatiaľ žiadne publikované články.",
+    "pagination": "Stránkovanie článkov",
+    "readMore": "Čítať článok →",
+    "back": "← Späť na články",
+    "eyebrowDetail": "Článok",
+    "notFound": "Článok nenájdený"
+  },
+  "api": {
+    "errors": {
+      "missingSlug": "Chýba slug.",
+      "invalidArticleId": "Neplatné ID článku.",
+      "articleCreateFailed": "Vytvorenie článku zlyhalo.",
+      "articleUpdateFailed": "Uloženie článku zlyhalo.",
+      "authorCreateFailed": "Vytvorenie autora zlyhalo.",
+      "articleNotFound": "Článok nenájdený.",
+      "missingEntityOrSlug": "Chýba entita alebo slug.",
+      "entityNoSlugMap": "Entita \"{entity}\" nemá mapu slugov.",
+      "slugNotFound": "Slug nenájdený.",
+      "invalidMessageId": "Neplatné ID správy.",
+      "messageNotFound": "Správa nenájdená.",
+      "messageRequired": "Vyplňte meno, e-mail aj správu.",
+      "gdprRequired": "Na odoslanie je potrebný súhlas s GDPR.",
+      "invalidEmail": "Zadajte platný e-mail.",
+      "recaptchaRequired": "Chýba overenie reCAPTCHA. Skúste to znova.",
+      "recaptchaFailed": "Overenie reCAPTCHA zlyhalo. Skúste to znova.",
+      "recaptchaConfig": "reCAPTCHA nie je na serveri nakonfigurovaná.",
+      "bulkInvalidMode": "selection.mode musí byť include alebo exclude.",
+      "bulkInvalidIds": "selection.ids musí byť pole identifikátorov.",
+      "bulkUnknownAction": "Neznáma hromadná akcia."
+    }
+  },
+  "legal": {
+    "eyebrow": "Právne dokumenty",
+    "effective": "Účinnosť od {date}."
+  },
+  "gdpr": {
+    "seoTitle": "Ochrana osobných údajov (GDPR)",
+    "seoDescription": "Informácie o spracovaní osobných údajov podľa GDPR.",
+    "title": "Ochrana osobných údajov",
+    "intro": "Prevádzkovateľom osobných údajov je {company}, IČO {ico}, so sídlom {address}, e-mail {email}.",
+    "h1": "1. Aké údaje spracúvame",
+    "p1": "Spracúvame údaje, ktoré nám dobrovoľne poskytnete (najmä meno, e-mail a obsah správy) a technické údaje nevyhnutné na prevádzku webu (napr. IP adresa, cookies — pozri",
+    "cookiesLink": "Zásady cookies",
+    "p1end": ").",
+    "h2": "2. Účel a právny základ",
+    "li1": "vybavenie dopytu / komunikácia — oprávnený záujem / plnenie zmluvy,",
+    "li2": "prevádzka a zabezpečenie webu — oprávnený záujem,",
+    "li3": "plnenie zákonných povinností — právna povinnosť.",
+    "h3": "3. Doba uchovávania",
+    "p3": "Údaje uchovávame po dobu nevyhnutne potrebnú na naplnenie účelu, prípadne po dobu stanovenú právnymi predpismi.",
+    "h4": "4. Príjemcovia údajov",
+    "p4": "Údaje môžu byť poskytnuté sprostredkovateľom (hosting, e-mailová služba), ktorí sú viazaní zmluvou o spracovaní. Údaje neposkytujeme tretím stranám na marketingové účely bez súhlasu.",
+    "h5": "5. Vaše práva",
+    "p5": "Máte právo na prístup, opravu, výmaz, obmedzenie spracovania, prenosnosť a námietku. Sťažnosť môžete podať na Úrade na ochranu osobných údajov.",
+    "h6": "6. Kontakt",
+    "p6": "Vo veciach ochrany osobných údajov nás kontaktujte na",
+    "note": "Text je šablóna. Pred publikáciou doplňte reálne údaje a nechajte skontrolovať právnym poradcom."
+  },
+  "cookieConsent": {
+    "manage": "Nastavenie cookies",
+    "title": "Používame cookies",
+    "description": "Cookies nám pomáhajú web prevádzkovať, merať návštevnosť a prípadne personalizovať obsah. Nevyhnutné cookies sú vždy aktívne. Ostatné môžete povoliť alebo odmietnuť.",
+    "acceptAll": "Prijať všetko",
+    "acceptNecessary": "Len nevyhnutné",
+    "showPreferences": "Nastavenie",
+    "preferencesTitle": "Nastavenie cookies",
+    "savePreferences": "Uložiť výber",
+    "close": "Zavrieť",
+    "introTitle": "Vaše voľby",
+    "introText": "Tu môžete kedykoľvek upraviť súhlas s jednotlivými kategóriami cookies. Voľbu zmeníte aj cez odkaz v pätičke webu.",
+    "necessaryTitle": "Nevyhnutné",
+    "necessaryText": "Tieto cookies sú nutné pre základné fungovanie webu (napr. zabezpečenie, jazyk, motív). Nie je možné ich vypnúť.",
+    "analyticsTitle": "Analytické",
+    "analyticsText": "Pomáhajú pochopiť, ako web používate. Dáta sú anonymizované a slúžia na zlepšenie webu.",
+    "marketingTitle": "Marketingové",
+    "marketingText": "Používajú sa na personalizáciu obsahu a reklamných správ podľa vašich záujmov.",
+    "moreTitle": "Ďalšie informácie",
+    "moreText": "Podrobnosti nájdete v dokumente",
+    "cookiesLink": "Zásady cookies",
+    "privacyLink": "GDPR"
+  },
+  "cookies": {
+    "seoTitle": "Zásady cookies",
+    "seoDescription": "Informácie o používaní cookies na tomto webe.",
+    "title": "Zásady cookies",
+    "intro": "Tieto zásady popisujú, aké cookies a podobné technológie používa web {name} ({company}).",
+    "h1": "1. Čo sú cookies",
+    "p1": "Cookies sú malé textové súbory ukladané v zariadení. Pomáhajú webu fungovať, pamätať si voľby a v niektorých prípadoch merať návštevnosť.",
+    "h2": "2. Typy cookies",
+    "necessary": "Nevyhnutné",
+    "necessaryText": "— potrebné pre základné funkcie (napr. zabezpečenie, preferencia motívu). Nie je možné ich vypnúť.",
+    "analytics": "Analytické",
+    "analyticsText": "— pomáhajú pochopiť návštevnosť; iba so súhlasom.",
+    "marketing": "Marketingové",
+    "marketingText": "— personalizácia / reklama; iba so súhlasom.",
+    "h3": "3. Správa súhlasu",
+    "p3": "Súhlas môžete kedykoľvek odvolať zmenou nastavenia v prehliadači alebo cez cookie lištu (odkaz Nastavenie cookies v pätičke).",
+    "h4": "4. Kontakt",
+    "p4": "Otázky k cookies:",
+    "p4more": "Viac o spracovaní údajov nájdete v",
+    "gdprLink": "GDPR",
+    "note": "Text je šablóna. Doplňte konkrétne nástroje (GA, Meta Pixel atď.) a dobu platnosti cookies."
+  },
+  "terms": {
+    "seoTitle": "Obchodné podmienky",
+    "seoDescription": "Obchodné podmienky a pravidlá používania služieb.",
+    "title": "Obchodné podmienky",
+    "intro": "Tieto obchodné podmienky upravujú práva a povinnosti medzi {company} (IČO {ico}, {address}) a zákazníkom pri nákupe tovaru / služieb prostredníctvom tohto webu.",
+    "h1": "1. Úvodné ustanovenia",
+    "p1": "Objednávkou zákazník potvrdzuje, že sa s podmienkami oboznámil a súhlasí s nimi. Odchylné dojednania majú prednosť, ak boli dohodnuté písomne.",
+    "h2": "2. Objednávka a uzavretie zmluvy",
+    "p2": "Návrh na uzavretie zmluvy vzniká odoslaním objednávky. Zmluva je uzavretá potvrdením objednávky zo strany predávajúceho (e-mail).",
+    "h3": "3. Cena a platba",
+    "p3": "Ceny sú uvedené vrátane / bez DPH podľa nastavenia projektu. Spôsoby platby a dopravy doplňte podľa konkrétneho obchodného modelu.",
+    "h4": "4. Dodanie",
+    "p4": "Termíny a spôsob dodania stanoví konkrétna ponuka. Riziko škody na tovare prechádza na zákazníka prevzatím.",
+    "h5": "5. Odstúpenie od zmluvy",
+    "p5": "Spotrebiteľ má právo odstúpiť od zmluvy v lehote 14 dní bez uvedenia dôvodu, ak to zákon umožňuje. Výnimky (napr. rýchlo sa kaziaci tovar, digitálny obsah) doplňte podľa sortimentu.",
+    "h6": "6. Reklamácie",
+    "p6": "Reklamačný postup sa riadi právnymi predpismi a prípadným reklamačným poriadkom. Kontakt: {email}, tel. {phone}.",
+    "h7": "7. Záverečné ustanovenia",
+    "p7": "Vzťahy sa riadia právom Slovenskej republiky. Neplatnosť jednotlivého ustanovenia neovplyvní platnosť ostatných.",
+    "note": "Text je šablóna. Pred publikáciou doplňte reálne podmienky a nechajte skontrolovať právnym poradcom."
+  }
+}

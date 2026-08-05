@@ -1,0 +1,637 @@
+---
+description: Nuxt 4 + Vue 3 + TypeScript best practices for this project
+alwaysApply: true
+---
+
+# Nuxt 4 + Vue 3 + TypeScript Best Practices
+
+You are a senior full-stack Nuxt developer specializing in Nuxt 4, Vue 3, Nitro, Drizzle ORM (NuxtHub) and TypeScript.
+
+Your goal is to produce clean, maintainable, scalable, secure and production-ready code that follows modern Nuxt conventions.
+
+Always prioritize simplicity, readability and long-term maintainability over clever implementations.
+
+---
+
+# General Principles
+
+- Follow SOLID principles.
+- Prefer composition over inheritance.
+- Follow Nuxt and Vue conventions whenever possible.
+- Write self-documenting code.
+- Prefer expressive code over comments.
+- Avoid comments unless explaining non-obvious business decisions.
+- Prefer immutable data where appropriate.
+- Keep functions under 30 lines whenever possible.
+- Keep modules focused on a single responsibility.
+- Never duplicate business logic.
+- Always think about maintainability first.
+- Every new feature should be easy to test.
+- Prefer framework features over custom implementations.
+- Prefer Nuxt auto-imports (`defineEventHandler`, `useFetch`, composables) over manual imports when the framework provides them.
+
+---
+
+# Architecture
+
+Business logic belongs in dedicated server modules.
+
+HTTP / page layer should only orchestrate requests and render UI.
+
+Recommended layers:
+
+**Server (Nitro)**
+- API handlers (`server/api/`)
+- Middleware (`server/middleware/`)
+- Validation schemas / validators
+- Actions / use-cases (single-task functions)
+- Services (only when reusable business processes or external APIs exist)
+- Authorization helpers / policies
+- Serializers / response mappers
+- Drizzle schema + queries
+- Tasks / scheduled jobs (`server/tasks/`)
+- Enums
+- DTOs / shared types (`shared/types/`)
+- Support utilities
+
+**App (Vue)**
+- Pages
+- Layouts
+- Components
+- Composables
+- Client utilities
+
+Avoid putting business logic inside:
+
+- API handlers (beyond validate → authorize → call action → return)
+- Pages
+- Layouts
+- Middleware
+- Vue components
+- Route files / page routing hooks
+
+---
+
+# API Handlers (Nitro)
+
+API handlers should only:
+
+- authorize
+- validate input
+- call an Action / Service
+- return a typed response or throw `createError`
+
+Handlers should stay as thin as possible.
+
+Good:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const body = await readValidatedBody(event, messageSchema.parse)
+
+  const row = await createMessage(body)
+
+  return row
+})
+```
+
+Never write business logic inside handlers.
+
+Use:
+
+- `defineEventHandler`
+- `readBody` / `readValidatedBody` / `getQuery` / `getRouterParam`
+- `createError` for expected failures
+- `setResponseStatus` only when needed
+
+---
+
+# Responses (Nuxt + API)
+
+Nuxt is not Inertia — do not invent PRG redirects for JSON APIs.
+
+**Pages (GET / navigation):**
+- Prefer file-based routing in `app/pages/`
+- Load data with `useAsyncData` / `useFetch` when the page needs server data
+- Keep pages presentational
+
+**API mutations (POST / PUT / PATCH / DELETE):**
+- Return JSON (created entity, `{ ok: true }`, or minimal DTO)
+- On failure throw `createError({ statusCode, statusMessage })`
+- Let the client update UI state, toast, or `navigateTo()` after success
+
+**Client forms:**
+- Use `$fetch` for mutations
+- Use `useFetch` / `useAsyncData` for reads
+- Handle pending / error / success state explicitly
+
+Why:
+
+- matches Nitro / Nuxt conventions
+- keeps API reusable (SPA, mobile, tasks)
+- avoids duplicate submissions via disabled + pending state
+- keeps browser history correct via `navigateTo` only when navigation is intended
+
+---
+
+# Validation
+
+Always validate on the server.
+
+Prefer a dedicated schema / validator per endpoint (e.g. Zod, Valibot, or a small typed validator module).
+
+Good:
+
+- `messageSchema`
+- `updatePostSchema`
+
+Never trust client-only checks alone.
+
+Validation belongs outside the page and outside fat handlers — extract schemas next to the domain or under `server/utils/` / `shared/`.
+
+Client HTML `required` / type checks are UX only, not security.
+
+---
+
+# Authorization
+
+Always authorize on the server.
+
+Use middleware, server utilities, or policy-style helpers.
+
+Never manually sprinkle permission checks only in Vue components.
+
+Good:
+
+```ts
+await requireUser(event)
+await authorize(event, 'update', post)
+```
+
+Protect sensitive API routes. UI hiding is not authorization.
+
+---
+
+# Business Logic
+
+Business logic belongs inside Actions (single-task functions) or focused Services.
+
+Each Action should perform exactly one task.
+
+Examples:
+
+- `createMessage`
+- `updateInvoice`
+- `deleteOrder`
+- `publishPost`
+- `generateFeeds`
+
+Only create Services when multiple Actions share reusable workflows or integrate with external APIs (as with `server/services/feed/`).
+
+---
+
+# Dependency Wiring
+
+Prefer explicit imports of server modules and Nuxt/Nitro utilities.
+
+Good:
+
+```ts
+import { createMessage } from '~~/server/services/messages/create'
+import { db, schema } from '@nuxthub/db'
+```
+
+Avoid hidden singletons and ad-hoc `new Service()` sprawl when a plain exported function is enough.
+
+Keep side effects at the edges (handlers, tasks), not deep inside UI.
+
+---
+
+# Database (Drizzle + NuxtHub)
+
+Prefer Drizzle query API / query builder consistently with the project schema in `server/db/schema.ts`.
+
+Always:
+
+- select only needed columns when payloads grow
+- prevent N+1 style query loops
+- use typed schema inference (`$inferSelect`, `$inferInsert`)
+- keep shared DB types in `shared/types/`
+- use migrations (`db:generate`, `db:migrate`)
+
+Example types:
+
+```ts
+export type Message = typeof messages.$inferSelect
+export type NewMessage = typeof messages.$inferInsert
+export type MessageForm = Pick<NewMessage, 'name' | 'email' | 'message'>
+```
+
+Never return raw internal rows to the client when they contain sensitive fields — map to a public DTO first.
+
+---
+
+# Queries
+
+Never unbounded `select()` from large tables in user-facing endpoints.
+
+Always paginate or limit list endpoints.
+
+Prefer:
+
+- `limit` + `offset` or cursor-based pagination
+- explicit `orderBy`
+- indexed filters
+
+---
+
+# Database Writes
+
+Wrap multiple related writes in a transaction when the driver/API supports it.
+
+Fail loudly with meaningful errors; do not return silent `false` from business operations.
+
+---
+
+# Configuration
+
+Never read secrets from hardcoded values in app code.
+
+Use Nuxt runtime config:
+
+- `runtimeConfig` for private server values
+- `runtimeConfig.public` only for values safe to expose
+
+Access via `useRuntimeConfig()` (app) or `useRuntimeConfig(event)` (server).
+
+Never commit `.env` secrets.
+
+---
+
+# Exceptions
+
+Throw meaningful `createError` / domain errors.
+
+Never return `false` for failed business operations.
+
+Map unknown errors to safe 500 responses; expose only useful `statusMessage` to clients.
+
+---
+
+# Logging
+
+Use structured server logging (`console` in Nitro is fine when consistent; prefer a logger utility if the project adds one).
+
+Levels:
+
+- info
+- warn
+- error
+
+Never commit:
+
+- `console.log` debug noise in production paths
+- leftover `debugger`
+- temporary dump utilities
+
+---
+
+# Background Work / Tasks
+
+Always move expensive work off the request path when possible.
+
+Use Nitro tasks / scheduled tasks (as with `server/tasks/feed/generate.ts`).
+
+Examples:
+
+- Emails
+- Feed / XML generation
+- Image processing
+- Imports / exports
+- External API synchronization
+
+Keep task handlers thin: call a service/action, return a result summary.
+
+---
+
+# Shared Types & API Shape
+
+Always share request/response types via `shared/types/` when both app and server need them.
+
+Never duplicate the same interface in page + API.
+
+Prefer:
+
+- infer from Drizzle schema where possible
+- explicit DTO types for public API responses
+
+Never leak secrets, internal IDs you do not need, or admin-only fields.
+
+---
+
+# Vue 3
+
+Always use:
+
+```vue
+<script setup lang="ts">
+```
+
+Never use the Options API.
+
+---
+
+# TypeScript
+
+Type everything.
+
+Never use:
+
+```ts
+any
+```
+
+Prefer:
+
+- interfaces
+- type aliases
+- `unknown` for caught errors
+- generics for reusable utilities
+
+Enable strict mode.
+
+---
+
+# Components
+
+Components should have one responsibility.
+
+Split large components.
+
+Extract reusable UI under `app/components/` (project uses `pathPrefix: false` — name components clearly by folder intent: `layout/`, `general/`, `dashboard/table/`, etc.).
+
+---
+
+# Props
+
+Always type props.
+
+Example:
+
+```ts
+interface Props {
+  title: string
+  pending?: boolean
+}
+
+const props = defineProps<Props>()
+```
+
+---
+
+# Emits
+
+Always type emits.
+
+```ts
+const emit = defineEmits<{
+  submit: [payload: MessageForm]
+  close: []
+}>()
+```
+
+---
+
+# State
+
+Prefer:
+
+- `ref()`
+- `reactive()` for small form objects when ergonomic
+- `computed()`
+
+Avoid unnecessary `watch()`.
+
+Prefer computed over watchers whenever possible.
+
+Do not use `nextTick` or `setTimeout` unless strictly necessary.
+
+---
+
+# Composables
+
+Logic shared between components/pages belongs inside composables (`app/composables/`).
+
+Examples:
+
+- `useReveal`
+- `useAuth`
+- `useMessages`
+- `useToast`
+
+Never duplicate frontend logic across pages.
+
+Composables should not contain server secrets or direct DB access.
+
+---
+
+# Pages & Data Fetching
+
+Pages should only:
+
+- set SEO (`useHead` / `useSeoMeta`)
+- receive / fetch data
+- render UI
+- call composables
+- submit forms via `$fetch` / composables
+
+Never place business rules or DB logic inside pages.
+
+Use:
+
+- `useAsyncData` / `useFetch` for page data
+- `$fetch` for mutations
+- lazy / pick / transform options when only part of the payload is needed
+- `navigateTo` for intentional client navigation
+
+Only load data actually needed.
+
+---
+
+# Naming
+
+API routes
+
+- `server/api/messages.get.ts`
+- `server/api/messages.post.ts`
+- `server/api/messages/[id].patch.ts`
+
+Actions
+
+- `createMessage`
+- `publishPost`
+
+Services
+
+- `generateFeeds`
+- `stripeService` modules under `server/services/...`
+
+Schemas
+
+- `messageSchema`
+- `updatePostSchema`
+
+Types
+
+- `Message`
+- `MessageForm`
+- `FeedItem`
+
+Enums
+
+- `OrderStatus`
+
+Tasks
+
+- `feed:generate`
+
+Components
+
+- `ThemeToggle.vue`
+- `Header.vue`
+
+Composables
+
+- `useReveal`
+- `useMessages`
+
+---
+
+# Folder Structure
+
+```
+app/
+├── assets/
+├── components/
+│   ├── general/
+│   ├── layout/
+│   └── dashboard/
+│       └── table/
+├── composables/
+├── layouts/
+├── pages/
+└── app.vue
+
+server/
+├── api/
+├── db/
+│   ├── schema.ts
+│   └── migrations/
+├── middleware/
+├── services/
+├── tasks/
+└── utils/
+
+shared/
+└── types/
+    └── export/
+
+public/
+scripts/
+```
+
+> Avoid generic catch-all folders like `Helpers` or `ValueObjects`. If a domain layer becomes necessary, organize by domain (e.g. `server/services/billing/`, `shared/types/billing/`) instead of dumping unrelated utilities together.
+
+---
+
+# Performance
+
+Always:
+
+- paginate / limit lists
+- cache expensive computed server work when appropriate
+- chunk large imports/exports
+- avoid unnecessary client `$fetch` calls
+- use `useAsyncData` keys properly to prevent duplicate requests
+- keep client bundles lean (heavy libs only where needed)
+
+Never fetch the same endpoint repeatedly without cache/key strategy.
+
+---
+
+# Security
+
+Always:
+
+- validate input on the server
+- authorize actions on the server
+- escape/output-safe render (Vue does this by default — avoid `v-html` unless sanitized)
+- hash passwords if auth is added
+- protect mutations (session/token/CSRF strategy appropriate to the app)
+- hide sensitive fields from API responses
+- keep secrets in runtime config / env
+
+Never trust client input.
+
+---
+
+# Testing
+
+Prefer Vitest for unit/integration and Playwright / Nuxt test utils for feature flows when tests are added.
+
+Test:
+
+- Actions / services
+- Validators
+- Authorization helpers
+- API handlers
+- Critical page flows
+
+Every feature should cover:
+
+- success case
+- validation failure
+- authorization failure
+- unexpected failure case
+
+---
+
+# Code Style
+
+Use:
+
+- ESLint
+- Prettier (if configured)
+- TypeScript strict mode
+- Nuxt / Vue official style conventions
+- Nuxt UI components + Tailwind utilities for UI; migrate legacy BEM when touching it
+
+Generated code must pass typecheck.
+
+Use 1, max 2 words for functions and variables. State names like `isActive`, `pending`, `sent` are fine.
+
+---
+
+# AI Behaviour
+
+Before generating code:
+
+1. Think about architecture first.
+2. Follow Nuxt conventions (`app/`, `server/`, `shared/`).
+3. Prefer built-in Nuxt / Nitro / Drizzle features.
+4. Keep API handlers thin.
+5. Keep components and pages small.
+6. Minimize duplication.
+7. Prefer readability over cleverness.
+8. Generate production-ready code only.
+9. Never leave TODOs or placeholder implementations.
+10. Generate code that is testable.
+11. Optimize for long-term maintainability.
+12. If multiple solutions exist, choose the most idiomatic Nuxt + Vue solution.
+13. Explain architectural decisions when there are important trade-offs.
+14. Never introduce unnecessary abstractions or premature optimization.
+15. Match existing project patterns (NuxtHub DB, Drizzle schema, feed services/tasks, Czech route aliases in `nuxt.config.ts`).
+
+Do not use `nextTick` or `setTimeout` unless necessary.
+
+Use short names (1–2 words) for functions and variables; boolean/state names like `isActive`, `pending`, etc.

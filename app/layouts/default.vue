@@ -1,16 +1,10 @@
-<script setup lang="ts">
-
-import Header from '~/components/layout/Header.vue';
-import Footer from '~/components/layout/Footer.vue';
-
-</script>
-
 <template>
-  <div class="site">
+  <div class="flex min-h-screen flex-col">
     <Header />
-    <main>
+    <Main>
       <slot />
-    </main>
+    </Main>
     <Footer />
+    <Consent />
   </div>
 </template>

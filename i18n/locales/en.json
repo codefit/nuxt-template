@@ -1,0 +1,558 @@
+{
+  "site": {
+    "tagline": "Universal Nuxt starter for brochure and commerce sites.",
+    "description": "Universal Nuxt starter for brochure and commerce sites."
+  },
+  "nav": {
+    "home": "Home",
+    "articles": "Articles",
+    "messages": "Messages",
+    "gallery": "Gallery",
+    "about": "About",
+    "contact": "Contact",
+    "gdpr": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "main": "Main navigation",
+    "footer": "Footer",
+    "menu": "Menu"
+  },
+  "theme": {
+    "toLight": "Switch to light mode",
+    "toDark": "Switch to dark mode",
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "toggle": "Toggle light / dark mode"
+  },
+  "locale": {
+    "label": "Language",
+    "cs": "Čeština",
+    "sk": "Slovenčina",
+    "en": "English"
+  },
+  "home": {
+    "ctaArticles": "Articles",
+    "ctaContact": "Contact",
+    "ctaAbout": "About",
+    "hero": {
+      "title": "Your Goals. Our Expertise — Shared Success",
+      "lead": "Universal Nuxt starter. Swap copy and sections to match your project.",
+      "search": "Search",
+      "searchPlaceholder": "Search articles…"
+    },
+    "banners": {
+      "cta": "More information",
+      "b1": {
+        "label": "Deal of the week",
+        "title": "Sample product with 50 % off",
+        "price": "499 Kč",
+        "oldPrice": "999 Kč"
+      },
+      "b2": {
+        "label": "New",
+        "title": "Default offer — edit this text",
+        "price": "299 Kč",
+        "oldPrice": "449 Kč"
+      },
+      "b3": {
+        "label": "Recommended",
+        "title": "Placeholder banner for your project",
+        "price": "799 Kč",
+        "oldPrice": "1 199 Kč"
+      },
+      "b4": {
+        "label": "Best seller",
+        "title": "Another sample card",
+        "price": "199 Kč",
+        "oldPrice": "349 Kč"
+      },
+      "b5": {
+        "label": "Limited offer",
+        "title": "Fifth banner — default copy",
+        "price": "599 Kč",
+        "oldPrice": "899 Kč"
+      },
+      "b6": {
+        "label": "Editor’s pick",
+        "title": "Sixth banner — replace with content",
+        "price": "149 Kč",
+        "oldPrice": "249 Kč"
+      }
+    },
+    "stats": {
+      "title": "Numbers that reflect our reputation",
+      "s1": { "value": "120+", "label": "Happy clients" },
+      "s2": { "value": "1.3k+", "label": "Projects delivered" },
+      "s3": { "value": "730+", "label": "Consultations a year" }
+    },
+    "values": {
+      "v1": {
+        "title": "Trust & clarity",
+        "body": "Transparent communication from the first conversation."
+      },
+      "v2": {
+        "title": "Measurable outcomes",
+        "body": "Decisions backed by data and a clear next step."
+      },
+      "v3": {
+        "title": "Tailored partnership",
+        "body": "We match your pace and long-term goals."
+      }
+    },
+    "split": {
+      "title": "A simple framework for growth",
+      "body": "Sections, components and a color system ready to customize. Treat this as a starter skeleton — every project reshapes content and visuals.",
+      "cta": "About us",
+      "badge": "Ready to customize",
+      "m1": { "value": "1.2×", "label": "Faster start" },
+      "m2": { "value": "100 %", "label": "Your content" }
+    },
+    "services": {
+      "title": "What we offer",
+      "lead": "Sample services — replace with your catalog.",
+      "s1": {
+        "title": "Planning",
+        "body": "Strategic overview and clear priorities for the next period."
+      },
+      "s2": {
+        "title": "Management",
+        "body": "Ongoing care for key processes and communication."
+      },
+      "s3": {
+        "title": "Analysis",
+        "body": "Clear reports and recommendations based on data."
+      },
+      "s4": {
+        "title": "Advisory",
+        "body": "Practical guidance for important decisions."
+      }
+    },
+    "testimonials": {
+      "title": "What clients say",
+      "lead": "Sample quotes — replace with real stories.",
+      "t1": {
+        "quote": "Collaboration was clear and results arrived sooner than expected.",
+        "name": "Jane Novak",
+        "role": "CEO, Example"
+      },
+      "t2": {
+        "quote": "We finally have a site that is easy to grow and maintain.",
+        "name": "Peter Smith",
+        "role": "Product manager"
+      },
+      "t3": {
+        "quote": "Design and engineering fit — the team gets business and code.",
+        "name": "Eva Horak",
+        "role": "Marketing lead"
+      },
+      "t4": {
+        "quote": "The starter saved us weeks on the base framework.",
+        "name": "Martin Dvorak",
+        "role": "Founder"
+      }
+    },
+    "projects": {
+      "title": "Successful projects",
+      "lead": "Sample case studies — wire to your portfolio.",
+      "cta": "View project",
+      "prev": "Previous",
+      "next": "Next",
+      "p1": {
+        "title": "Digital transformation",
+        "body": "Full presentation redesign and CMS integration."
+      },
+      "p2": {
+        "title": "Brand growth",
+        "body": "New site structure, SEO basics and a clear conversion path."
+      },
+      "p3": {
+        "title": "Internal tools",
+        "body": "Dashboard and content management tailored to the client team."
+      }
+    },
+    "insights": {
+      "title": "News & tips",
+      "lead": "Latest articles from the blog.",
+      "all": "All articles",
+      "tag": "News",
+      "empty": "No published articles yet."
+    },
+    "cta": {
+      "title": "Want to chat? Reach out to our team.",
+      "action": "Contact"
+    }
+  },
+  "error": {
+    "404": {
+      "seoTitle": "Page not found",
+      "title": "Page not found",
+      "description": "Sorry, the address you are looking for does not exist or has been moved. Try going back home, or continue to one of the useful pages below.",
+      "home": "Back to home",
+      "contact": "Contact us",
+      "hint": "Looking for:"
+    },
+    "default": {
+      "seoTitle": "Something went wrong",
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Please try again, or return to the home page.",
+      "home": "Back to home",
+      "retry": "Try again"
+    }
+  },
+
+  "table": {
+    "search": "Search…",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "clearFilter": "Remove filter",
+    "columns": "Columns",
+    "perPage": "Per page",
+    "showing": "Showing {from} – {to} of {total} records",
+    "showingEmpty": "Showing 0 records",
+    "selected": "Selected: {count}",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "filterUnset": "Not selected",
+    "applyFilters": "Done"
+  },
+  "messages": {
+    "seoTitle": "Messages",
+    "seoDescription": "Overview of messages from the contact form.",
+    "title": "Messages",
+    "lead": "Manage contact messages — search, filters, sorting and pagination live in the URL.",
+    "searchHint": "Search name, email and message…",
+    "filterCreated": "Date",
+    "colName": "Name",
+    "colEmail": "Email",
+    "colMessage": "Message",
+    "colCreated": "Created",
+    "actions": "Actions",
+    "actionCopyId": "Copy ID",
+    "actionExpand": "Expand",
+    "actionCollapse": "Collapse",
+    "actionView": "View",
+    "actionDelete": "Delete",
+    "bulkExportReport": "Export + report",
+    "bulkExport": "Export",
+    "bulkMarkRead": "Mark as read",
+    "bulkArchive": "Archive",
+    "bulkDelete": "Delete",
+    "bulkDeleteTitle": "Delete messages",
+    "bulkDeleteDesc": "Really delete {count} items? This cannot be undone.",
+    "exportTitle": "Export complete",
+    "exportDesc": "Report for {count} selected messages is ready to download.",
+    "exportItems": "Items",
+    "exportEmails": "Emails",
+    "exportSize": "Size",
+    "exportDownload": "Download CSV"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "nav": {
+      "rail": "Dashboard main menu",
+      "sidebar": "Sidebar",
+      "home": "Overview",
+      "articles": "Articles",
+      "messages": "Messages",
+      "media": "Media",
+      "users": "Users",
+      "settings": "Settings",
+      "sections": "Sections",
+      "more": "More",
+      "recent": "Recent",
+      "search": "Search",
+      "searchHint": "Search the dashboard…",
+      "newArticle": "New article",
+      "backToSite": "Back to site",
+      "openMenu": "Open menu"
+    },
+    "header": {
+      "badge": "Admin",
+      "config": "Configuration",
+      "share": "Share"
+    },
+    "home": {
+      "seoTitle": "Dashboard",
+      "seoDescription": "Content overview and management.",
+      "greeting": "Hi there 👋",
+      "lead": "Tell us what you need — articles, messages and more are one click away.",
+      "cardAssistantTitle": "Assistant",
+      "cardAssistantBody": "Placeholder — site status and tips will land here soon.",
+      "cardTasksTitle": "Tasks",
+      "task1": "Review new messages",
+      "task2": "Fill in article meta",
+      "task3": "Prepare the media library",
+      "viewAll": "View all",
+      "cardPromptTitle": "Suggestion",
+      "cardPromptBody": "Placeholder — tips, checklists or quick actions go here.",
+      "actionArticles": "Articles",
+      "actionMessages": "Messages",
+      "actionMedia": "Media",
+      "actionUsers": "Users",
+      "searchPlaceholder": "Quick search… (placeholder for now)",
+      "selectSource": "Source",
+      "attach": "Attach",
+      "voice": "Voice",
+      "send": "Send",
+      "disclaimer": "Some controls are placeholders and will be wired up later.",
+      "recentPlaceholder1": "Article draft…",
+      "recentPlaceholder2": "New site message",
+      "recentPlaceholder3": "Translation draft"
+    },
+    "articles": {
+      "seoTitle": "Articles — Dashboard",
+      "seoDescription": "Manage articles in the dashboard.",
+      "title": "Articles",
+      "lead": "Manage articles — search, filters, sorting and pagination live in the URL.",
+      "searchHint": "Search title and slug…",
+      "filterCreated": "Created date",
+      "filterPublished": "Status",
+      "publishedYes": "Published",
+      "publishedNo": "Draft",
+      "colTitle": "Title",
+      "colAuthor": "Author",
+      "colSlug": "Slug",
+      "colPublished": "Status",
+      "colPublishedAt": "Published",
+      "colCreated": "Created",
+      "actions": "Actions",
+      "actionCopyId": "Copy ID",
+      "actionExpand": "Expand",
+      "actionCollapse": "Collapse",
+      "actionView": "Edit",
+      "actionCopy": "Copy",
+      "actionDelete": "Delete",
+      "addRecord": "Add record",
+      "fieldPublished": "Published",
+      "fieldPublishedAt": "Publish date",
+      "fieldTitle": "Title",
+      "fieldSlug": "Slug",
+      "fieldExcerpt": "Excerpt",
+      "fieldBody": "Body",
+      "fieldMetaTitle": "Meta title",
+      "fieldMetaDescription": "Meta description",
+      "fieldMetaKeywords": "Meta keywords",
+      "fieldAuthor": "Author",
+      "authorHint": "Select an author…",
+      "toastCreated": "Article created.",
+      "toastUpdated": "Article saved.",
+      "bulkExport": "Export",
+      "bulkPublish": "Publish",
+      "bulkUnpublish": "Draft",
+      "bulkArchive": "Archive",
+      "bulkArchiveTitle": "Archive articles",
+      "bulkArchiveDesc": "Really archive {count} items?",
+      "bulkDelete": "Delete",
+      "bulkDeleteTitle": "Delete articles",
+      "bulkDeleteDesc": "Really delete {count} items? This cannot be undone."
+    },
+    "form": {
+      "createTitle": "New record",
+      "editTitle": "Edit record",
+      "copyTitle": "Copy record",
+      "sharedSection": "Shared fields",
+      "translationsSection": "Translations",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create",
+      "required": "Required field",
+      "validationFailed": "Please fix the form errors.",
+      "saveFailed": "Save failed.",
+      "mediaLabel": "Media",
+      "mediaDrop": "Drop files here",
+      "mediaHint": "Upload storage comes later — files are prepared only for now.",
+      "mediaRemove": "Remove"
+    },
+    "authors": {
+      "createTitle": "New author",
+      "addAuthor": "Add author",
+      "fieldName": "Name",
+      "fieldEmail": "Email",
+      "fieldPhone": "Phone",
+      "invalidEmail": "Enter a valid email",
+      "invalidPhone": "Enter a valid phone number",
+      "toastCreated": "Author created."
+    }
+  },
+  "about": {
+    "seoTitle": "About",
+    "seoDescription": "About the brand, team and project.",
+    "eyebrow": "About",
+    "title": "About the project",
+    "lead": "Add your own copy. This page is part of the universal starter.",
+    "body": "Introduce the brand, team or service here. Content and visuals are project-specific — the starter only keeps the structure.",
+    "toContact": "Go to contact →"
+  },
+  "gallery": {
+    "seoTitle": "Gallery",
+    "seoDescription": "Sample gallery with lightbox — click an image to open the preview.",
+    "eyebrow": "Gallery",
+    "title": "Selected shots",
+    "lead": "Click an image to open the lightbox with zoom and swipe.",
+    "open": "Open {title}",
+    "items": {
+      "atelier": "Studio",
+      "detail": "Detail",
+      "space": "Space",
+      "material": "Material",
+      "light": "Light",
+      "process": "Process"
+    }
+  },
+  "contact": {
+    "seoTitle": "Contact",
+    "seoDescription": "Write to us — we will get back to you.",
+    "eyebrow": "Contact",
+    "title": "Write to us",
+    "lead": "A short message is enough. We will reply.",
+    "aside": "Prefer a direct line? Reach us by email or phone.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "message": "Message",
+    "submit": "Send",
+    "pending": "Sending…",
+    "success": "Thank you — your message has been sent.",
+    "error": "Sending failed. Please try again.",
+    "gdprLabel": "I agree to the processing of personal data under the",
+    "gdprRequired": "Please accept the privacy policy to send the message.",
+    "recaptchaNotice": "This form is protected by reCAPTCHA and the Google",
+    "recaptchaPrivacy": "Privacy Policy",
+    "recaptchaAnd": " and ",
+    "recaptchaTerms": "Terms of Service",
+    "recaptchaSuffix": " apply.",
+    "recaptchaConfig": "reCAPTCHA is not configured."
+  },
+  "articles": {
+    "seoTitle": "Articles",
+    "seoDescription": "Articles and news. The listing uses schema.org microdata in HTML.",
+    "eyebrow": "Blog",
+    "title": "Articles",
+    "lead": "Sample articles section — microdata on the listing, JSON-LD on the detail.",
+    "tag": "News",
+    "empty": "No published articles yet.",
+    "pagination": "Articles pagination",
+    "readMore": "Read article →",
+    "back": "← Back to articles",
+    "eyebrowDetail": "Article",
+    "notFound": "Article not found"
+  },
+  "api": {
+    "errors": {
+      "missingSlug": "Missing slug.",
+      "invalidArticleId": "Invalid article id.",
+      "articleCreateFailed": "Could not create the article.",
+      "articleUpdateFailed": "Could not update the article.",
+      "authorCreateFailed": "Could not create the author.",
+      "articleNotFound": "Article not found.",
+      "missingEntityOrSlug": "Missing entity or slug.",
+      "entityNoSlugMap": "Entity \"{entity}\" has no slug map.",
+      "slugNotFound": "Slug not found.",
+      "invalidMessageId": "Invalid message id.",
+      "messageNotFound": "Message not found.",
+      "messageRequired": "Please fill in name, email and message.",
+      "gdprRequired": "Please accept the privacy policy to send the message.",
+      "invalidEmail": "Please enter a valid email.",
+      "recaptchaRequired": "reCAPTCHA verification is missing. Please try again.",
+      "recaptchaFailed": "reCAPTCHA verification failed. Please try again.",
+      "recaptchaConfig": "reCAPTCHA is not configured on the server.",
+      "bulkInvalidMode": "selection.mode must be include or exclude.",
+      "bulkInvalidIds": "selection.ids must be an array of ids.",
+      "bulkUnknownAction": "Unknown bulk action."
+    }
+  },
+  "legal": {
+    "eyebrow": "Legal",
+    "effective": "Effective from {date}."
+  },
+  "gdpr": {
+    "seoTitle": "Privacy policy (GDPR)",
+    "seoDescription": "Information about personal data processing under GDPR.",
+    "title": "Privacy policy",
+    "intro": "The data controller is {company}, Company ID {ico}, address {address}, email {email}.",
+    "h1": "1. What data we process",
+    "p1": "We process data you provide voluntarily (especially name, email and message content) and technical data required to run the site (e.g. IP address, cookies — see",
+    "cookiesLink": "Cookie policy",
+    "p1end": ").",
+    "h2": "2. Purpose and legal basis",
+    "li1": "handling enquiries / communication — legitimate interest / contract performance,",
+    "li2": "operating and securing the site — legitimate interest,",
+    "li3": "complying with legal obligations — legal obligation.",
+    "h3": "3. Retention period",
+    "p3": "We keep data only as long as needed for the purpose, or as required by law.",
+    "h4": "4. Recipients",
+    "p4": "Data may be shared with processors (hosting, email) under a processing agreement. We do not share data with third parties for marketing without consent.",
+    "h5": "5. Your rights",
+    "p5": "You have the right of access, rectification, erasure, restriction, portability and objection. You may lodge a complaint with the data protection authority.",
+    "h6": "6. Contact",
+    "p6": "For privacy matters contact us at",
+    "note": "This is a template. Fill in real details and have it reviewed by legal counsel before publishing."
+  },
+  "cookieConsent": {
+    "manage": "Cookie settings",
+    "title": "We use cookies",
+    "description": "Cookies help us run the site, measure traffic and optionally personalize content. Necessary cookies are always on. You can allow or reject the rest.",
+    "acceptAll": "Accept all",
+    "acceptNecessary": "Necessary only",
+    "showPreferences": "Settings",
+    "preferencesTitle": "Cookie settings",
+    "savePreferences": "Save selection",
+    "close": "Close",
+    "introTitle": "Your choices",
+    "introText": "You can change consent for each cookie category anytime. Reopen this panel via the Cookie settings link in the footer.",
+    "necessaryTitle": "Necessary",
+    "necessaryText": "These cookies are required for the site to work (e.g. security, language, theme). They cannot be disabled.",
+    "analyticsTitle": "Analytics",
+    "analyticsText": "Help us understand how you use the site. Data is anonymized and used to improve the experience.",
+    "marketingTitle": "Marketing",
+    "marketingText": "Used to personalize content and ads based on your interests.",
+    "moreTitle": "More information",
+    "moreText": "Details are in the",
+    "cookiesLink": "Cookie policy",
+    "privacyLink": "Privacy policy"
+  },
+  "cookies": {
+    "seoTitle": "Cookie policy",
+    "seoDescription": "Information about cookies used on this site.",
+    "title": "Cookie policy",
+    "intro": "This policy describes cookies and similar technologies used by {name} ({company}).",
+    "h1": "1. What cookies are",
+    "p1": "Cookies are small text files stored on your device. They help the site work, remember choices and sometimes measure traffic.",
+    "h2": "2. Cookie types",
+    "necessary": "Necessary",
+    "necessaryText": "— required for basic functions (e.g. security, theme preference). Cannot be disabled.",
+    "analytics": "Analytics",
+    "analyticsText": "— help understand traffic; only with consent.",
+    "marketing": "Marketing",
+    "marketingText": "— personalization / advertising; only with consent.",
+    "h3": "3. Managing consent",
+    "p3": "You can withdraw consent anytime via browser settings or the cookie bar (Cookie settings link in the footer).",
+    "h4": "4. Contact",
+    "p4": "Cookie questions:",
+    "p4more": "More about data processing is in the",
+    "gdprLink": "Privacy policy",
+    "note": "This is a template. Add specific tools (GA, Meta Pixel, etc.) and cookie lifetimes."
+  },
+  "terms": {
+    "seoTitle": "Terms and conditions",
+    "seoDescription": "Terms and conditions for using our services.",
+    "title": "Terms and conditions",
+    "intro": "These terms govern rights and obligations between {company} (Company ID {ico}, {address}) and the customer when purchasing goods / services via this website.",
+    "h1": "1. Introductory provisions",
+    "p1": "By placing an order the customer confirms they have read and agree to these terms. Written deviations take precedence.",
+    "h2": "2. Order and contract",
+    "p2": "Submitting an order is an offer to contract. The contract is formed when the seller confirms the order (email).",
+    "h3": "3. Price and payment",
+    "p3": "Prices are shown with / without VAT depending on the project. Add payment and shipping methods for your business model.",
+    "h4": "4. Delivery",
+    "p4": "Delivery times and methods are set by the specific offer. Risk of damage passes to the customer on receipt.",
+    "h5": "5. Withdrawal",
+    "p5": "Consumers may withdraw within 14 days without giving a reason where the law allows. Add exceptions (e.g. perishable goods, digital content) as needed.",
+    "h6": "6. Complaints",
+    "p6": "Complaints follow applicable law and any complaints policy. Contact: {email}, tel. {phone}.",
+    "h7": "7. Final provisions",
+    "p7": "Relations are governed by the law of the Czech Republic. Invalidity of one clause does not affect the rest.",
+    "note": "This is a template. Fill in real terms and have them reviewed by legal counsel before publishing."
+  }
+}
