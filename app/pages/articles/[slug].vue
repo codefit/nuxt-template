@@ -57,66 +57,69 @@ const imageUrl = computed(() =>
 </script>
 
 <template>
-  <article
-    v-if="article"
-    class="article"
-    itemscope
-    itemtype="https://schema.org/Article"
-  >
-    <PageHeader
-      :eyebrow="t('articles.eyebrowDetail')"
-      :title="article.title"
-      :lead="article.description"
-      title-prop="headline"
-      lead-prop="description"
-    />
-
-    <link
-      itemprop="mainEntityOfPage"
-      :href="pageUrl"
+  <!-- Stable root required for page Transition (`v-if` on root → null children). -->
+  <div>
+    <article
+      v-if="article"
+      class="article"
+      itemscope
+      itemtype="https://schema.org/Article"
     >
-    <meta
-      v-if="imageUrl"
-      itemprop="image"
-      :content="imageUrl"
-    >
+      <PageHeader
+        :eyebrow="t('articles.eyebrowDetail')"
+        :title="article.title"
+        :lead="article.description"
+        title-prop="headline"
+        lead-prop="description"
+      />
 
-    <section class="py-10 sm:py-12">
-      <SiteContainer>
-        <p class="article__meta">
-          <time
-            itemprop="datePublished"
-            :datetime="article.publishedAt"
-          >
-            {{ formatDate(article.publishedAt, locale) }}
-          </time>
-          <meta
-            v-if="article.modifiedAt"
-            itemprop="dateModified"
-            :content="article.modifiedAt"
-          >
-          <span
-            v-if="article.author"
-            itemprop="author"
-            itemscope
-            itemtype="https://schema.org/Person"
-          >
-            <span itemprop="name">{{ article.author }}</span>
-          </span>
-        </p>
+      <link
+        itemprop="mainEntityOfPage"
+        :href="pageUrl"
+      >
+      <meta
+        v-if="imageUrl"
+        itemprop="image"
+        :content="imageUrl"
+      >
 
-        <div
-          class="prose"
-          itemprop="articleBody"
-          v-html="article.body"
-        />
+      <section class="py-10 sm:py-12">
+        <SiteContainer>
+          <p class="article__meta">
+            <time
+              itemprop="datePublished"
+              :datetime="article.publishedAt"
+            >
+              {{ formatDate(article.publishedAt, locale) }}
+            </time>
+            <meta
+              v-if="article.modifiedAt"
+              itemprop="dateModified"
+              :content="article.modifiedAt"
+            >
+            <span
+              v-if="article.author"
+              itemprop="author"
+              itemscope
+              itemtype="https://schema.org/Person"
+            >
+              <span itemprop="name">{{ article.author }}</span>
+            </span>
+          </p>
 
-        <p class="mt-8 font-semibold">
-          <NuxtLink :to="localePath('articles')">
-            {{ t('articles.back') }}
-          </NuxtLink>
-        </p>
-      </SiteContainer>
-    </section>
-  </article>
+          <div
+            class="prose"
+            itemprop="articleBody"
+            v-html="article.body"
+          />
+
+          <p class="mt-8 font-semibold">
+            <NuxtLink :to="localePath('articles')">
+              {{ t('articles.back') }}
+            </NuxtLink>
+          </p>
+        </SiteContainer>
+      </section>
+    </article>
+  </div>
 </template>

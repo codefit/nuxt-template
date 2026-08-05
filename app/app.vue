@@ -20,6 +20,28 @@ useHead(() => ({
 }))
 
 useBrandLd()
+
+/**
+ * Enable page transition only after hydration.
+ * `out-in` during SSR/hydrate hits Vue Transition with a null vnode
+ * → TypeError: Cannot read properties of null (reading 'children').
+ * Client navigations keep the animation.
+ */
+const ready = ref(false)
+onMounted(() => {
+  ready.value = true
+})
+
+const pageTransition = computed(() => {
+  if (!ready.value) {
+    return false
+  }
+
+  return {
+    name: 'page',
+    mode: 'out-in' as const,
+  }
+})
 </script>
 
 <template>
@@ -32,12 +54,7 @@ useBrandLd()
     />
     <NuxtRouteAnnouncer />
     <NuxtLayout>
-      <NuxtPage
-        :transition="{
-          name: 'page',
-          mode: 'out-in',
-        }"
-      />
+      <NuxtPage :transition="pageTransition" />
     </NuxtLayout>
   </UApp>
 </template>
