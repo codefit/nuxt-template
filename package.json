@@ -12,8 +12,8 @@
     "db:generate": "nuxt db generate",
     "db:migrate": "nuxt db migrate",
     "db:sql": "nuxt db sql",
-    "db:seed": "node --env-file=.env scripts/db-seed.mjs",
-    "db:create": "node --env-file=.env scripts/db-create.mjs",
+    "db:seed": "node scripts/db-seed.mjs",
+    "db:create": "node scripts/db-create.mjs",
     "feed:generate": "node scripts/feed-generate.mjs",
     "sitemap:generate": "node scripts/sitemap-generate.mjs"
   },

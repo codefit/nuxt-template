@@ -2,11 +2,19 @@ import { PGlite } from '@electric-sql/pglite'
 import { drizzle as drizzlePglite } from 'drizzle-orm/pglite'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
 import { createJiti } from 'jiti'
+import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import postgres from 'postgres'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+
+/** Local `.env` only — production relies on real process env. */
+const envPath = join(root, '.env')
+if (existsSync(envPath)) {
+  process.loadEnvFile(envPath)
+}
+
 const databaseUrl =
   process.env.DATABASE_URL
   || process.env.POSTGRES_URL
