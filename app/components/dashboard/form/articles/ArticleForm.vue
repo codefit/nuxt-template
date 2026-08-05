@@ -244,7 +244,7 @@ async function openCreateAuthor() {
 }
 
 async function loadLanguages() {
-  languages.value = await $fetch<LanguageOption[]>('/api/languages')
+  languages.value = await $fetch<LanguageOption[]>('/api/languages/options')
   const def = languages.value.find(item => item.isDefault) ?? languages.value[0]
   defaultCode.value = def?.code ?? 'cs'
   activeLang.value = defaultCode.value

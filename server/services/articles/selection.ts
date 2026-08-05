@@ -1,5 +1,5 @@
 import { and, count, desc, eq, isNull, like, or, type SQL } from 'drizzle-orm'
-import { alias } from 'drizzle-orm/sqlite-core'
+import { alias } from 'drizzle-orm/pg-core'
 import { db, schema } from '@nuxthub/db'
 import { site } from '#shared/config/site'
 import type { ArticleListItem } from '#shared/types/article'

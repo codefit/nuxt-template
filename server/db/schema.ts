@@ -1,9 +1,9 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 
-export const messages = sqliteTable('messages', {
-  id: integer().primaryKey({ autoIncrement: true }),
+export const messages = pgTable('messages', {
+  id: serial().primaryKey(),
   name: text().notNull(),
   email: text().notNull(),
   message: text().notNull(),
-  createdAt: integer({ mode: 'timestamp' }).notNull(),
+  createdAt: timestamp().notNull(),
 })

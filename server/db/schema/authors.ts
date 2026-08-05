@@ -1,18 +1,18 @@
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { index, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 
 /**
  * Authors — non-translated raw identity (name is the same in every locale).
  */
-export const authors = sqliteTable(
+export const authors = pgTable(
   'authors',
   {
-    id: integer().primaryKey({ autoIncrement: true }),
+    id: serial().primaryKey(),
     name: text().notNull(),
     email: text(),
     phone: text(),
-    deletedAt: integer({ mode: 'timestamp' }),
-    createdAt: integer({ mode: 'timestamp' }).notNull(),
-    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    deletedAt: timestamp(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
   },
   table => [
     index('authors_name_idx').on(table.name),

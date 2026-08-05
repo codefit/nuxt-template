@@ -63,7 +63,7 @@ export default defineNuxtConfig({
     },
   },
   hub: {
-    db: 'sqlite',
+    db: 'postgresql',
   },
   colorMode: {
     classSuffix: '',
@@ -153,6 +153,11 @@ export default defineNuxtConfig({
         cs: '/dashboard/articles',
         sk: '/dashboard/articles',
         en: '/dashboard/articles',
+      },
+      'dashboard/languages': {
+        cs: '/dashboard/languages',
+        sk: '/dashboard/languages',
+        en: '/dashboard/languages',
       },
     },
     detectBrowserLanguage: {

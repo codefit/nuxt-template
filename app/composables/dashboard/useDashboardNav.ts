@@ -41,6 +41,12 @@ export function useDashboardNav() {
       active: name.value.startsWith('dashboard-messages'),
     },
     {
+      to: localePath('dashboard-languages'),
+      label: t('dashboard.nav.languages'),
+      icon: 'i-lucide-languages',
+      active: name.value.startsWith('dashboard-languages'),
+    },
+    {
       to: '#',
       label: t('dashboard.nav.media'),
       icon: 'i-lucide-image',

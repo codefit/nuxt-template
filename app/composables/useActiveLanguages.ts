@@ -12,6 +12,6 @@ export async function ensureActiveLanguages(): Promise<LanguageOption[]> {
     return state.value
   }
 
-  state.value = await $fetch<LanguageOption[]>('/api/languages')
+  state.value = await $fetch<LanguageOption[]>('/api/languages/options')
   return state.value
 }

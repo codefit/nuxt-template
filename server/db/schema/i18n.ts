@@ -1,16 +1,24 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 
-export const languages = sqliteTable(
+export const languages = pgTable(
   'languages',
   {
-    id: integer().primaryKey({ autoIncrement: true }),
+    id: serial().primaryKey(),
     code: text().notNull(),
     name: text().notNull(),
     icon: text(),
     isActive: integer().notNull().default(1),
     isDefault: integer().notNull().default(0),
-    createdAt: integer({ mode: 'timestamp' }).notNull(),
-    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
   },
   table => [
     uniqueIndex('languages_code_uidx').on(table.code),
@@ -20,16 +28,16 @@ export const languages = sqliteTable(
 )
 
 /** Identity row for short translatable strings (name, excerpt, meta…). */
-export const texts = sqliteTable('texts', {
-  id: integer().primaryKey({ autoIncrement: true }),
-  createdAt: integer({ mode: 'timestamp' }).notNull(),
-  updatedAt: integer({ mode: 'timestamp' }).notNull(),
+export const texts = pgTable('texts', {
+  id: serial().primaryKey(),
+  createdAt: timestamp().notNull(),
+  updatedAt: timestamp().notNull(),
 })
 
-export const textTranslations = sqliteTable(
+export const textTranslations = pgTable(
   'text_translations',
   {
-    id: integer().primaryKey({ autoIncrement: true }),
+    id: serial().primaryKey(),
     textId: integer()
       .notNull()
       .references(() => texts.id, { onDelete: 'cascade' }),
@@ -37,8 +45,8 @@ export const textTranslations = sqliteTable(
       .notNull()
       .references(() => languages.id, { onDelete: 'cascade' }),
     content: text().notNull(),
-    createdAt: integer({ mode: 'timestamp' }).notNull(),
-    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
   },
   table => [
     uniqueIndex('text_translations_text_language_uidx').on(table.textId, table.languageId),
@@ -47,16 +55,16 @@ export const textTranslations = sqliteTable(
 )
 
 /** Identity row for long HTML / markdown bodies. */
-export const longTexts = sqliteTable('long_texts', {
-  id: integer().primaryKey({ autoIncrement: true }),
-  createdAt: integer({ mode: 'timestamp' }).notNull(),
-  updatedAt: integer({ mode: 'timestamp' }).notNull(),
+export const longTexts = pgTable('long_texts', {
+  id: serial().primaryKey(),
+  createdAt: timestamp().notNull(),
+  updatedAt: timestamp().notNull(),
 })
 
-export const longTextTranslations = sqliteTable(
+export const longTextTranslations = pgTable(
   'long_text_translations',
   {
-    id: integer().primaryKey({ autoIncrement: true }),
+    id: serial().primaryKey(),
     longTextId: integer()
       .notNull()
       .references(() => longTexts.id, { onDelete: 'cascade' }),
@@ -64,8 +72,8 @@ export const longTextTranslations = sqliteTable(
       .notNull()
       .references(() => languages.id, { onDelete: 'cascade' }),
     content: text().notNull(),
-    createdAt: integer({ mode: 'timestamp' }).notNull(),
-    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
   },
   table => [
     uniqueIndex('long_text_translations_long_text_language_uidx').on(
@@ -76,16 +84,16 @@ export const longTextTranslations = sqliteTable(
 )
 
 /** Identity row for URL slugs. */
-export const slugs = sqliteTable('slugs', {
-  id: integer().primaryKey({ autoIncrement: true }),
-  createdAt: integer({ mode: 'timestamp' }).notNull(),
-  updatedAt: integer({ mode: 'timestamp' }).notNull(),
+export const slugs = pgTable('slugs', {
+  id: serial().primaryKey(),
+  createdAt: timestamp().notNull(),
+  updatedAt: timestamp().notNull(),
 })
 
-export const slugTranslations = sqliteTable(
+export const slugTranslations = pgTable(
   'slug_translations',
   {
-    id: integer().primaryKey({ autoIncrement: true }),
+    id: serial().primaryKey(),
     slugId: integer()
       .notNull()
       .references(() => slugs.id, { onDelete: 'cascade' }),
@@ -94,8 +102,8 @@ export const slugTranslations = sqliteTable(
       .references(() => languages.id, { onDelete: 'cascade' }),
     name: text().notNull(),
     content: text(),
-    createdAt: integer({ mode: 'timestamp' }).notNull(),
-    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
   },
   table => [
     uniqueIndex('slug_translations_slug_language_uidx').on(table.slugId, table.languageId),

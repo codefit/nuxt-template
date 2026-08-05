@@ -1,16 +1,11 @@
-import type { LanguageOption } from '#shared/types/language'
-import { getActiveLanguages } from '~~/server/services/cache/languages'
+import { listLanguages } from '~~/server/services/languages/list'
+import { readListQuery } from '~~/server/utils/listQuery'
 
 /**
- * Active languages for UI (header switcher) — icons stored on `languages.icon`.
+ * GET /api/languages — paginated admin list.
  */
-export default defineEventHandler(async (): Promise<LanguageOption[]> => {
-  const rows = await getActiveLanguages()
+export default defineEventHandler(async (event) => {
+  const query = readListQuery(event, ['createdAt', 'isActive', 'isDefault'])
 
-  return rows.map(row => ({
-    code: row.code,
-    name: row.name,
-    icon: row.icon,
-    isDefault: row.isDefault === 1,
-  }))
+  return await listLanguages(query)
 })

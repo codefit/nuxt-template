@@ -4,6 +4,7 @@ import type { FormLoader } from '#shared/types/form'
 const loaders: Record<string, FormLoader> = {
   article: () => import('~/components/dashboard/form/articles/ArticleForm.vue'),
   author: () => import('~/components/dashboard/form/authors/AuthorForm.vue'),
+  language: () => import('~/components/dashboard/form/languages/LanguageForm.vue'),
 }
 
 /** Register a resource form for `useFormSlideover({ type })`. */
