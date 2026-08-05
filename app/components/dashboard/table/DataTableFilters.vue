@@ -4,7 +4,7 @@ import type {
   TableFilterOption,
   TableFilterValue,
   TableFilters,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import { isDateRange, isFilterActive } from '~/utils/tableQuery'
 
 const { t } = useI18n()

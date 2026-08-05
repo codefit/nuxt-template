@@ -1,5 +1,5 @@
 import { db, schema } from '@nuxthub/db'
-import type { ArticleAdminDetail } from '#shared/types/article'
+import type { ArticleAdminDetail } from '#shared/types/dto/article'
 import { localeFilled } from '#shared/utils/translations'
 import {
   assertArticleTranslations,

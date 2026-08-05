@@ -3,7 +3,7 @@ import type {
   TableFilter,
   TableFilterValue,
   TableFilters,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 
 // --- Types ------------------------------------------------------------------
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { LanguageListItem } from '#shared/types/language'
+import type { LanguageListItem } from '#shared/types/dto/language'
 import type {
   BulkAction,
   TableFilter,
   TableSearchConfig,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import { createSortHeader } from '~/utils/sortHeader'
 

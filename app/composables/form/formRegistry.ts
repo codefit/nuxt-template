@@ -1,5 +1,5 @@
 import type { Component } from 'vue'
-import type { FormLoader } from '#shared/types/form'
+import type { FormLoader } from '#shared/types/ui/form'
 
 const loaders: Record<string, FormLoader> = {
   article: () => import('~/components/dashboard/form/articles/ArticleForm.vue'),

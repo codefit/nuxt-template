@@ -1,4 +1,4 @@
-import type { LocaleRouteParams, LocaleSlugMap } from '#shared/types/localeSwitch'
+import type { LocaleRouteParams, LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
 import { provideLocaleSwitchParams } from '~/composables/useLocaleSwitch'
 
 /**

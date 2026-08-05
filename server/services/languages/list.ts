@@ -1,7 +1,7 @@
 import { count } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { LanguageListItem } from '#shared/types/language'
-import type { ResourceListQuery, ResourceListResponse } from '#shared/types/resource'
+import type { LanguageListItem } from '#shared/types/dto/language'
+import type { ResourceListQuery, ResourceListResponse } from '#shared/types/ui/resource'
 import { mapLanguage } from '~~/server/services/languages/map'
 import { languageFilterSql } from '~~/server/services/languages/selection'
 import {

@@ -1,8 +1,8 @@
-import type { TableSearchConfig } from '#shared/types/data-table'
+import type { TableSearchConfig } from '#shared/types/ui/data-table'
 
 interface Options {
-  search: Ref<string>
   config: MaybeRefOrGetter<TableSearchConfig | undefined>
+  search: Ref<string>
   onChange?: () => void
 }
 

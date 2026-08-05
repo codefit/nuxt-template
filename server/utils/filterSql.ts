@@ -7,7 +7,7 @@ import {
   notInArray,
   type SQL,
 } from 'drizzle-orm'
-import type { TableDateRange, TableSelection } from '#shared/types/data-table'
+import type { TableDateRange, TableSelection } from '#shared/types/ui/data-table'
 
 type RangeColumn = Parameters<typeof gte>[0]
 type IdColumn = Parameters<typeof eq>[0]

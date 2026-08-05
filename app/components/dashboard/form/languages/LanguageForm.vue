@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { LanguageAdminDetail, LanguageFormInput } from '#shared/types/language'
-import type { FormMode } from '#shared/types/form'
+import type { LanguageAdminDetail, LanguageFormInput } from '#shared/types/dto/language'
+import type { FormMode } from '#shared/types/ui/form'
 
 interface Props {
-  mode: FormMode
   id?: number | string
+  mode: FormMode
   initial?: Partial<LanguageFormInput>
   pending?: boolean
 }

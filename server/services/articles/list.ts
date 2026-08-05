@@ -1,9 +1,9 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import { site } from '#shared/config/site'
-import type { ArticleDetail, ArticleListItem } from '#shared/types/article'
-import type { LocaleSlugMap } from '#shared/types/localeSwitch'
-import type { ResourceListQuery, ResourceListResponse } from '#shared/types/resource'
+import type { ArticleDetail, ArticleListItem } from '#shared/types/dto/article'
+import type { LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
+import type { ResourceListQuery, ResourceListResponse } from '#shared/types/ui/resource'
 import {
   articleExcerptTranslation,
   articleFilterSql,

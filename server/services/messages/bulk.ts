@@ -1,8 +1,8 @@
 import { inArray } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { Message } from '#shared/types/db'
-import type { BulkResult, TableFilters, TableSelection } from '#shared/types/data-table'
-import type { ResourceBulkResponse } from '#shared/types/resource'
+import type { BulkResult, TableFilters, TableSelection } from '#shared/types/ui/data-table'
+import type { ResourceBulkResponse } from '#shared/types/ui/resource'
 import { runResourceBulk } from '~~/server/utils/bulkRun'
 import { resolveMessageSelection } from './selection'
 
@@ -20,8 +20,8 @@ const ACTION_LABELS: Record<MessageBulkAction, string> = {
 
 export interface MessageBulkInput {
   action: MessageBulkAction
-  selection: TableSelection
   filters?: TableFilters
+  selection: TableSelection
 }
 
 export function isMessageBulkAction(value: string): value is MessageBulkAction {

@@ -1,4 +1,4 @@
-import type { LanguageOption } from '#shared/types/language'
+import type { LanguageOption } from '#shared/types/dto/language'
 import { getActiveLanguages } from '~~/server/services/cache/languages'
 
 /**

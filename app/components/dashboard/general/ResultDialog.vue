@@ -3,14 +3,14 @@ import type {
   ResultItem,
   ResultLink,
   ResultStat,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 
 interface Props {
   title?: string
-  description?: string
-  stats?: ResultStat[]
-  links?: ResultLink[]
   items?: ResultItem[]
+  links?: ResultLink[]
+  stats?: ResultStat[]
+  description?: string
 }
 
 withDefaults(defineProps<Props>(), {

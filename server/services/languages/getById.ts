@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { LanguageAdminDetail } from '#shared/types/language'
+import type { LanguageAdminDetail } from '#shared/types/dto/language'
 import { mapLanguageDetail } from '~~/server/services/languages/map'
 
 export async function getLanguageById(

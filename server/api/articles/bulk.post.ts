@@ -1,4 +1,4 @@
-import type { ResourceBulkBody } from '#shared/types/resource'
+import type { ResourceBulkBody } from '#shared/types/ui/resource'
 import {
   isArticleBulkAction,
   runArticleBulk,

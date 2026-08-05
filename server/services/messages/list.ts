@@ -1,7 +1,7 @@
 import { count } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { Message } from '#shared/types/db'
-import type { ResourceListQuery, ResourceListResponse } from '#shared/types/resource'
+import type { ResourceListQuery, ResourceListResponse } from '#shared/types/ui/resource'
 import { messageFilterSql } from '~~/server/services/messages/selection'
 import {
   listResponse,

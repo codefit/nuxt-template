@@ -1,5 +1,5 @@
 import { site } from '#shared/config/site'
-import type { SeoInput } from '#shared/types/seo'
+import type { SeoInput } from '#shared/types/ui/seo'
 
 /**
  * Page-level SEO: title, description, robots, canonical, Open Graph, Twitter.

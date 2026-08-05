@@ -2,17 +2,17 @@ import type {
   TableFilters,
   TablePagination,
   TableSort,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import { serializeFilterValue } from '~/utils/tableQuery'
 
 /** Client mirror of `ResourceListQuery` (table state → GET params). */
 interface ListQueryState {
-  pagination: TablePagination
-  sorting?: TableSort[]
-  search?: string
-  filters?: TableFilters
   /** Related data to request, e.g. `['author']` → `?with=author`. */
   with?: string[]
+  search?: string
+  sorting?: TableSort[]
+  filters?: TableFilters
+  pagination: TablePagination
 }
 
 /**

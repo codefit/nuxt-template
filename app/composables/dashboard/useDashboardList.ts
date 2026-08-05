@@ -1,11 +1,11 @@
 import type {
   BulkPayload,
   BulkResult,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import type {
   ResourceBulkResponse,
   ResourceListResponse,
-} from '#shared/types/resource'
+} from '#shared/types/ui/resource'
 import type { WatchSource } from 'vue'
 import { toListQuery } from '~/utils/listQuery'
 
@@ -13,15 +13,15 @@ interface Options {
   endpoint: string
   /** Defaults to `${endpoint}/bulk`. */
   bulkEndpoint?: string
-  filterKeys?: string[]
-  multiFilterKeys?: string[]
-  dateRangeKeys?: string[]
   /** Related data for list GET, e.g. `['author']`. */
   with?: string[]
   /** Inject i18n locale into list + bulk query. */
   locale?: boolean
   pageSize?: number
   pageSizes?: number[]
+  filterKeys?: string[]
+  dateRangeKeys?: string[]
+  multiFilterKeys?: string[]
 }
 
 /**
@@ -46,8 +46,8 @@ export async function useDashboardList<T extends { id: string | number }>(
     pageSize: options.pageSize,
     pageSizes: options.pageSizes,
     filterKeys: options.filterKeys,
-    multiFilterKeys: options.multiFilterKeys,
     dateRangeKeys: options.dateRangeKeys,
+    multiFilterKeys: options.multiFilterKeys,
   })
 
   const listQuery = computed(() =>

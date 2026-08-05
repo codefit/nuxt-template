@@ -1,4 +1,4 @@
-import type { LocaleRouteParams } from '#shared/types/localeSwitch'
+import type { LocaleRouteParams } from '#shared/types/i18n/localeSwitch'
 
 const STATE_KEY: string = 'locale-switch-params'
 

@@ -1,8 +1,8 @@
 import { and, eq, inArray, ne } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { LanguageListItem } from '#shared/types/language'
-import type { BulkResult, TableFilters, TableSelection } from '#shared/types/data-table'
-import type { ResourceBulkResponse } from '#shared/types/resource'
+import type { LanguageListItem } from '#shared/types/dto/language'
+import type { BulkResult, TableFilters, TableSelection } from '#shared/types/ui/data-table'
+import type { ResourceBulkResponse } from '#shared/types/ui/resource'
 import { clearLanguageCache } from '~~/server/services/cache/languages'
 import { mapLanguage } from '~~/server/services/languages/map'
 import { resolveLanguageSelection } from '~~/server/services/languages/selection'
@@ -24,8 +24,8 @@ const ACTION_LABELS: Record<LanguageBulkAction, string> = {
 
 export interface LanguageBulkInput {
   action: LanguageBulkAction
-  selection: TableSelection
   filters?: TableFilters
+  selection: TableSelection
 }
 
 export function isLanguageBulkAction(value: string): value is LanguageBulkAction {

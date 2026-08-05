@@ -53,16 +53,14 @@ export interface TableDateRange {
  */
 export interface TableFilter {
   key: string
-  label: string
   type: 'select' | 'boolean' | 'date' | 'date-range'
   icon?: string
+  label: string
+  options?: TableFilterOption[]
+  multiple?: boolean
+  trueValue?: string | boolean
   /** Empty option label for single select (default: i18n `table.filterUnset`). */
   placeholder?: string
-  options?: TableFilterOption[]
-  /** Allow multiple values (select). Stored as string[] / comma-separated in URL. */
-  multiple?: boolean
-  /** For boolean filters: value written when checked (default `true`). */
-  trueValue?: string | boolean
 }
 
 export type TableFilterValue =
@@ -78,11 +76,9 @@ export type TableFilters = Record<string, TableFilterValue>
 
 /** Single global search across configured columns. */
 export interface TableSearchConfig {
-  /** Row keys / column ids to match against. */
   columns: string[]
-  placeholder?: string
-  /** URL query key (default `q`). */
   queryKey?: string
+  placeholder?: string
 }
 
 export interface TableSort {
@@ -104,11 +100,12 @@ export interface BulkAction {
   label: string
   value: string
   icon?: string
+  toast?: BulkToast
+  result?: boolean
   confirm?: boolean
-  confirmTitle?: string
-  confirmDescription?: string
-  confirmLabel?: string
   cancelLabel?: string
+  confirmLabel?: string
+  confirmTitle?: string
   confirmColor?:
     | 'error'
     | 'primary'
@@ -117,9 +114,7 @@ export interface BulkAction {
     | 'warning'
     | 'info'
     | 'secondary'
-  toast?: BulkToast
-  /** After success, open a follow-up result modal (stats / links / items). */
-  result?: boolean
+  confirmDescription?: string
 }
 
 /**
@@ -127,26 +122,19 @@ export interface BulkAction {
  * Prefer `selection` + `filters` on the wire; `rows` is optional local context.
  */
 export interface BulkPayload<T = unknown> {
-  action: BulkAction
-  selection: TableSelection
-  /** Resolved count (include: ids.length; exclude: matchTotal - ids.length). */
   count: number
-  /** Active filters — required for exclude mode on the server. */
-  filters: TableFilters
-  /**
-   * Rows currently loaded that match selection.
-   * Useful for client demos / small sets; do not rely on this for large exclude sets.
-   */
   rows: T[]
+  action: BulkAction
+  filters: TableFilters
+  selection: TableSelection
 }
 
 // --- Result dialog ----------------------------------------------------------
 
 export interface ResultStat {
+  icon?: string
   label: string
   value: string | number
-  description?: string
-  icon?: string
   color?:
     | 'success'
     | 'error'
@@ -155,27 +143,28 @@ export interface ResultStat {
     | 'neutral'
     | 'primary'
     | 'secondary'
+  description?: string
 }
 
 export interface ResultLink {
-  label: string
   href: string
   icon?: string
+  label: string
   external?: boolean
 }
 
 export interface ResultItem {
   title: string
-  description?: string
   badge?: string
+  description?: string
 }
 
 export interface BulkResult {
   title: string
-  description?: string
-  stats?: ResultStat[]
-  links?: ResultLink[]
   items?: ResultItem[]
+  links?: ResultLink[]
+  stats?: ResultStat[]
+  description?: string
 }
 
 /** @deprecated Use BulkResult */

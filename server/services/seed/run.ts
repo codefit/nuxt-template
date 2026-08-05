@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { ENTITY_KEYS } from '#shared/types/entity'
+import { ENTITY_KEYS } from '#shared/types/dto/entity'
 import { SEED_ARTICLES, SEED_LANGUAGES, type SeedLocale } from '~~/server/services/seed/data'
 
 type Hub = typeof import('@nuxthub/db')

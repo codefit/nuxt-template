@@ -1,7 +1,7 @@
 import { and, count, desc, eq, like, or, type SQL } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { Language } from '#shared/types/db'
-import type { TableFilters, TableSelection } from '#shared/types/data-table'
+import type { TableFilters, TableSelection } from '#shared/types/ui/data-table'
 import { dateRangeSql, selectionConstraintSql } from '~~/server/utils/filterSql'
 
 function searchSql(value: unknown): SQL | undefined {

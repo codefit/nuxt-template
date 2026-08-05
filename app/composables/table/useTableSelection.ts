@@ -1,11 +1,9 @@
-import type { TableSelection } from '#shared/types/data-table'
+import type { TableSelection } from '#shared/types/ui/data-table'
 
 interface Options {
   /** Ids currently loaded / matching filters on the client. */
   matchIds: Ref<string[]>
-  /**
-   * Total matching rows from API `meta.total` (select-all / pager).
-   */
+  /** Total matching rows from API `meta.total` (select-all / pager). */
   matchTotal: MaybeRefOrGetter<number>
 }
 

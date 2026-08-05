@@ -1,6 +1,6 @@
 import { and, eq, ne } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { LanguageAdminDetail } from '#shared/types/language'
+import type { LanguageAdminDetail } from '#shared/types/dto/language'
 import { clearLanguageCache } from '~~/server/services/cache/languages'
 import { getLanguageById } from '~~/server/services/languages/getById'
 import type { LanguageFormParsed } from '~~/server/services/languages/schema'

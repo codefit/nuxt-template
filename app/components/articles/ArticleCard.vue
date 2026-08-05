@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { ArticleListItem } from '#shared/types/article'
+import type { ArticleListItem } from '#shared/types/dto/article'
 
 interface Props {
   article: ArticleListItem
-  /** Alternates placeholder tone (even / odd). */
   index?: number
-  /** 1-based ItemList position — when set, wraps card as schema.org ListItem. */
-  position?: number
   badge?: string
+  position?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {

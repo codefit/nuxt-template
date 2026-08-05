@@ -1,6 +1,6 @@
 import { useJsonld } from '#jsonld'
 import { site } from '#shared/config/site'
-import type { ArticleDetail } from '#shared/types/article'
+import type { ArticleDetail } from '#shared/types/dto/article'
 
 type ArticleLdSource = Pick<
   ArticleDetail,

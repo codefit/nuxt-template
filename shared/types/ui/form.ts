@@ -3,8 +3,8 @@ import type { Component } from 'vue'
 /** Active translation locale hint shown next to field labels. */
 export interface FormLocaleHint {
   code: string
-  name?: string
   icon?: string | null
+  name?: string
 }
 
 /** Create / edit / copy — shared by every resource form slideover. */
@@ -14,42 +14,35 @@ export type FormMode = 'create' | 'edit' | 'copy'
 export interface FormResult<T = unknown> {
   ok: boolean
   mode: FormMode
-  /** Saved / created entity payload (for nesting callbacks). */
   data?: T
-  /** True when user dismissed without saving. */
   cancelled?: boolean
 }
 
 /** Pending media file — prepared for upload; backend may ignore binary for now. */
 export interface PendingMedia {
   id: string
-  field: string
-  name: string
   mime: string
+  name: string
   size: number
-  /** Object URL for local preview only. */
+  field: string
   previewUrl?: string
 }
 
 /** Options passed into `useFormSlideover().open()`. */
 export interface FormSlideoverOptions<TInitial = unknown> {
-  /** Registry key, e.g. `article`. */
   type: string
   mode: FormMode
-  title?: string
-  description?: string
-  /** Existing id for edit / copy source. */
   id?: number | string
-  /** Prefill (copy) or partial overrides. */
-  initial?: TInitial
-  /** Slideover width class override. */
   ui?: { content?: string }
+  title?: string
+  initial?: TInitial
+  description?: string
 }
 
 /** Props every resource form component receives from FormSlideover. */
 export interface FormHostProps<TInitial = unknown> {
-  mode: FormMode
   id?: number | string
+  mode: FormMode
   initial?: TInitial
 }
 

@@ -3,14 +3,14 @@ import type {
   TableFilter,
   TableFilters,
   TableSearchConfig,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import { filterLabel, isFilterActive } from '~/utils/tableQuery'
 
 const props = defineProps<{
-  searchConfig?: TableSearchConfig
   filters: TableFilter[]
-  columnToggle?: boolean
   columnItems: Array<Record<string, unknown>>
+  columnToggle?: boolean
+  searchConfig?: TableSearchConfig
 }>()
 
 const search = defineModel<string>('search', { default: '' })

@@ -5,8 +5,8 @@ import { formatEmail, formatNumber, formatPhone } from '#shared/utils/format'
 export type FormatKind = 'email' | 'phone' | 'number' | 'none'
 
 export interface ValidationFieldConfig {
-  rules?: FieldRule[]
   format?: FormatKind
+  rules?: FieldRule[]
 }
 
 export type ValidationSchema = Record<string, ValidationFieldConfig>

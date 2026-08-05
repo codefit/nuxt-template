@@ -3,11 +3,11 @@ import { UButton, UCheckbox, UDropdownMenu } from '#components'
 import type { TableColumn, TableRow } from '@nuxt/ui'
 
 interface SelectHandlers {
-  isAllSelected: () => boolean
-  isSomeSelected: () => boolean
-  isSelected: (id: string) => boolean
   selectAll: (checked: boolean) => void
   selectOne: (id: string, checked: boolean) => void
+  isSelected: (id: string) => boolean
+  isAllSelected: () => boolean
+  isSomeSelected: () => boolean
 }
 
 export function buildSelectColumn<T>(handlers: SelectHandlers): TableColumn<T> {

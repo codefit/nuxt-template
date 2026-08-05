@@ -1,5 +1,5 @@
 import { ResultDialog } from '#components'
-import type { BulkResult } from '#shared/types/data-table'
+import type { BulkResult } from '#shared/types/ui/data-table'
 
 export function useResultDialog() {
   const overlay = useOverlay()

@@ -2,11 +2,11 @@ import type {
   TableFilters,
   TablePagination,
   TableSort,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import {
   RESOURCE_DEFAULT_LIMIT,
   RESOURCE_PAGE_SIZES,
-} from '#shared/types/resource'
+} from '#shared/types/ui/resource'
 import type { LocationQuery, LocationQueryValue } from 'vue-router'
 import { parseFilterValue, serializeFilterValue } from '~/utils/tableQuery'
 
@@ -17,10 +17,10 @@ interface Options {
   searchKey?: string
   /** Query keys for modal filters. */
   filterKeys?: string[]
-  /** Filter keys stored as comma-separated lists. */
-  multiFilterKeys?: string[]
   /** Filter keys stored as `from..to` date ranges. */
   dateRangeKeys?: string[]
+  /** Filter keys stored as comma-separated lists. */
+  multiFilterKeys?: string[]
 }
 
 // --- Query helpers ----------------------------------------------------------

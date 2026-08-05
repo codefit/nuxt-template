@@ -4,17 +4,17 @@
  */
 import '~/utils/hugerte.client'
 import Editor from '@hugerte/hugerte-vue'
-import type { FormLocaleHint } from '#shared/types/form'
+import type { FormLocaleHint } from '#shared/types/ui/form'
 
 interface Props {
-  label?: string
   name: string
+  label?: string
   error?: string
   valid?: boolean
-  required?: boolean
-  disabled?: boolean
   height?: number
   locale?: FormLocaleHint | null
+  required?: boolean
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

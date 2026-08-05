@@ -1,4 +1,4 @@
-import type { LanguageOption } from '#shared/types/language'
+import type { LanguageOption } from '#shared/types/dto/language'
 
 /** Shared active languages (middleware ensure → LangToggle). */
 export function useActiveLanguages() {
@@ -23,7 +23,7 @@ export async function ensureActiveLanguages(): Promise<LanguageOption[]> {
     state.value = await requestFetch<LanguageOption[]>('/api/languages/options')
   }
   catch {
-    return state.value
+    // Keep previous state if refresh fails.
   }
 
   return state.value

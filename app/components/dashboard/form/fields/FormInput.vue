@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import type { FormLocaleHint } from '#shared/types/form'
+import type { FormLocaleHint } from '#shared/types/ui/form'
 
 interface Props {
-  label?: string
   name: string
+  type?: string
+  label?: string
   error?: string
   valid?: boolean
-  required?: boolean
-  type?: string
-  placeholder?: string
-  disabled?: boolean
   locale?: FormLocaleHint | null
+  required?: boolean
+  disabled?: boolean
+  placeholder?: string
 }
 
 withDefaults(defineProps<Props>(), {

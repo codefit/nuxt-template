@@ -1,15 +1,17 @@
 <script setup lang="ts">
+
 interface Props {
-  eyebrow?: string
   title: string
   lead?: string
-  /** schema.org itemprop on the H1 (e.g. headline) */
-  titleProp?: string
+  eyebrow?: string
   /** schema.org itemprop on the lead */
   leadProp?: string
+  /** schema.org itemprop on the H1 (e.g. headline) */
+  titleProp?: string
 }
 
 defineProps<Props>()
+
 </script>
 
 <template>

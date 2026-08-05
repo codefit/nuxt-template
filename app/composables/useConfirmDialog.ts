@@ -3,8 +3,8 @@ import { ConfirmDialog } from '#components'
 export interface ConfirmDialogOptions {
   title: string
   description?: string
-  confirmLabel?: string
   cancelLabel?: string
+  confirmLabel?: string
   confirmColor?: 'error' | 'primary' | 'neutral' | 'success' | 'warning' | 'info' | 'secondary'
 }
 

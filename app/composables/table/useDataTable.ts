@@ -7,7 +7,7 @@ import type {
   TableFilter,
   TableFilters,
   TableSearchConfig,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 
 interface TableExpose<T> {
   tableApi?: Table<T>
@@ -15,22 +15,21 @@ interface TableExpose<T> {
 
 interface Options<T> {
   data: MaybeRefOrGetter<T[]>
-  columns: MaybeRefOrGetter<TableColumn<T>[]>
-  getRowId: (row: T) => string
-  /** Total matching rows from API meta (required for pager / select-all). */
   total: MaybeRefOrGetter<number>
   search: Ref<string>
-  searchConfig: MaybeRefOrGetter<TableSearchConfig | undefined>
+  columns: MaybeRefOrGetter<TableColumn<T>[]>
+  getRowId: (row: T) => string
   filters: MaybeRefOrGetter<TableFilter[]>
-  filterValues: Ref<TableFilters>
-  selectable: MaybeRefOrGetter<boolean>
-  bulkActions: MaybeRefOrGetter<BulkAction[]>
-  rowActions?: MaybeRefOrGetter<
-    ((row: TableRow<T>) => Array<Record<string, unknown>>) | undefined
-  >
   runBulk?: (
     payload: BulkPayload<T>,
   ) => Promise<BulkResult | void | false>
+  selectable: MaybeRefOrGetter<boolean>
+  rowActions?: MaybeRefOrGetter<
+    ((row: TableRow<T>) => Array<Record<string, unknown>>) | undefined
+  >
+  bulkActions: MaybeRefOrGetter<BulkAction[]>
+  searchConfig: MaybeRefOrGetter<TableSearchConfig | undefined>
+  filterValues: Ref<TableFilters>
 }
 
 /**

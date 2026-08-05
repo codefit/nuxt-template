@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { SelectionMode, TablePagination } from '#shared/types/data-table'
+import type { SelectionMode, TablePagination } from '#shared/types/ui/data-table'
 
 const props = defineProps<{
   pageTotal: number
   pageSizes: number[]
   selectable?: boolean
-  selectedCount: number
   matchCount: number
-  selectionMode: SelectionMode
   selectionIds: number
+  selectedCount: number
+  selectionMode: SelectionMode
 }>()
 
 const { t } = useI18n()

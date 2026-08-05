@@ -4,10 +4,10 @@ import type {
   ArticleFormInput,
   ArticleLocaleInput,
   ArticleTranslations,
-} from '#shared/types/article'
-import type { AuthorDetail, AuthorOption } from '#shared/types/author'
-import type { FormMode } from '#shared/types/form'
-import type { LanguageOption } from '#shared/types/language'
+} from '#shared/types/dto/article'
+import type { AuthorDetail, AuthorOption } from '#shared/types/dto/author'
+import type { FormMode } from '#shared/types/ui/form'
+import type { LanguageOption } from '#shared/types/dto/language'
 import { slugify } from '#shared/utils/slug'
 import {
   emptyLocale,
@@ -17,8 +17,8 @@ import {
 } from '#shared/utils/translations'
 
 interface Props {
-  mode: FormMode
   id?: number | string
+  mode: FormMode
   initial?: Partial<ArticleFormInput>
   pending?: boolean
 }

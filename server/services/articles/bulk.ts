@@ -1,8 +1,8 @@
 import { and, inArray, isNull } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { ArticleListItem } from '#shared/types/article'
-import type { BulkResult, TableFilters, TableSelection } from '#shared/types/data-table'
-import type { ResourceBulkResponse } from '#shared/types/resource'
+import type { ArticleListItem } from '#shared/types/dto/article'
+import type { BulkResult, TableFilters, TableSelection } from '#shared/types/ui/data-table'
+import type { ResourceBulkResponse } from '#shared/types/ui/resource'
 import { runResourceBulk } from '~~/server/utils/bulkRun'
 import { resolveArticleSelection } from './selection'
 
@@ -26,9 +26,9 @@ const ACTION_LABELS: Record<ArticleBulkAction, string> = {
 
 export interface ArticleBulkInput {
   action: ArticleBulkAction
-  selection: TableSelection
-  filters?: TableFilters
   locale: string
+  filters?: TableFilters
+  selection: TableSelection
 }
 
 export function isArticleBulkAction(value: string): value is ArticleBulkAction {

@@ -39,7 +39,6 @@ export interface ResourceCapabilities {
   detail?: boolean
   update?: boolean
   delete?: boolean
-  /** Bulk action values this model accepts (subset of page BulkAction[].value). */
   bulk?: string[]
   filters?: TableFilter[]
   sortable?: string[]
@@ -71,12 +70,10 @@ export type ResourcePageSize = (typeof RESOURCE_PAGE_SIZES)[number]
  */
 export interface ResourceListQuery {
   page?: number
+  with?: string[]
   limit?: number
   sort?: TableSort[]
-  /** Includes global search as `q` when present. */
   filters?: TableFilters
-  /** Related data to include, e.g. `['author']`. */
-  with?: string[]
 }
 
 /** Resolved page window (offset = (page - 1) * limit). */
@@ -102,18 +99,15 @@ export interface ResourceListResponse<T> {
 /** Body for `POST /api/{model}/bulk`. */
 export interface ResourceBulkBody {
   action: string
-  selection: TableSelection
-  /** Prefer `filters.q` or top-level search — both are accepted. */
   search?: string
   filters?: TableFilters
+  selection: TableSelection
 }
 
 export interface ResourceBulkResponse {
   ok: true
-  action: string
   mode: SelectionMode
-  /** Rows actually processed. */
+  action: string
   affected: number
-  /** Optional follow-up for ResultDialog. */
   result?: BulkResult
 }

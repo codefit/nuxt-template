@@ -1,12 +1,12 @@
-import type { ArticleListItem } from '#shared/types/article'
-import { PUBLIC_ARTICLE_LIMIT } from '#shared/types/resource'
+import type { ArticleListItem } from '#shared/types/dto/article'
+import { PUBLIC_ARTICLE_LIMIT } from '#shared/types/ui/resource'
 
 interface Options {
+  /** Prefix for useAsyncData key (e.g. `home-insights`). */
+  key?: string
   /** 1-based page (URL / UPagination). Defaults to 1. */
   page?: MaybeRefOrGetter<number>
   limit?: number
-  /** Prefix for useAsyncData key (e.g. `home-insights`). */
-  key?: string
   withAuthor?: boolean
 }
 

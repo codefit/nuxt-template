@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PUBLIC_ARTICLE_LIMIT } from '#shared/types/resource'
+import { PUBLIC_ARTICLE_LIMIT } from '#shared/types/ui/resource'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -17,8 +17,7 @@ function paginationTo(target: number) {
 
   if (target <= 1) {
     delete query.page
-  }
-  else {
+  } else {
     query.page = String(target)
   }
 

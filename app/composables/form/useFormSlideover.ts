@@ -1,5 +1,5 @@
 import { FormSlideover } from '#components'
-import type { FormResult, FormSlideoverOptions } from '#shared/types/form'
+import type { FormResult, FormSlideoverOptions } from '#shared/types/ui/form'
 
 /**
  * Programmatic layered form slideover.

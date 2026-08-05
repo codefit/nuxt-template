@@ -1,42 +1,38 @@
-import type { LocaleSlugMap } from '#shared/types/localeSwitch'
-import type { PendingMedia } from '#shared/types/form'
+import type { LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
+import type { PendingMedia } from '#shared/types/ui/form'
 
 /** Shared article list row (public cards + dashboard table). */
 export interface ArticleListItem {
   id: number
   slug: string
   title: string
-  description: string
   image?: string
   author?: string
-  /** Intentional publish flag (independent of schedule date). */
-  isPublished: boolean
-  /** Planned / actual publish date; independent of isPublished. */
-  publishedAt: string | null
-  modifiedAt?: string
+  description: string
   createdAt: string
   updatedAt: string
+  modifiedAt?: string
+  isPublished: boolean
   archivedAt: string | null
+  publishedAt: string | null
 }
 
 /** Article detail — includes locale slug map for language switcher (no extra request). */
 export interface ArticleDetail extends Omit<ArticleListItem, 'publishedAt'> {
-  /** HTML body */
   body: string
-  /** Always set on detail (falls back to createdAt). */
   publishedAt: string
   slugMap: LocaleSlugMap
 }
 
 /** Per-locale fields stored in texts / slugs / long_texts / metas. */
 export interface ArticleLocaleInput {
-  title: string
-  slug: string
-  excerpt: string
   body: string
+  slug: string
+  title: string
+  excerpt: string
   metaTitle: string
-  metaDescription: string
   metaKeywords: string
+  metaDescription: string
 }
 
 /** Locale-keyed map — omit empty locales (except default, which is required). */
@@ -44,24 +40,23 @@ export type ArticleTranslations = Record<string, ArticleLocaleInput>
 
 /** Shared (non-translated) article fields. */
 export interface ArticleSharedInput {
+  authorId: number | null
   isPublished: boolean
   publishedAt: string | null
-  authorId: number | null
 }
 
 /** Create / update body from dashboard form. */
 export interface ArticleFormInput extends ArticleSharedInput {
-  translations: ArticleTranslations
-  /** Prepared media metadata — upload pipeline TBD. */
   media?: PendingMedia[]
+  translations: ArticleTranslations
 }
 
 /** Admin detail for edit / copy forms (all locales). */
 export interface ArticleAdminDetail extends ArticleSharedInput {
   id: number
-  translations: ArticleTranslations
   createdAt: string
   updatedAt: string
-  archivedAt: string | null
   deletedAt: string | null
+  archivedAt: string | null
+  translations: ArticleTranslations
 }

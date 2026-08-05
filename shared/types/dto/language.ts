@@ -1,15 +1,15 @@
 export type LanguageOption = {
   code: string
-  name: string
   icon: string | null
+  name: string
   isDefault: boolean
 }
 
 export type LanguageListItem = {
   id: number
   code: string
-  name: string
   icon: string | null
+  name: string
   isActive: boolean
   isDefault: boolean
   createdAt: string
@@ -17,8 +17,8 @@ export type LanguageListItem = {
 }
 
 export type LanguageFormInput = {
-  name: string
   icon: string | null
+  name: string
   isActive: boolean
   isDefault: boolean
 }

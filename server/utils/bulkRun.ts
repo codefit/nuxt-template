@@ -2,24 +2,23 @@ import type {
   BulkResult,
   TableFilters,
   TableSelection,
-} from '#shared/types/data-table'
-import type { ResourceBulkResponse } from '#shared/types/resource'
+} from '#shared/types/ui/data-table'
+import type { ResourceBulkResponse } from '#shared/types/ui/resource'
 
 interface BulkResolveResult<TRow> {
-  matchedTotal: number
   affected: TRow[]
+  matchedTotal: number
 }
 
 interface Options<TRow, TAction extends string> {
   action: TAction
-  selection: TableSelection
-  filters?: TableFilters
+  mutate?: (action: TAction, affected: TRow[]) => Promise<void>
   resolve: (
     selection: TableSelection,
     filters: TableFilters,
   ) => Promise<BulkResolveResult<TRow>>
-  /** Optional mutation; skip for read-only actions (e.g. export). */
-  mutate?: (action: TAction, affected: TRow[]) => Promise<void>
+  filters?: TableFilters
+  selection: TableSelection
   buildResult: (
     action: TAction,
     affected: TRow[],

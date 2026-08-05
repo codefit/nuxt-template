@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LanguageOption } from '#shared/types/language'
+import type { LanguageOption } from '#shared/types/dto/language'
 
 interface Props {
   languages: LanguageOption[]

@@ -1,4 +1,4 @@
-import { isEntityKey } from '#shared/types/entity'
+import { isEntityKey } from '#shared/types/dto/entity'
 import { getEntitySlugMap, hasSlugEntity } from '~~/server/services/i18n/slugMap'
 import { apiError } from '~~/server/utils/apiI18n'
 

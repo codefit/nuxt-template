@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
-  label?: string
   name?: string
+  label?: string
   disabled?: boolean
   description?: string
 }

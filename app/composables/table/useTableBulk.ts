@@ -4,18 +4,18 @@ import type {
   BulkResult,
   TableFilters,
   TableSelection,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 
 interface Options<T> {
-  selection: MaybeRefOrGetter<TableSelection>
-  selectedCount: MaybeRefOrGetter<number>
-  filterValues: MaybeRefOrGetter<TableFilters>
   data: MaybeRefOrGetter<T[]>
   getRowId: (row: T) => string
+  runBulk?: (payload: BulkPayload<T>) => Promise<BulkResult | void | false>
+  selection: MaybeRefOrGetter<TableSelection>
   resolveRows: (rows: T[], getRowId: (row: T) => string) => T[]
   bulkActions: MaybeRefOrGetter<BulkAction[]>
+  filterValues: MaybeRefOrGetter<TableFilters>
+  selectedCount: MaybeRefOrGetter<number>
   clearSelection: () => void
-  runBulk?: (payload: BulkPayload<T>) => Promise<BulkResult | void | false>
 }
 
 export function useTableBulk<T>(options: Options<T>) {

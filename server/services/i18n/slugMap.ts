@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { EntityKey } from '#shared/types/entity'
-import type { LocaleSlugMap } from '#shared/types/localeSwitch'
+import type { EntityKey } from '#shared/types/dto/entity'
+import type { LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
 
 /** Entities that own a `slugId` column pointing at `slugs`. */
 const SLUG_TABLES = {

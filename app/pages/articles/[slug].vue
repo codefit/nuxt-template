@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ArticleDetail } from '#shared/types/article'
+import type { ArticleDetail } from '#shared/types/dto/article'
 import { useArticleLd } from '~/composables/jsonLd/useArticleLd'
 import { provideLocaleSlugMap } from '~/composables/useEntitySlugSwitch'
 
@@ -10,11 +10,10 @@ const localePath = useLocalePath()
 const slug = computed(() => String(route.params.slug || ''))
 
 const { data: article, error } = await useAsyncData(
-  computed(() => `article-${locale.value}-${slug.value}`),
+  () => `article-${locale.value}-${slug.value}`,
   () => $fetch<ArticleDetail>(`/api/articles/${encodeURIComponent(slug.value)}`, {
     query: { locale: locale.value, with: 'author' },
   }),
-  { watch: [slug, locale] },
 )
 
 if (error.value || !article.value) {
@@ -57,7 +56,6 @@ const imageUrl = computed(() =>
 </script>
 
 <template>
-  <!-- Stable root required for page Transition (`v-if` on root → null children). -->
   <div>
     <article
       v-if="article"

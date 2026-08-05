@@ -2,7 +2,7 @@ import type {
   TableFilter,
   TableFilterValue,
   TableFilters,
-} from '#shared/types/data-table'
+} from '#shared/types/ui/data-table'
 import {
   activeFilterCount,
   filterLabel,
@@ -15,9 +15,9 @@ export interface FilterChip {
 }
 
 interface Options {
+  onChange?: () => void
   filters: MaybeRefOrGetter<TableFilter[]>
   filterValues: Ref<TableFilters>
-  onChange?: () => void
 }
 
 /**

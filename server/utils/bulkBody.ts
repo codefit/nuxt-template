@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
-import type { ResourceBulkBody } from '#shared/types/resource'
-import type { TableFilters, TableSelection } from '#shared/types/data-table'
+import type { ResourceBulkBody } from '#shared/types/ui/resource'
+import type { TableFilters, TableSelection } from '#shared/types/ui/data-table'
 import { apiError } from '~~/server/utils/apiI18n'
 
 export function readBulkSelection(

@@ -9,29 +9,28 @@ import type {
   TablePagination,
   TableSearchConfig,
   TableSort,
-} from '#shared/types/data-table'
-import { RESOURCE_DEFAULT_LIMIT, RESOURCE_PAGE_SIZES } from '#shared/types/resource'
+} from '#shared/types/ui/data-table'
+import { RESOURCE_DEFAULT_LIMIT, RESOURCE_PAGE_SIZES } from '#shared/types/ui/resource'
 
 const props = withDefaults(
   defineProps<{
     data: T[]
-    columns: TableColumn<T>[]
-    getRowId: (row: T) => string
-    /** Total matching rows from API (`meta.total`). */
     total: number
-    loading?: boolean
-    pageSizes?: number[]
-    searchConfig?: TableSearchConfig
-    filters?: TableFilter[]
-    selectable?: boolean
-    bulkActions?: BulkAction[]
-    columnToggle?: boolean
     sticky?: boolean
-    tableClass?: string
-    rowActions?: (row: TableRow<T>) => Array<Record<string, unknown>>
+    loading?: boolean
+    columns: TableColumn<T>[]
+    filters?: TableFilter[]
     runBulk?: (
       payload: BulkPayload<T>,
     ) => Promise<BulkResult | void | false>
+    getRowId: (row: T) => string
+    pageSizes?: number[]
+    selectable?: boolean
+    tableClass?: string
+    rowActions?: (row: TableRow<T>) => Array<Record<string, unknown>>
+    bulkActions?: BulkAction[]
+    columnToggle?: boolean
+    searchConfig?: TableSearchConfig
   }>(),
   {
     loading: false,

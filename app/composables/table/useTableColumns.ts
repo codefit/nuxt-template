@@ -4,21 +4,21 @@ import type { TableColumn, TableRow } from '@nuxt/ui'
 import { buildActionsColumn, buildSelectColumn } from '~/utils/tableColumns'
 
 interface SelectApi {
-  isAllSelected: ComputedRef<boolean>
-  isSomeSelected: ComputedRef<boolean>
-  isSelected: (id: string) => boolean
   selectAll: (checked: boolean) => void
   selectOne: (id: string, checked: boolean) => void
+  isSelected: (id: string) => boolean
+  isAllSelected: ComputedRef<boolean>
+  isSomeSelected: ComputedRef<boolean>
 }
 
 interface Options<T> {
   table: Ref<{ tableApi?: Table<T> } | null>
+  select: SelectApi
   columns: MaybeRefOrGetter<TableColumn<T>[]>
   selectable: MaybeRefOrGetter<boolean>
   rowActions?: MaybeRefOrGetter<
     ((row: TableRow<T>) => Array<Record<string, unknown>>) | undefined
   >
-  select: SelectApi
 }
 
 export function useTableColumns<T>(options: Options<T>) {

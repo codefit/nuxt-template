@@ -1,7 +1,7 @@
 export interface DashboardNavItem {
   to: string
-  label: string
   icon: string
+  label: string
   active: boolean
   placeholder?: boolean
 }

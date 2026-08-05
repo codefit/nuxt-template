@@ -1,4 +1,4 @@
-import type { ArticleLocaleInput, ArticleTranslations } from '#shared/types/article'
+import type { ArticleLocaleInput, ArticleTranslations } from '#shared/types/dto/article'
 
 export function emptyLocale(): ArticleLocaleInput {
   return {

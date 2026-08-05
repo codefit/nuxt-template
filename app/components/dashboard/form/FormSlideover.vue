@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import type { FormMode, FormResult } from '#shared/types/form'
+import type { FormMode, FormResult } from '#shared/types/ui/form'
 import { resolveForm } from '~/composables/form/formRegistry'
 
 interface Props {
   type: string
   mode: FormMode
-  title?: string
-  description?: string
   id?: number | string
-  initial?: unknown
-  /** Nesting level from `useFormSlideover` (0 = root). */
-  depth?: number
   ui?: { content?: string }
+  depth?: number
+  title?: string
+  initial?: unknown
+  description?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

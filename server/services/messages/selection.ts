@@ -1,7 +1,7 @@
 import { and, count, desc, like, or, type SQL } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { Message } from '#shared/types/db'
-import type { TableFilters, TableSelection } from '#shared/types/data-table'
+import type { TableFilters, TableSelection } from '#shared/types/ui/data-table'
 import { dateRangeSql, selectionConstraintSql } from '~~/server/utils/filterSql'
 
 // --- Search / filter SQL ----------------------------------------------------

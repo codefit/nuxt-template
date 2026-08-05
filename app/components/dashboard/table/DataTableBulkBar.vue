@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { BulkAction } from '#shared/types/data-table'
+import type { BulkAction } from '#shared/types/ui/data-table'
 
 defineProps<{
+  bulkValue?: string
+  bulkActions: BulkAction[]
+  bulkPending?: boolean
   selectedCount: number
   selectionHint?: string | null
-  bulkActions: BulkAction[]
-  bulkValue?: string
-  bulkPending?: boolean
 }>()
 
 const emit = defineEmits<{

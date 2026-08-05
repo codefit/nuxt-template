@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface Props {
   code: string
-  name?: string
   icon?: string | null
+  name?: string
   /** `sm` = field labels, `md` = language switcher (header size). */
   size?: 'sm' | 'md'
 }

@@ -1,5 +1,5 @@
 import type { Language } from '#shared/types/db'
-import type { LanguageAdminDetail, LanguageListItem } from '#shared/types/language'
+import type { LanguageAdminDetail, LanguageListItem } from '#shared/types/dto/language'
 
 function toIso(value: Date | string): string {
   if (value instanceof Date) {

@@ -1,5 +1,5 @@
-import type { ResourceListResponse } from '#shared/types/resource'
-import { RESOURCE_DEFAULT_LIMIT } from '#shared/types/resource'
+import type { ResourceListResponse } from '#shared/types/ui/resource'
+import { RESOURCE_DEFAULT_LIMIT } from '#shared/types/ui/resource'
 import type { WatchSource } from 'vue'
 
 interface Options {

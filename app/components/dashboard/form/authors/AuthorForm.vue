@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { AuthorDetail, AuthorFormInput } from '#shared/types/author'
-import type { FormMode } from '#shared/types/form'
+import type { AuthorDetail, AuthorFormInput } from '#shared/types/dto/author'
+import type { FormMode } from '#shared/types/ui/form'
 
 interface Props {
-  mode: FormMode
   id?: number | string
+  mode: FormMode
   initial?: Partial<AuthorFormInput>
   pending?: boolean
 }

@@ -5,14 +5,14 @@ interface SelectOption {
 }
 
 interface Props {
-  label?: string
   name: string
+  label?: string
   error?: string
   valid?: boolean
-  required?: boolean
   options: SelectOption[]
-  placeholder?: string
+  required?: boolean
   disabled?: boolean
+  placeholder?: string
 }
 
 defineProps<Props>()

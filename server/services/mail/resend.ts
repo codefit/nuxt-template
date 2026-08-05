@@ -1,10 +1,10 @@
 import { Resend } from 'resend'
 
 export interface SendEmailInput {
-  from?: string
   to: string | string[]
-  subject: string
+  from?: string
   html: string
+  subject: string
 }
 
 export function createResend(apiKey: string) {

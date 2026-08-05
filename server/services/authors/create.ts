@@ -1,6 +1,6 @@
 import { and, asc, eq, isNull, like, or } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { AuthorDetail, AuthorFormInput, AuthorOption } from '#shared/types/author'
+import type { AuthorDetail, AuthorFormInput, AuthorOption } from '#shared/types/dto/author'
 import { formatEmail, formatPhone } from '#shared/utils/format'
 import { isValidEmail, isValidPhone } from '#shared/utils/validate'
 

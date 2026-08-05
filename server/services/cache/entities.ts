@@ -1,5 +1,5 @@
 import { db, schema } from '@nuxthub/db'
-import { ENTITY_KEYS, type EntityKey } from '#shared/types/entity'
+import { ENTITY_KEYS, type EntityKey } from '#shared/types/dto/entity'
 import type { Entity } from '#shared/types/db'
 
 let byKey: Map<string, Entity> | null = null

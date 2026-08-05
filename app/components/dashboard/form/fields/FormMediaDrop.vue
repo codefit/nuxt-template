@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { PendingMedia } from '#shared/types/form'
+import type { PendingMedia } from '#shared/types/ui/form'
 
 interface Props {
-  label?: string
   name: string
   field?: string
+  label?: string
   error?: string
   accept?: string
-  multiple?: boolean
   disabled?: boolean
+  multiple?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -1,6 +1,6 @@
 import { asc, desc, type SQL } from 'drizzle-orm'
 import type { H3Event } from 'h3'
-import type { TableFilters, TableSort } from '#shared/types/data-table'
+import type { TableFilters, TableSort } from '#shared/types/ui/data-table'
 import {
   RESOURCE_DEFAULT_LIMIT,
   RESOURCE_MAX_LIMIT,
@@ -8,7 +8,7 @@ import {
   type ResourceListPagination,
   type ResourceListQuery,
   type ResourceListResponse,
-} from '#shared/types/resource'
+} from '#shared/types/ui/resource'
 
 type SortColumn = Parameters<typeof desc>[0]
 
