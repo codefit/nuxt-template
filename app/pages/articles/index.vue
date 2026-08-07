@@ -81,7 +81,6 @@ usePageSeo({
             v-for="(article, index) in items"
             :key="article.slug"
             :article="article"
-            :index="index"
             :position="(page - 1) * PUBLIC_ARTICLE_LIMIT + index + 1"
           />
         </div>

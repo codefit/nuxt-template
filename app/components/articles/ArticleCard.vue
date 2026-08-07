@@ -7,14 +7,11 @@ import { ImageSurface } from '#shared/types/media/imageSurface'
 
 interface Props {
   article: ArticleListItem
-  index?: number
   badge?: string
   position?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  index: 0,
-})
+const props = defineProps<Props>()
 
 const { absolute } = useSiteUrl()
 const localePath = useLocalePath()
@@ -29,10 +26,6 @@ const publishedAt = computed(
 )
 
 const badgeLabel = computed(() => props.badge ?? t('articles.tag'))
-
-const mediaTone = computed(() =>
-  props.index % 2 === 0 ? 'bg-brand-200' : 'bg-accent-100',
-)
 
 /** Listing always sizes as PREVIEW (even when src falls back to detail IMAGE file). */
 const hasCover = computed(() => Boolean(props.article.image))
@@ -72,10 +65,7 @@ const asListItem = computed(() => props.position != null && props.position >= 1)
         :to="localePath({ name: 'articles-slug', params: { slug: article.slug } })"
         class="group flex h-full flex-col overflow-hidden rounded-3xl border border-default bg-default transition hover:border-brand-300"
       >
-        <div
-          class="aspect-[16/9] overflow-hidden"
-          :class="mediaTone"
-        >
+        <div class="aspect-[16/9] overflow-hidden">
           <MediaImg
             v-if="hasCover"
             :src="article.image"
@@ -88,11 +78,12 @@ const asListItem = computed(() => props.position != null && props.position >= 1)
           />
           <div
             v-else
-            class="flex size-full items-center justify-center"
+            class="flex size-full items-center justify-center bg-elevated text-muted"
+            aria-hidden="true"
           >
             <UIcon
-              name="i-lucide-newspaper"
-              class="size-12 text-brand-700/40"
+              name="i-lucide-image"
+              class="size-12"
             />
           </div>
         </div>
