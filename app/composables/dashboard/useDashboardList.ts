@@ -34,6 +34,12 @@ export async function useDashboardList<T extends { id: string | number }>(
   const withLocale = Boolean(options.locale)
   const bulkEndpoint = options.bulkEndpoint ?? `${options.endpoint}/bulk`
 
+  // Nuxt composables must run before any await (NUXT_E1001).
+  const bulkRunner = shallowRef<
+    ((payload: BulkPayload<T>) => Promise<BulkResult | void | false>) | undefined
+  >()
+  const { runRow } = useTableAction<T>(() => bulkRunner.value)
+
   const {
     pagination,
     sorting,
@@ -110,6 +116,8 @@ export async function useDashboardList<T extends { id: string | number }>(
     return response.result
   }
 
+  bulkRunner.value = runBulk
+
   return {
     pagination,
     sorting,
@@ -124,5 +132,6 @@ export async function useDashboardList<T extends { id: string | number }>(
     refresh,
     getRowId,
     runBulk,
+    runRow,
   }
 }

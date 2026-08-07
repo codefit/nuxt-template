@@ -106,11 +106,14 @@ const {
   status,
   getRowId,
   runBulk,
+  runRow,
 } = await useDashboardList<Message>({
   endpoint: '/api/messages',
   filterKeys: ['createdAt'],
   dateRangeKeys: ['createdAt'],
 })
+
+const deleteAction = bulkActions.find(action => action.value === 'delete')!
 
 // --- Handlers ---------------------------------------------------------------
 
@@ -140,8 +143,14 @@ function rowActions(row: TableRow<Message>) {
     },
     {
       label: t('messages.actionDelete'),
+      icon: 'i-lucide-trash',
+      color: 'error' as const,
       onSelect() {
-        console.log('action:delete', row.original.id)
+        void runRow(deleteAction, row.original.id, {
+          confirmTitle: t('messages.actionDeleteTitle'),
+          confirmDescription: t('messages.actionDeleteDesc'),
+          confirmLabel: t('messages.actionDelete'),
+        })
       },
     },
   ]

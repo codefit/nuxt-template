@@ -19,35 +19,11 @@ interface Options<T> {
 }
 
 export function useTableBulk<T>(options: Options<T>) {
-  const confirm = useConfirmDialog()
-  const showResult = useResultDialog()
-  const toast = useToast()
+  const { pending, run } = useTableAction<T>(() => options.runBulk)
   const bulkValue = ref<string | undefined>()
-  const bulkPending = ref(false)
-
-  function toastBulk(action: BulkAction, count: number) {
-    const color = action.toast ?? 'success'
-
-    toast.add({
-      title: `Operace „${action.label}“`,
-      description: ({
-        success: `Provedla se operace pro ${count} položek.`,
-        error: `Operace selhala pro ${count} položek.`,
-        warning: `Varování při operaci pro ${count} položek.`,
-        info: `Provedla se operace pro ${count} položek.`,
-      })[color],
-      color,
-      icon: ({
-        success: 'i-lucide-circle-check',
-        error: 'i-lucide-circle-x',
-        warning: 'i-lucide-triangle-alert',
-        info: 'i-lucide-info',
-      })[color],
-    })
-  }
 
   async function runBulkAction(value: string | undefined) {
-    if (bulkPending.value) {
+    if (pending.value) {
       return
     }
 
@@ -68,98 +44,29 @@ export function useTableBulk<T>(options: Options<T>) {
       return
     }
 
-    if (action.confirm) {
-      const ok = await confirm({
-        title: action.confirmTitle ?? action.label,
-        description:
-          action.confirmDescription?.replace('{count}', String(selectedCount))
-          ?? `Opravdu provést „${action.label}“ pro ${selectedCount} položek?`,
-        confirmLabel: action.confirmLabel ?? action.label,
-        cancelLabel: action.cancelLabel ?? 'Zrušit',
-        confirmColor: action.confirmColor ?? 'error',
-      })
-
-      if (!ok) {
-        bulkValue.value = undefined
-        return
-      }
-    }
-
     const selection = toValue(options.selection)
     const filterValues = toValue(options.filterValues)
     const data = toValue(options.data)
     const rows = options.resolveRows(data, options.getRowId)
-    const count = selectedCount
 
-    const payload: BulkPayload<T> = {
+    await run({
       action,
+      count: selectedCount,
       selection: {
         mode: selection.mode,
         ids: [...selection.ids],
       },
-      count,
       filters: { ...filterValues },
       rows,
-    }
-
-    bulkPending.value = true
-
-    const pending = toast.add({
-      title: `Provádím „${action.label}“…`,
-      description: `${count} položek · ${payload.selection.mode}`,
-      color: 'neutral',
-      icon: 'i-lucide-loader-circle',
-      duration: 0,
+      clearSelection: options.clearSelection,
     })
 
-    let result: BulkResult | void | false
-
-    try {
-      result = options.runBulk
-        ? await options.runBulk(payload)
-        : undefined
-    }
-    catch (error) {
-      toast.remove(pending.id)
-      toast.add({
-        title: `Operace „${action.label}“ selhala`,
-        description: error instanceof Error ? error.message : 'Neočekávaná chyba.',
-        color: 'error',
-        icon: 'i-lucide-circle-x',
-      })
-      bulkValue.value = undefined
-      bulkPending.value = false
-      return
-    }
-
-    toast.remove(pending.id)
-
-    if (result === false) {
-      toast.add({
-        title: `Operace „${action.label}“ selhala`,
-        description: `Nepodařilo se dokončit akci pro ${count} položek.`,
-        color: 'error',
-        icon: 'i-lucide-circle-x',
-      })
-      bulkValue.value = undefined
-      bulkPending.value = false
-      return
-    }
-
-    toastBulk(action, count)
-
-    if (action.result && result) {
-      await showResult(result)
-    }
-
-    options.clearSelection()
     bulkValue.value = undefined
-    bulkPending.value = false
   }
 
   return {
     bulkValue,
-    bulkPending,
+    bulkPending: pending,
     runBulkAction,
   }
 }

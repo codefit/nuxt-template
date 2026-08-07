@@ -177,6 +177,7 @@ const {
   refresh,
   getRowId,
   runBulk,
+  runRow,
 } = await useDashboardList<ArticleListItem>({
   endpoint: '/api/articles',
   filterKeys: ['createdAt', 'isPublished'],
@@ -184,6 +185,8 @@ const {
   with: ['author'],
   locale: true,
 })
+
+const deleteAction = bulkActions.find(action => action.value === 'delete')!
 
 const { open: openForm } = useFormSlideover()
 const formBusy = ref(false)
@@ -287,8 +290,14 @@ function rowActions(row: TableRow<ArticleListItem>) {
     { type: 'separator' as const },
     {
       label: t('dashboard.articles.actionDelete'),
+      icon: 'i-lucide-trash',
+      color: 'error' as const,
       onSelect() {
-        console.log('action:delete', row.original.id)
+        void runRow(deleteAction, row.original.id, {
+          confirmTitle: t('dashboard.articles.actionDeleteTitle'),
+          confirmDescription: t('dashboard.articles.actionDeleteDesc'),
+          confirmLabel: t('dashboard.articles.actionDelete'),
+        })
       },
     },
   ]
