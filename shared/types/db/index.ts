@@ -11,6 +11,7 @@ import type {
   slugs,
   textTranslations,
   texts,
+  users,
 } from '@nuxthub/db/schema'
 
 export type Message = typeof messages.$inferSelect
@@ -38,3 +39,6 @@ export type NewAuthor = typeof authors.$inferInsert
 
 export type Meta = typeof metas.$inferSelect
 export type NewMeta = typeof metas.$inferInsert
+
+export type User = typeof users.$inferSelect
+export type NewUser = typeof users.$inferInsert

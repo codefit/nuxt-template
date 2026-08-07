@@ -13,6 +13,7 @@
     "gdpr": "GDPR",
     "terms": "Obchodní podmínky",
     "cookies": "Cookies",
+    "dashboard": "Dashboard",
     "main": "Hlavní navigace",
     "footer": "Patička",
     "menu": "Menu"
@@ -108,6 +109,10 @@
     "nav": {
       "rail": "Hlavní menu dashboardu",
       "sidebar": "Boční panel",
+      "sectionContent": "Obsah webu",
+      "sectionApp": "Specifická část webu",
+      "sectionCommunication": "Komunikace",
+      "sectionSettings": "Nastavení",
       "home": "Přehled",
       "articles": "Články",
       "messages": "Zprávy",
@@ -115,6 +120,10 @@
       "media": "Média",
       "users": "Uživatelé",
       "settings": "Nastavení",
+      "constants": "Konstanty",
+      "appModules": "Moduly aplikace",
+      "menu": "Menu",
+      "comingSoon": "Připravujeme",
       "sections": "Sekce",
       "more": "Další",
       "recent": "Nedávné",
@@ -127,7 +136,8 @@
     "header": {
       "badge": "Admin",
       "config": "Konfigurace",
-      "share": "Sdílet"
+      "share": "Sdílet",
+      "logout": "Odhlásit"
     },
     "home": {
       "seoTitle": "Dashboard",
@@ -362,7 +372,71 @@
       "recaptchaConfig": "reCAPTCHA není na serveru nakonfigurovaná.",
       "bulkInvalidMode": "selection.mode musí být include nebo exclude.",
       "bulkInvalidIds": "selection.ids musí být pole identifikátorů.",
-      "bulkUnknownAction": "Neznámá hromadná akce."
+      "bulkUnknownAction": "Neznámá hromadná akce.",
+      "unauthorized": "Nejste přihlášeni.",
+      "invalidCredentials": "Neplatný e-mail nebo heslo.",
+      "registerDisabled": "Registrace není povolená.",
+      "registerInvalid": "Zkontrolujte vyplněné údaje a zkuste to znovu.",
+      "passwordRequirements": "Heslo nesplňuje požadavky.",
+      "emailExists": "Účet s tímto e-mailem už existuje.",
+      "resetConfig": "Chybí konfigurace URL webu pro reset hesla.",
+      "resetInvalid": "Odkaz pro reset hesla je neplatný.",
+      "resetExpired": "Odkaz pro reset hesla vypršel."
+    }
+  },
+  "auth": {
+    "togglePassword": "Zobrazit nebo skrýt heslo",
+    "fields": {
+      "email": "E-mail",
+      "password": "Heslo",
+      "newPassword": "Nové heslo",
+      "firstName": "Jméno",
+      "lastName": "Příjmení",
+      "emailPlaceholder": "vas{'@'}email.cz",
+      "passwordPlaceholder": "Zadejte heslo"
+    },
+    "login": {
+      "seoTitle": "Přihlášení",
+      "seoDescription": "Přihlášení do administrace.",
+      "title": "Přihlášení",
+      "lead": "Administrace webu {site}",
+      "hint": "Přihlaste se e-mailem a heslem. Účet spravuje provozovatel webu.",
+      "submit": "Přihlásit se",
+      "forgot": "Zapomenuté heslo?",
+      "backToSite": "Zpět na web",
+      "error": "Neplatný e-mail nebo heslo."
+    },
+    "register": {
+      "seoTitle": "Registrace",
+      "seoDescription": "Vytvoření účtu do administrace.",
+      "title": "Vytvořit účet",
+      "submit": "Vytvořit účet",
+      "haveAccount": "Už máte účet?",
+      "loginLink": "Přihlaste se",
+      "error": "Registrace se nepovedla.",
+      "legal": "Registrací účtu {brand} souhlasíte s dokumenty {privacy} a {terms}.",
+      "privacy": "Ochrana osobních údajů",
+      "terms": "Obchodní podmínky"
+    },
+    "forgot": {
+      "seoTitle": "Zapomenuté heslo",
+      "seoDescription": "Obnova hesla do administrace.",
+      "title": "Obnova hesla",
+      "lead": "Zadejte e-mail a pošleme vám odkaz pro nastavení nového hesla.",
+      "submit": "Odeslat odkaz",
+      "sent": "Pokud účet existuje, poslali jsme odkaz na e-mail.",
+      "backLogin": "Zpět na přihlášení",
+      "error": "Zadejte platný e-mail."
+    },
+    "reset": {
+      "seoTitle": "Nové heslo",
+      "seoDescription": "Nastavení nového hesla.",
+      "title": "Nové heslo",
+      "submit": "Uložit heslo",
+      "done": "Heslo je změněné. Můžete se přihlásit.",
+      "backLogin": "Přihlásit se",
+      "missingToken": "Odkaz pro reset hesla je neplatný.",
+      "error": "Změna hesla se nepovedla."
     }
   },
   "legal": {

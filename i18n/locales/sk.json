@@ -13,6 +13,7 @@
     "gdpr": "GDPR",
     "terms": "Obchodné podmienky",
     "cookies": "Cookies",
+    "dashboard": "Dashboard",
     "main": "Hlavná navigácia",
     "footer": "Pätička",
     "menu": "Menu"
@@ -251,6 +252,10 @@
     "nav": {
       "rail": "Hlavné menu dashboardu",
       "sidebar": "Bočný panel",
+      "sectionContent": "Obsah webu",
+      "sectionApp": "Špecifická časť webu",
+      "sectionCommunication": "Komunikácia",
+      "sectionSettings": "Nastavenia",
       "home": "Prehľad",
       "articles": "Články",
       "messages": "Správy",
@@ -258,6 +263,10 @@
       "media": "Médiá",
       "users": "Používatelia",
       "settings": "Nastavenia",
+      "constants": "Konštanty",
+      "appModules": "Moduly aplikácie",
+      "menu": "Menu",
+      "comingSoon": "Pripravujeme",
       "sections": "Sekcie",
       "more": "Ďalšie",
       "recent": "Nedávne",
@@ -270,7 +279,8 @@
     "header": {
       "badge": "Admin",
       "config": "Konfigurácia",
-      "share": "Zdieľať"
+      "share": "Zdieľať",
+      "logout": "Odhlásiť"
     },
     "home": {
       "seoTitle": "Dashboard",
@@ -505,7 +515,71 @@
       "recaptchaConfig": "reCAPTCHA nie je na serveri nakonfigurovaná.",
       "bulkInvalidMode": "selection.mode musí byť include alebo exclude.",
       "bulkInvalidIds": "selection.ids musí byť pole identifikátorov.",
-      "bulkUnknownAction": "Neznáma hromadná akcia."
+      "bulkUnknownAction": "Neznáma hromadná akcia.",
+      "unauthorized": "Nie ste prihlásení.",
+      "invalidCredentials": "Neplatný e-mail alebo heslo.",
+      "registerDisabled": "Registrácia nie je povolená.",
+      "registerInvalid": "Skontrolujte vyplnené údaje a skúste to znova.",
+      "passwordRequirements": "Heslo nespĺňa požiadavky.",
+      "emailExists": "Účet s týmto e-mailom už existuje.",
+      "resetConfig": "Chýba konfigurácia URL webu pre reset hesla.",
+      "resetInvalid": "Odkaz na reset hesla je neplatný.",
+      "resetExpired": "Odkaz na reset hesla vypršal."
+    }
+  },
+  "auth": {
+    "togglePassword": "Zobraziť alebo skryť heslo",
+    "fields": {
+      "email": "E-mail",
+      "password": "Heslo",
+      "newPassword": "Nové heslo",
+      "firstName": "Meno",
+      "lastName": "Priezvisko",
+      "emailPlaceholder": "vas{'@'}email.sk",
+      "passwordPlaceholder": "Zadajte heslo"
+    },
+    "login": {
+      "seoTitle": "Prihlásenie",
+      "seoDescription": "Prihlásenie do administrácie.",
+      "title": "Prihlásenie",
+      "lead": "Administrácia webu {site}",
+      "hint": "Prihláste sa e-mailom a heslom. Účet spravuje prevádzkovateľ webu.",
+      "submit": "Prihlásiť sa",
+      "forgot": "Zabudnuté heslo?",
+      "backToSite": "Späť na web",
+      "error": "Neplatný e-mail alebo heslo."
+    },
+    "register": {
+      "seoTitle": "Registrácia",
+      "seoDescription": "Vytvorenie účtu do administrácie.",
+      "title": "Vytvoriť účet",
+      "submit": "Vytvoriť účet",
+      "haveAccount": "Už máte účet?",
+      "loginLink": "Prihláste sa",
+      "error": "Registrácia sa nepodarila.",
+      "legal": "Registráciou účtu {brand} súhlasíte s dokumentmi {privacy} a {terms}.",
+      "privacy": "Ochrana osobných údajov",
+      "terms": "Obchodné podmienky"
+    },
+    "forgot": {
+      "seoTitle": "Zabudnuté heslo",
+      "seoDescription": "Obnova hesla do administrácie.",
+      "title": "Obnova hesla",
+      "lead": "Zadajte e-mail a pošleme vám odkaz na nastavenie nového hesla.",
+      "submit": "Odoslať odkaz",
+      "sent": "Ak účet existuje, poslali sme odkaz na e-mail.",
+      "backLogin": "Späť na prihlásenie",
+      "error": "Zadajte platný e-mail."
+    },
+    "reset": {
+      "seoTitle": "Nové heslo",
+      "seoDescription": "Nastavenie nového hesla.",
+      "title": "Nové heslo",
+      "submit": "Uložiť heslo",
+      "done": "Heslo je zmenené. Môžete sa prihlásiť.",
+      "backLogin": "Prihlásiť sa",
+      "missingToken": "Odkaz na reset hesla je neplatný.",
+      "error": "Zmena hesla sa nepodarila."
     }
   },
   "legal": {

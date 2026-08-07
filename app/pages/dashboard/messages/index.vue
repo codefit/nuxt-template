@@ -17,6 +17,7 @@ const { t } = useI18n()
 usePageSeo({
   title: t('messages.seoTitle'),
   description: t('messages.seoDescription'),
+  noindex: true,
 })
 
 // --- Table config -----------------------------------------------------------

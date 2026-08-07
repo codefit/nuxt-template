@@ -137,60 +137,67 @@ onMounted(() => {
     />
 
     <template v-else>
-      <FormInput
-        v-model="code"
-        :label="t('dashboard.languages.fieldCode')"
-        name="code"
-        disabled
-      />
-      <p class="text-sm text-muted -mt-2">
-        {{ t('dashboard.languages.codeHint') }}
-      </p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-1 sm:col-span-2">
+          <FormInput
+            v-model="code"
+            :label="t('dashboard.languages.fieldCode')"
+            name="code"
+            disabled
+          />
+          <p class="text-sm text-muted">
+            {{ t('dashboard.languages.codeHint') }}
+          </p>
+        </div>
 
-      <FormInput
-        v-model="form.name"
-        :label="t('dashboard.languages.fieldName')"
-        name="name"
-        required
-        v-bind="validation.fieldUi('name')"
-        @blur="validation.validateField('name', true)"
-      />
+        <FormInput
+          v-model="form.name"
+          :label="t('dashboard.languages.fieldName')"
+          name="name"
+          required
+          v-bind="validation.fieldUi('name')"
+          @blur="validation.validateField('name', true)"
+        />
 
-      <FormInput
-        v-model="form.icon"
-        :label="t('dashboard.languages.fieldIcon')"
-        name="icon"
-      />
-      <p class="text-sm text-muted -mt-2">
-        {{ t('dashboard.languages.iconHint') }}
-      </p>
+        <div class="flex flex-col gap-1">
+          <FormInput
+            v-model="form.icon"
+            :label="t('dashboard.languages.fieldIcon')"
+            name="icon"
+          />
+          <p class="text-sm text-muted">
+            {{ t('dashboard.languages.iconHint') }}
+          </p>
+          <div
+            v-if="form.icon"
+            class="flex items-center gap-2"
+          >
+            <img
+              :src="form.icon"
+              alt=""
+              class="size-6 rounded-sm object-contain"
+            >
+            <span class="text-sm text-muted">{{ form.icon }}</span>
+          </div>
+        </div>
 
-      <div
-        v-if="form.icon"
-        class="flex items-center gap-2"
-      >
-        <img
-          :src="form.icon"
-          alt=""
-          class="size-6 rounded-sm object-contain"
-        >
-        <span class="text-sm text-muted">{{ form.icon }}</span>
+        <div class="flex flex-col gap-4 sm:col-span-2">
+          <FormCheckbox
+            v-model="form.isActive"
+            :label="t('dashboard.languages.fieldActive')"
+            name="isActive"
+            :disabled="form.isDefault"
+            :description="form.isDefault ? t('dashboard.languages.defaultActiveHint') : undefined"
+          />
+
+          <FormCheckbox
+            v-model="form.isDefault"
+            :label="t('dashboard.languages.fieldDefault')"
+            name="isDefault"
+            :description="t('dashboard.languages.defaultHint')"
+          />
+        </div>
       </div>
-
-      <FormCheckbox
-        v-model="form.isActive"
-        :label="t('dashboard.languages.fieldActive')"
-        name="isActive"
-        :disabled="form.isDefault"
-        :description="form.isDefault ? t('dashboard.languages.defaultActiveHint') : undefined"
-      />
-
-      <FormCheckbox
-        v-model="form.isDefault"
-        :label="t('dashboard.languages.fieldDefault')"
-        name="isDefault"
-        :description="t('dashboard.languages.defaultHint')"
-      />
 
       <div class="flex justify-end gap-2 border-t border-default pt-4">
         <UButton

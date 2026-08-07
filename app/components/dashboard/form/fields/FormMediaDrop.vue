@@ -9,18 +9,23 @@ interface Props {
   accept?: string
   disabled?: boolean
   multiple?: boolean
+  /** Square drop zone (e.g. cover) — uses grid layout overlay. */
+  square?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   field: 'media',
   accept: 'image/*',
   multiple: true,
+  square: false,
 })
 
 const model = defineModel<PendingMedia[]>({ default: () => [] })
 const files = ref<File[] | null | File>(null)
 
 const { t } = useI18n()
+
+const isMultiple = computed(() => (props.square ? false : props.multiple))
 
 function uid(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -55,7 +60,7 @@ function remove(id: string) {
   const list = toList(files.value).filter(file =>
     model.value.some(entry => entry.name === file.name && entry.size === file.size),
   )
-  files.value = props.multiple ? list : (list[0] ?? null)
+  files.value = isMultiple.value ? list : (list[0] ?? null)
 }
 </script>
 
@@ -69,17 +74,25 @@ function remove(id: string) {
       <UFileUpload
         v-model="files"
         :accept="accept"
-        :multiple="multiple"
+        :multiple="isMultiple"
         :disabled="disabled"
         :label="t('dashboard.form.mediaDrop')"
-        :description="t('dashboard.form.mediaHint')"
+        :description="square ? undefined : t('dashboard.form.mediaHint')"
         icon="i-lucide-image-plus"
-        layout="list"
-        class="w-full"
+        :layout="square ? 'grid' : 'list'"
+        :class="square ? 'aspect-square w-full max-w-56' : 'w-full'"
+        :ui="square
+          ? {
+              base: 'aspect-square size-full min-h-0',
+              wrapper: 'text-center',
+              label: 'text-xs',
+              description: 'hidden',
+            }
+          : undefined"
       />
 
       <ul
-        v-if="model.length"
+        v-if="!square && model.length"
         class="flex flex-col gap-2"
       >
         <li

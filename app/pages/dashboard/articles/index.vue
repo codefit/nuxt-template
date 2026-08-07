@@ -18,6 +18,7 @@ const localePath = useLocalePath()
 usePageSeo({
   title: t('dashboard.articles.seoTitle'),
   description: t('dashboard.articles.seoDescription'),
+  noindex: true,
 })
 
 // --- Table config -----------------------------------------------------------

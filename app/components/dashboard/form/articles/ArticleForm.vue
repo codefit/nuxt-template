@@ -394,32 +394,42 @@ async function save() {
         <h3 class="text-sm font-medium text-muted">
           {{ t('dashboard.form.sharedSection') }}
         </h3>
-        <FormCheckbox
-          v-model="form.isPublished"
-          :label="t('dashboard.articles.fieldPublished')"
-          name="isPublished"
-        />
-        <FormInput
-          v-model="publishedAtDate"
-          type="date"
-          :label="t('dashboard.articles.fieldPublishedAt')"
-          name="publishedAt"
-        />
-        <FormAutocomplete
-          v-model="authorId"
-          :label="t('dashboard.articles.fieldAuthor')"
-          name="authorId"
-          :options="authorOptions"
-          :placeholder="t('dashboard.articles.authorHint')"
-          :create-label="t('dashboard.authors.addAuthor')"
-          @create="openCreateAuthor"
-        />
-        <FormMediaDrop
-          v-model="form.media"
-          :label="t('dashboard.form.mediaLabel')"
-          name="media"
-          field="cover"
-        />
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,14rem)_1fr] md:items-stretch">
+          <FormMediaDrop
+            v-model="form.media"
+            :label="t('dashboard.form.mediaLabel')"
+            name="media"
+            field="cover"
+            square
+          />
+
+          <div class="flex min-h-0 flex-col gap-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormInput
+                v-model="publishedAtDate"
+                type="date"
+                :label="t('dashboard.articles.fieldPublishedAt')"
+                name="publishedAt"
+              />
+              <FormAutocomplete
+                v-model="authorId"
+                :label="t('dashboard.articles.fieldAuthor')"
+                name="authorId"
+                :options="authorOptions"
+                :placeholder="t('dashboard.articles.authorHint')"
+                :create-label="t('dashboard.authors.addAuthor')"
+                @create="openCreateAuthor"
+              />
+            </div>
+            <FormCheckbox
+              v-model="form.isPublished"
+              class="mt-auto"
+              :label="t('dashboard.articles.fieldPublished')"
+              name="isPublished"
+            />
+          </div>
+        </div>
       </section>
 
       <section class="flex flex-col gap-4">
@@ -433,96 +443,101 @@ async function save() {
           />
         </div>
 
-        <FormInput
-          v-model="current.title"
-          :label="t('dashboard.articles.fieldTitle')"
-          name="title"
-          required
-          :locale="activeLocale"
-          v-bind="fieldState('title')"
-          @blur="onTitleBlur"
-        />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormInput
+            v-model="current.title"
+            :label="t('dashboard.articles.fieldTitle')"
+            name="title"
+            required
+            :locale="activeLocale"
+            v-bind="fieldState('title')"
+            @blur="onTitleBlur"
+          />
 
-        <FormInput
-          v-model="current.slug"
-          :label="t('dashboard.articles.fieldSlug')"
-          name="slug"
-          required
-          :locale="activeLocale"
-          v-bind="fieldState('slug')"
-          @blur="validation.states[fieldPath('slug')] = {
-            error: current.slug.trim() ? null : t('dashboard.form.required'),
-            valid: current.slug.trim() !== '',
-            touched: true,
-          }"
-          @update:model-value="onSlugInput"
-        />
+          <FormInput
+            v-model="current.slug"
+            :label="t('dashboard.articles.fieldSlug')"
+            name="slug"
+            required
+            :locale="activeLocale"
+            v-bind="fieldState('slug')"
+            @blur="validation.states[fieldPath('slug')] = {
+              error: current.slug.trim() ? null : t('dashboard.form.required'),
+              valid: current.slug.trim() !== '',
+              touched: true,
+            }"
+            @update:model-value="onSlugInput"
+          />
 
-        <FormTextarea
-          v-model="current.excerpt"
-          :label="t('dashboard.articles.fieldExcerpt')"
-          name="excerpt"
-          required
-          :rows="3"
-          :locale="activeLocale"
-          v-bind="fieldState('excerpt')"
-          @blur="validation.states[fieldPath('excerpt')] = {
-            error: current.excerpt.trim() ? null : t('dashboard.form.required'),
-            valid: current.excerpt.trim() !== '',
-            touched: true,
-          }"
-        />
+          <FormTextarea
+            v-model="current.excerpt"
+            class="sm:col-span-2"
+            :label="t('dashboard.articles.fieldExcerpt')"
+            name="excerpt"
+            required
+            :rows="3"
+            :locale="activeLocale"
+            v-bind="fieldState('excerpt')"
+            @blur="validation.states[fieldPath('excerpt')] = {
+              error: current.excerpt.trim() ? null : t('dashboard.form.required'),
+              valid: current.excerpt.trim() !== '',
+              touched: true,
+            }"
+          />
 
-        <FormEditor
-          v-model="current.body"
-          :label="t('dashboard.articles.fieldBody')"
-          name="body"
-          required
-          :locale="activeLocale"
-          v-bind="fieldState('body')"
-          @blur="validation.states[fieldPath('body')] = {
-            error: current.body.trim() ? null : t('dashboard.form.required'),
-            valid: current.body.trim() !== '',
-            touched: true,
-          }"
-        />
+          <FormEditor
+            v-model="current.body"
+            class="sm:col-span-2"
+            :label="t('dashboard.articles.fieldBody')"
+            name="body"
+            required
+            :locale="activeLocale"
+            v-bind="fieldState('body')"
+            @blur="validation.states[fieldPath('body')] = {
+              error: current.body.trim() ? null : t('dashboard.form.required'),
+              valid: current.body.trim() !== '',
+              touched: true,
+            }"
+          />
 
-        <FormInput
-          v-model="current.metaTitle"
-          :label="t('dashboard.articles.fieldMetaTitle')"
-          name="metaTitle"
-          required
-          :locale="activeLocale"
-          v-bind="fieldState('metaTitle')"
-          @blur="validation.states[fieldPath('metaTitle')] = {
-            error: current.metaTitle.trim() ? null : t('dashboard.form.required'),
-            valid: current.metaTitle.trim() !== '',
-            touched: true,
-          }"
-        />
+          <FormInput
+            v-model="current.metaTitle"
+            :label="t('dashboard.articles.fieldMetaTitle')"
+            name="metaTitle"
+            required
+            :locale="activeLocale"
+            v-bind="fieldState('metaTitle')"
+            @blur="validation.states[fieldPath('metaTitle')] = {
+              error: current.metaTitle.trim() ? null : t('dashboard.form.required'),
+              valid: current.metaTitle.trim() !== '',
+              touched: true,
+            }"
+          />
 
-        <FormTextarea
-          v-model="current.metaDescription"
-          :label="t('dashboard.articles.fieldMetaDescription')"
-          name="metaDescription"
-          required
-          :rows="2"
-          :locale="activeLocale"
-          v-bind="fieldState('metaDescription')"
-          @blur="validation.states[fieldPath('metaDescription')] = {
-            error: current.metaDescription.trim() ? null : t('dashboard.form.required'),
-            valid: current.metaDescription.trim() !== '',
-            touched: true,
-          }"
-        />
+          <FormInput
+            v-model="current.metaKeywords"
+            :label="t('dashboard.articles.fieldMetaKeywords')"
+            name="metaKeywords"
+            :locale="activeLocale"
+            v-bind="fieldState('metaKeywords')"
+          />
 
-        <FormInput
-          v-model="current.metaKeywords"
-          :label="t('dashboard.articles.fieldMetaKeywords')"
-          name="metaKeywords"
-          :locale="activeLocale"
-          v-bind="fieldState('metaKeywords')"
-        />
+          <FormTextarea
+            v-model="current.metaDescription"
+            class="sm:col-span-2"
+            :label="t('dashboard.articles.fieldMetaDescription')"
+            name="metaDescription"
+            required
+            :rows="2"
+            :locale="activeLocale"
+            v-bind="fieldState('metaDescription')"
+            @blur="validation.states[fieldPath('metaDescription')] = {
+              error: current.metaDescription.trim() ? null : t('dashboard.form.required'),
+              valid: current.metaDescription.trim() !== '',
+              touched: true,
+            }"
+          />
+        </div>
       </section>
 
       <div class="flex justify-end gap-2 border-t border-default pt-4">

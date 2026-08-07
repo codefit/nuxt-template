@@ -7,6 +7,20 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const { user, clear: clearSession } = useUserSession()
+const loggingOut = ref(false)
+
+async function logout() {
+  loggingOut.value = true
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    await clearSession()
+    await navigateTo(localePath('dashboard-login'))
+  }
+  finally {
+    loggingOut.value = false
+  }
+}
 </script>
 
 <template>
@@ -34,35 +48,33 @@ const localePath = useLocalePath()
             size="sm"
           />
         </div>
+        <p
+          v-if="user?.email"
+          class="truncate text-xs text-muted"
+        >
+          {{ user.name || user.email }}
+        </p>
       </div>
     </div>
 
     <div class="flex shrink-0 items-center gap-2">
-      <UButton
-        :label="t('dashboard.header.config')"
-        icon="i-lucide-settings"
-        color="neutral"
-        variant="outline"
-        size="sm"
-        class="hidden rounded-xl sm:inline-flex"
-        disabled
-      />
-      <UButton
-        :label="t('dashboard.header.share')"
-        icon="i-lucide-upload"
-        color="neutral"
-        variant="outline"
-        size="sm"
-        class="hidden rounded-xl md:inline-flex"
-        disabled
-      />
       <UButton
         :to="localePath('dashboard-articles')"
         :label="t('dashboard.nav.newArticle')"
         icon="i-lucide-sparkles"
         color="primary"
         size="sm"
+        class="hidden rounded-xl sm:inline-flex"
+      />
+      <UButton
+        :label="t('dashboard.header.logout')"
+        icon="i-lucide-log-out"
+        color="neutral"
+        variant="outline"
+        size="sm"
         class="rounded-xl"
+        :loading="loggingOut"
+        @click="logout"
       />
     </div>
   </header>

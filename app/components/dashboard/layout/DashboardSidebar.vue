@@ -1,15 +1,10 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { primary, placeholders } = useDashboardNav()
+const { activeSection, primary, placeholders } = useDashboardNav()
 
 const query = ref('')
-
-const recent = [
-  { label: 'dashboard.home.recentPlaceholder1', icon: 'i-lucide-newspaper' },
-  { label: 'dashboard.home.recentPlaceholder2', icon: 'i-lucide-mail' },
-  { label: 'dashboard.home.recentPlaceholder3', icon: 'i-lucide-file-text' },
-] as const
+const isContent = computed(() => activeSection.value?.id === 'content')
 </script>
 
 <template>
@@ -18,9 +13,14 @@ const recent = [
     :aria-label="t('dashboard.nav.sidebar')"
   >
     <div class="flex items-center justify-between gap-2 px-1">
-      <h2 class="text-base font-semibold text-highlighted">
-        {{ t('dashboard.title') }}
-      </h2>
+      <div class="min-w-0">
+        <p class="text-xs font-medium uppercase tracking-wide text-muted">
+          {{ t('dashboard.title') }}
+        </p>
+        <h2 class="truncate text-base font-semibold text-highlighted">
+          {{ activeSection?.label }}
+        </h2>
+      </div>
       <UButton
         icon="i-lucide-search"
         color="neutral"
@@ -34,6 +34,7 @@ const recent = [
     </div>
 
     <UButton
+      v-if="isContent"
       :to="localePath('dashboard-articles')"
       :label="t('dashboard.nav.newArticle')"
       icon="i-lucide-sparkles"
@@ -50,9 +51,12 @@ const recent = [
       disabled
     />
 
-    <nav class="flex flex-col gap-1">
+    <nav
+      v-if="primary.length"
+      class="flex flex-col gap-1"
+    >
       <p class="px-2 text-xs font-medium uppercase tracking-wide text-muted">
-        {{ t('dashboard.nav.sections') }}
+        {{ t('dashboard.nav.menu') }}
       </p>
       <UButton
         v-for="link in primary"
@@ -67,9 +71,12 @@ const recent = [
       />
     </nav>
 
-    <div class="flex flex-col gap-1">
+    <div
+      v-if="placeholders.length"
+      class="flex flex-col gap-1"
+    >
       <p class="px-2 text-xs font-medium uppercase tracking-wide text-muted">
-        {{ t('dashboard.nav.more') }}
+        {{ t('dashboard.nav.comingSoon') }}
       </p>
       <UButton
         v-for="link in placeholders"
@@ -79,23 +86,6 @@ const recent = [
         color="neutral"
         variant="ghost"
         class="w-full justify-start rounded-xl opacity-60"
-        disabled
-      />
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <p class="px-2 text-xs font-medium uppercase tracking-wide text-muted">
-        {{ t('dashboard.nav.recent') }}
-      </p>
-      <UButton
-        v-for="item in recent"
-        :key="item.label"
-        :label="t(item.label)"
-        :icon="item.icon"
-        color="neutral"
-        variant="ghost"
-        class="w-full justify-start rounded-xl"
-        trailing-icon="i-lucide-ellipsis"
         disabled
       />
     </div>

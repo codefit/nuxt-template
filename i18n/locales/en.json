@@ -13,6 +13,7 @@
     "gdpr": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies",
+    "dashboard": "Dashboard",
     "main": "Main navigation",
     "footer": "Footer",
     "menu": "Menu"
@@ -251,6 +252,10 @@
     "nav": {
       "rail": "Dashboard main menu",
       "sidebar": "Sidebar",
+      "sectionContent": "Site content",
+      "sectionApp": "App-specific",
+      "sectionCommunication": "Communication",
+      "sectionSettings": "Settings",
       "home": "Overview",
       "articles": "Articles",
       "messages": "Messages",
@@ -258,6 +263,10 @@
       "media": "Media",
       "users": "Users",
       "settings": "Settings",
+      "constants": "Constants",
+      "appModules": "App modules",
+      "menu": "Menu",
+      "comingSoon": "Coming soon",
       "sections": "Sections",
       "more": "More",
       "recent": "Recent",
@@ -270,7 +279,8 @@
     "header": {
       "badge": "Admin",
       "config": "Configuration",
-      "share": "Share"
+      "share": "Share",
+      "logout": "Log out"
     },
     "home": {
       "seoTitle": "Dashboard",
@@ -505,7 +515,71 @@
       "recaptchaConfig": "reCAPTCHA is not configured on the server.",
       "bulkInvalidMode": "selection.mode must be include or exclude.",
       "bulkInvalidIds": "selection.ids must be an array of ids.",
-      "bulkUnknownAction": "Unknown bulk action."
+      "bulkUnknownAction": "Unknown bulk action.",
+      "unauthorized": "You are not signed in.",
+      "invalidCredentials": "Invalid email or password.",
+      "registerDisabled": "Registration is disabled.",
+      "registerInvalid": "Check the form and try again.",
+      "passwordRequirements": "Password does not meet the requirements.",
+      "emailExists": "An account with this email already exists.",
+      "resetConfig": "Site URL is not configured for password reset.",
+      "resetInvalid": "Password reset link is invalid.",
+      "resetExpired": "Password reset link has expired."
+    }
+  },
+  "auth": {
+    "togglePassword": "Show or hide password",
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "emailPlaceholder": "you{'@'}email.com",
+      "passwordPlaceholder": "Enter your password"
+    },
+    "login": {
+      "seoTitle": "Sign in",
+      "seoDescription": "Sign in to the admin dashboard.",
+      "title": "Sign in",
+      "lead": "{site} admin",
+      "hint": "Sign in with your email and password. Accounts are managed by the site operator.",
+      "submit": "Log in",
+      "forgot": "Forgot password?",
+      "backToSite": "Back to website",
+      "error": "Invalid email or password."
+    },
+    "register": {
+      "seoTitle": "Create account",
+      "seoDescription": "Create an admin account.",
+      "title": "Create an account",
+      "submit": "Create account",
+      "haveAccount": "Have an account?",
+      "loginLink": "Log in here",
+      "error": "Registration failed.",
+      "legal": "Signing up for a {brand} account means you agree to the {privacy} and {terms}.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "forgot": {
+      "seoTitle": "Forgot password",
+      "seoDescription": "Reset your admin password.",
+      "title": "Reset password",
+      "lead": "Enter your email and we will send a reset link.",
+      "submit": "Send reset link",
+      "sent": "If an account exists, we sent a reset link to your email.",
+      "backLogin": "Back to sign in",
+      "error": "Enter a valid email."
+    },
+    "reset": {
+      "seoTitle": "New password",
+      "seoDescription": "Set a new password.",
+      "title": "New password",
+      "submit": "Save password",
+      "done": "Password updated. You can sign in now.",
+      "backLogin": "Log in",
+      "missingToken": "Password reset link is invalid.",
+      "error": "Could not update the password."
     }
   },
   "legal": {

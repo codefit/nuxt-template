@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     ['nuxt-jsonld', { disableOptionsAPI: true }],
     'nuxt-easy-lightbox',
     '@pinia/nuxt',
+    'nuxt-auth-utils',
   ],
   components: [
     {
@@ -64,6 +65,9 @@ export default defineNuxtConfig({
         'lucide:eye-off',
         'lucide:globe',
         'lucide:download',
+        'lucide:log-out',
+        'lucide:eye',
+        'lucide:arrow-left',
       ],
     },
   },
@@ -169,6 +173,26 @@ export default defineNuxtConfig({
         sk: '/dashboard/languages',
         en: '/dashboard/languages',
       },
+      'dashboard/login': {
+        cs: '/dashboard/login',
+        sk: '/dashboard/login',
+        en: '/dashboard/login',
+      },
+      'dashboard/register': {
+        cs: '/dashboard/register',
+        sk: '/dashboard/register',
+        en: '/dashboard/register',
+      },
+      'dashboard/forgot-password': {
+        cs: '/dashboard/forgot-password',
+        sk: '/dashboard/forgot-password',
+        en: '/dashboard/forgot-password',
+      },
+      'dashboard/reset-password': {
+        cs: '/dashboard/reset-password',
+        sk: '/dashboard/reset-password',
+        en: '/dashboard/reset-password',
+      },
     },
     detectBrowserLanguage: {
       useCookie: true,
@@ -182,11 +206,16 @@ export default defineNuxtConfig({
     recaptchaSecretKey: '',
     /** Minimum reCAPTCHA v3 score (0–1). Override: NUXT_RECAPTCHA_MIN_SCORE */
     recaptchaMinScore: 0.5,
+    session: {
+      maxAge: 60 * 60 * 24 * 7,
+    },
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || site.url,
       gtmId: process.env.NUXT_PUBLIC_GTM_ID || '',
       defaultLocale,
       recaptchaSiteKey: '',
+      /** Enable /dashboard/register + POST /api/auth/register. NUXT_PUBLIC_AUTH_ALLOW_REGISTER=true */
+      authAllowRegister: false,
     },
   },
 

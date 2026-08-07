@@ -17,6 +17,7 @@ const { t } = useI18n()
 usePageSeo({
   title: t('dashboard.languages.seoTitle'),
   description: t('dashboard.languages.seoDescription'),
+  noindex: true,
 })
 
 // --- Table config -----------------------------------------------------------

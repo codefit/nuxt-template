@@ -20,6 +20,7 @@ export function useSiteNav() {
     { to: localePath('common-gdpr'), label: t('nav.gdpr') },
     { to: localePath('common-obchodni-podminky'), label: t('nav.terms') },
     { to: localePath('common-cookies'), label: t('nav.cookies') },
+    { to: localePath('dashboard'), label: t('nav.dashboard') },
   ])
 
   return {

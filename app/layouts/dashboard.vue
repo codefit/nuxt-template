@@ -1,15 +1,27 @@
 <script setup lang="ts">
+import type { DashboardSectionId } from '~~/app/composables/dashboard/useDashboardNav'
+
 const open = ref(false)
 const route = useRoute()
 
 watch(() => route.path, () => {
   open.value = false
 })
+
+function onSelectSection(_id: DashboardSectionId) {
+  // Below lg the labeled sidebar lives in a slideover — open it after picking a hub.
+  if (import.meta.client && window.matchMedia('(max-width: 1023px)').matches) {
+    open.value = true
+  }
+}
 </script>
 
 <template>
   <div class="flex h-dvh overflow-hidden bg-muted/40 dark:bg-default">
-    <DashboardRail class="hidden sm:flex" />
+    <DashboardRail
+      class="hidden sm:flex"
+      @select-section="onSelectSection"
+    />
     <DashboardSidebar class="hidden lg:flex" />
     <USlideover
       v-model:open="open"

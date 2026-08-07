@@ -9,6 +9,7 @@ const localePath = useLocalePath()
 usePageSeo({
   title: t('dashboard.home.seoTitle'),
   description: t('dashboard.home.seoDescription'),
+  noindex: true,
 })
 
 const cards = computed(() => [

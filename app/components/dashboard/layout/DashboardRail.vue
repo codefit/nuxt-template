@@ -1,9 +1,19 @@
 <script setup lang="ts">
+import type { DashboardSectionId } from '~~/app/composables/dashboard/useDashboardNav'
 import { site } from '#shared/config/site'
+
+const emit = defineEmits<{
+  selectSection: [id: DashboardSectionId]
+}>()
 
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { rail } = useDashboardNav()
+const { sections, selectedId, selectSection } = useDashboardNav()
+
+function onSelect(id: DashboardSectionId) {
+  selectSection(id)
+  emit('selectSection', id)
+}
 </script>
 
 <template>
@@ -27,22 +37,21 @@ const { rail } = useDashboardNav()
 
     <nav class="flex flex-1 flex-col items-center gap-1.5">
       <UTooltip
-        v-for="link in rail"
-        :key="link.label"
-        :text="link.label"
+        v-for="section in sections"
+        :key="section.id"
+        :text="section.label"
         :content="{ side: 'right' }"
       >
         <UButton
-          :to="link.placeholder ? undefined : link.to"
-          :icon="link.icon"
-          :color="link.active ? 'primary' : 'neutral'"
-          :variant="link.active ? 'soft' : 'ghost'"
+          :icon="section.icon"
+          :color="selectedId === section.id ? 'primary' : 'neutral'"
+          :variant="selectedId === section.id ? 'soft' : 'ghost'"
           size="md"
           square
           class="rounded-xl"
-          :aria-label="link.label"
-          :aria-current="link.active ? 'page' : undefined"
-          :disabled="link.placeholder"
+          :aria-label="section.label"
+          :aria-current="selectedId === section.id ? 'true' : undefined"
+          @click="onSelect(section.id)"
         />
       </UTooltip>
     </nav>

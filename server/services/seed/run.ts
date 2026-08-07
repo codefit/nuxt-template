@@ -12,7 +12,15 @@ export type SeedResult = {
   articles: number
   skippedArticles: boolean
   syncedSlugs: number
+  users: number
 }
+
+/** Default test admin — override via SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD. */
+export const SEED_ADMIN = {
+  email: 'admin@example.com',
+  password: 'Admin123!',
+  name: 'Admin',
+} as const
 
 function stamp(): Date {
   return new Date()
@@ -275,9 +283,48 @@ async function seedArticles(
   return { created, skipped: false, syncedSlugs: 0 }
 }
 
+async function seedAdmin(db: Db, schema: Schema): Promise<number> {
+  if (!schema.users) {
+    throw new Error('Schema is missing users table.')
+  }
+
+  const email = (
+    process.env.SEED_ADMIN_EMAIL
+    || SEED_ADMIN.email
+  ).trim().toLowerCase()
+  const password = process.env.SEED_ADMIN_PASSWORD || SEED_ADMIN.password
+  const name = process.env.SEED_ADMIN_NAME || SEED_ADMIN.name
+
+  const existing = await db
+    .select({ id: schema.users.id })
+    .from(schema.users)
+    .where(eq(schema.users.email, email))
+    .limit(1)
+
+  if (existing.length > 0) {
+    return 0
+  }
+
+  const { hashPlain } = await import('~~/server/services/auth/password')
+  const passwordHash = await hashPlain(password)
+  const now = stamp()
+
+  await db.insert(schema.users).values({
+    email,
+    passwordHash,
+    name,
+    role: 'admin',
+    createdAt: now,
+    updatedAt: now,
+  })
+
+  return 1
+}
+
 /**
  * Languages + entities upsert; articles are wiped and recreated from SEED_ARTICLES.
  * CS translation is always present; SK/EN may be missing on purpose.
+ * Admin user is upserted once (skipped if email already exists).
  */
 export async function seedDatabase(opts?: { db?: Db, schema?: Schema }): Promise<SeedResult> {
   const hub = opts?.db && opts?.schema ? null : await import('@nuxthub/db')
@@ -286,6 +333,7 @@ export async function seedDatabase(opts?: { db?: Db, schema?: Schema }): Promise
 
   const languages = await seedLanguages(db, schema)
   const entities = await seedEntities(db, schema)
+  const users = await seedAdmin(db, schema)
   const articles = await seedArticles(db, schema)
 
   return {
@@ -294,5 +342,6 @@ export async function seedDatabase(opts?: { db?: Db, schema?: Schema }): Promise
     articles: articles.created,
     skippedArticles: articles.skipped,
     syncedSlugs: articles.syncedSlugs,
+    users,
   }
 }

@@ -90,32 +90,35 @@ async function save() {
 
 <template>
   <div class="flex flex-col gap-4">
-    <FormInput
-      v-model="form.name"
-      :label="t('dashboard.authors.fieldName')"
-      name="name"
-      required
-      v-bind="validation.fieldUi('name')"
-      @blur="validation.validateField('name', true)"
-    />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <FormInput
+        v-model="form.name"
+        class="sm:col-span-2"
+        :label="t('dashboard.authors.fieldName')"
+        name="name"
+        required
+        v-bind="validation.fieldUi('name')"
+        @blur="validation.validateField('name', true)"
+      />
 
-    <FormInput
-      v-model="form.email"
-      :label="t('dashboard.authors.fieldEmail')"
-      name="email"
-      type="email"
-      v-bind="validation.fieldUi('email')"
-      @blur="validation.blur('email')"
-    />
+      <FormInput
+        v-model="form.email"
+        :label="t('dashboard.authors.fieldEmail')"
+        name="email"
+        type="email"
+        v-bind="validation.fieldUi('email')"
+        @blur="validation.blur('email')"
+      />
 
-    <FormInput
-      v-model="form.phone"
-      :label="t('dashboard.authors.fieldPhone')"
-      name="phone"
-      type="tel"
-      v-bind="validation.fieldUi('phone')"
-      @blur="validation.blur('phone')"
-    />
+      <FormInput
+        v-model="form.phone"
+        :label="t('dashboard.authors.fieldPhone')"
+        name="phone"
+        type="tel"
+        v-bind="validation.fieldUi('phone')"
+        @blur="validation.blur('phone')"
+      />
+    </div>
 
     <div class="flex justify-end gap-2 border-t border-default pt-4">
       <UButton
