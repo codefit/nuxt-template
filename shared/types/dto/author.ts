@@ -11,7 +11,9 @@ export interface AuthorFormInput {
   phone?: string | null
 }
 
-export type AuthorDetail = AuthorOption & {
+export type AuthorListItem = AuthorOption & {
   createdAt: string
   updatedAt: string
 }
+
+export type AuthorDetail = AuthorListItem

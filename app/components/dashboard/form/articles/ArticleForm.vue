@@ -256,7 +256,7 @@ function onSlugInput() {
 }
 
 async function loadAuthors() {
-  authors.value = await $fetch<AuthorOption[]>('/api/authors')
+  authors.value = await $fetch<AuthorOption[]>('/api/authors/options')
 }
 
 async function openCreateAuthor() {

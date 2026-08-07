@@ -57,6 +57,38 @@ const pageUrl = computed(() => {
 const imageUrl = computed(() =>
   article.value?.image ? absolute(article.value.image) : '',
 )
+
+/** Cover first, then ordered gallery — hero swipe when more than one. */
+const slides = computed(() => {
+  const item = article.value
+  if (!item) {
+    return []
+  }
+
+  const result: {
+    src: string
+    alt: string
+    collection: typeof MediaCollection.IMAGE | typeof MediaCollection.GALLERY
+  }[] = []
+
+  if (item.image) {
+    result.push({
+      src: item.image,
+      alt: item.title,
+      collection: MediaCollection.IMAGE,
+    })
+  }
+
+  for (const src of item.gallery ?? []) {
+    result.push({
+      src,
+      alt: item.title,
+      collection: MediaCollection.GALLERY,
+    })
+  }
+
+  return result
+})
 </script>
 
 <template>
@@ -109,16 +141,14 @@ const imageUrl = computed(() =>
             </span>
           </p>
 
-          <MediaImg
-            v-if="article.image"
+          <MediaSwiper
+            v-if="slides.length"
             class="mb-8 overflow-hidden rounded-2xl"
-            :src="article.image"
+            :items="slides"
             :entity="Entity.ARTICLE"
-            :collection="MediaCollection.IMAGE"
             :role="ImageRole.DETAIL"
             :surface="ImageSurface.CLIENT"
-            :alt="article.title"
-            loading="eager"
+            :autoplay="slides.length > 1"
             img-class="aspect-[16/9] w-full object-cover"
           />
           <div

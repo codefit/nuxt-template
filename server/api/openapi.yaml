@@ -99,6 +99,10 @@ components:
         - type: object
           properties:
             body: { type: string }
+            gallery:
+              type: array
+              items: { type: string }
+              description: Ordered gallery image URLs (excludes cover `image`)
             slugMap:
               type: object
               additionalProperties: { type: string }
@@ -561,12 +565,15 @@ paths:
   /api/authors:
     get:
       tags: [authors]
-      summary: List / search authors
+      summary: Paginated admin list
       parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
       responses:
         '200':
-          description: OK
+          description: ResourceListResponse
     post:
       tags: [authors]
       summary: Create author
@@ -578,6 +585,58 @@ paths:
       responses:
         '200':
           description: Created
+
+  /api/authors/options:
+    get:
+      tags: [authors]
+      summary: Autocomplete options
+      parameters:
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: AuthorOption[]
+
+  /api/authors/{id}:
+    get:
+      tags: [authors]
+      summary: Author detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: AuthorDetail
+    patch:
+      tags: [authors]
+      summary: Update author
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AuthorFormInput' }
+      responses:
+        '200':
+          description: Updated
+
+  /api/authors/bulk:
+    post:
+      tags: [authors]
+      summary: Bulk export / soft-delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BulkBody' }
+      responses:
+        '200':
+          description: OK
 
   /api/media:
     get:

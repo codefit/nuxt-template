@@ -1,54 +1,10 @@
-import { and, asc, eq, isNull, like, or } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import type { AuthorDetail, AuthorFormInput, AuthorOption } from '#shared/types/dto/author'
+import type { AuthorDetail, AuthorFormInput } from '#shared/types/dto/author'
 import { formatEmail, formatPhone } from '#shared/utils/format'
 import { isValidEmail, isValidPhone } from '#shared/utils/validate'
 
 function stamp(): Date {
   return new Date()
-}
-
-function toOption(row: {
-  id: number
-  name: string
-  email: string | null
-  phone: string | null
-}): AuthorOption {
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone: row.phone,
-  }
-}
-
-export async function listAuthors(q?: string): Promise<AuthorOption[]> {
-  const where = [isNull(schema.authors.deletedAt)]
-
-  const term = q?.trim()
-  if (term) {
-    const pattern = `%${term}%`
-    where.push(
-      or(
-        like(schema.authors.name, pattern),
-        like(schema.authors.email, pattern),
-      )!,
-    )
-  }
-
-  const rows = await db
-    .select({
-      id: schema.authors.id,
-      name: schema.authors.name,
-      email: schema.authors.email,
-      phone: schema.authors.phone,
-    })
-    .from(schema.authors)
-    .where(and(...where))
-    .orderBy(asc(schema.authors.name))
-    .limit(50)
-
-  return rows.map(toOption)
 }
 
 export function normalizeAuthorInput(input: AuthorFormInput): AuthorFormInput {
@@ -93,27 +49,6 @@ export async function createAuthor(input: AuthorFormInput): Promise<AuthorDetail
 
   if (!row) {
     throw createError({ statusCode: 500, message: 'Author insert failed.' })
-  }
-
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone: row.phone,
-    createdAt: row.createdAt.toISOString(),
-    updatedAt: row.updatedAt.toISOString(),
-  }
-}
-
-export async function getAuthorById(id: number): Promise<AuthorDetail | null> {
-  const [row] = await db
-    .select()
-    .from(schema.authors)
-    .where(and(eq(schema.authors.id, id), isNull(schema.authors.deletedAt)))
-    .limit(1)
-
-  if (!row) {
-    return null
   }
 
   return {

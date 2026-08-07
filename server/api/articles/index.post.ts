@@ -1,4 +1,5 @@
 import { createArticle } from '~~/server/services/articles/create'
+import { getAuthorById } from '~~/server/services/authors/getById'
 import { articleFormSchema } from '~~/server/services/articles/schema'
 import { apiError } from '~~/server/utils/apiI18n'
 
@@ -13,6 +14,13 @@ export default defineEventHandler(async (event) => {
     }
     return parsed.data
   })
+
+  if (body.authorId) {
+    const author = await getAuthorById(body.authorId)
+    if (!author) {
+      apiError(event, 400, 'api.errors.authorNotFound')
+    }
+  }
 
   try {
     return await createArticle(body)

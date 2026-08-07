@@ -22,6 +22,8 @@ export interface ArticleDetail extends Omit<ArticleListItem, 'publishedAt'> {
   body: string
   publishedAt: string
   slugMap: LocaleSlugMap
+  /** Ordered gallery URLs (GALLERY collection), excluding the cover `image`. */
+  gallery: string[]
 }
 
 /** Per-locale fields stored in texts / slugs / long_texts / metas. */

@@ -205,7 +205,7 @@ Typy: `ResourceBulkBody` · `ResourceBulkResponse` · `TableSelection`.
 | Method | Path | Auth | Notes |
 |--------|------|------|-------|
 | GET | `/api/articles` | public | list + filters |
-| GET | `/api/articles/:slug` | public | detail + `slugMap` · `?with=author` |
+| GET | `/api/articles/:slug` | public | detail + `slugMap` + `gallery` · `?with=author` |
 | GET | `/api/articles/id/:id` | session | admin detail (všechny locale) |
 | POST | `/api/articles` | session | `ArticleFormInput` |
 | PATCH | `/api/articles/id/:id` | session | `ArticleFormInput` |
@@ -273,8 +273,12 @@ Media nepatří do article body — `/api/media`.
 
 | Method | Path | Auth |
 |--------|------|------|
-| GET | `/api/authors` | session |
+| GET | `/api/authors` | session · paginated `ResourceListResponse` |
+| GET | `/api/authors/options` | session · autocomplete `AuthorOption[]` |
+| GET | `/api/authors/:id` | session |
 | POST | `/api/authors` | session · `AuthorFormInput` |
+| PATCH | `/api/authors/:id` | session · `AuthorFormInput` |
+| POST | `/api/authors/bulk` | session · export / soft-delete |
 
 ### Media
 

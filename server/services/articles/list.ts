@@ -16,6 +16,9 @@ import { Entity } from '#shared/types/dto/entity'
 import { requireLanguageId } from '~~/server/services/cache/languages'
 import { getEntitySlugMap } from '~~/server/services/i18n/slugMap'
 import { articleCoverUrlMap } from '~~/server/services/articles/covers'
+import { listMedia } from '~~/server/services/media/list'
+import { MediaCollection } from '#shared/types/media/collection'
+import { mediaUrl } from '#shared/utils/mediaUrl'
 import {
   listResponse,
   resolveListPagination,
@@ -167,7 +170,14 @@ export async function getArticleBySlug(
     body = bodyRow?.content ?? ''
   }
 
-  const covers = await articleCoverUrlMap([row.id], 'detail')
+  const [covers, galleryRows] = await Promise.all([
+    articleCoverUrlMap([row.id], 'detail'),
+    listMedia(Entity.ARTICLE, row.id, MediaCollection.GALLERY),
+  ])
+
+  const gallery = galleryRows
+    .map(item => mediaUrl(item))
+    .filter((url): url is string => Boolean(url))
 
   const detail: ArticleDetail = {
     id: row.id,
@@ -176,6 +186,7 @@ export async function getArticleBySlug(
     description: row.description ?? '',
     body,
     image: covers.get(row.id),
+    gallery,
     isPublished: row.isPublished === 1,
     publishedAt: publishedIso(row.publishedAt, row.createdAt),
     modifiedAt: toIso(row.updatedAt),

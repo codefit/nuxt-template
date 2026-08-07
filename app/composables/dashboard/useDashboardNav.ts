@@ -50,6 +50,12 @@ export function useDashboardNav() {
         active: name.value.startsWith('dashboard-articles'),
       },
       {
+        to: localePath('dashboard-authors'),
+        label: t('dashboard.nav.authors'),
+        icon: 'i-lucide-user-pen',
+        active: name.value.startsWith('dashboard-authors'),
+      },
+      {
         to: '#',
         label: t('dashboard.nav.media'),
         icon: 'i-lucide-image',

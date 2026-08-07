@@ -90,7 +90,8 @@ echo.
 exit /b 0
 
 :authors
-curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/authors"
+curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/authors?page=1&limit=25"
+curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/authors/options"
 echo.
 exit /b 0
 

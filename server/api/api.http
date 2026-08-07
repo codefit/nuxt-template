@@ -186,7 +186,13 @@ Content-Type: application/json
 }
 
 ### Authors — List (session)
-GET {{domain}}/api/authors?q=
+GET {{domain}}/api/authors?page=1&limit=25&q=
+
+### Authors — Options / autocomplete (session)
+GET {{domain}}/api/authors/options?q=
+
+### Authors — Detail (session)
+GET {{domain}}/api/authors/{{authorId}}
 
 ### Authors — Create (session)
 POST {{domain}}/api/authors
@@ -196,6 +202,29 @@ Content-Type: application/json
   "name": "Jan Novák",
   "email": "jan@example.com",
   "phone": null
+}
+
+### Authors — Update (session)
+PATCH {{domain}}/api/authors/{{authorId}}
+Content-Type: application/json
+
+{
+  "name": "Jan Novák",
+  "email": "jan@example.com",
+  "phone": "+420123456789"
+}
+
+### Authors — Bulk (session)
+POST {{domain}}/api/authors/bulk
+Content-Type: application/json
+
+{
+  "action": "delete",
+  "filters": {},
+  "selection": {
+    "mode": "include",
+    "ids": ["1"]
+  }
 }
 
 ### Media — List grouped (session)
