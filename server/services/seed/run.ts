@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { ENTITY_KEYS } from '#shared/types/dto/entity'
+import { Entity, ENTITY_KEYS } from '#shared/types/dto/entity'
 import { SEED_ARTICLES, SEED_LANGUAGES, type SeedLocale } from '~~/server/services/seed/data'
 
 type Hub = typeof import('@nuxthub/db')
@@ -179,11 +179,11 @@ async function seedArticles(
   const [entity] = await db
     .select()
     .from(schema.entities)
-    .where(eq(schema.entities.key, 'article'))
+    .where(eq(schema.entities.key, Entity.ARTICLE))
     .limit(1)
 
   if (!entity) {
-    throw new Error('Entity "article" is missing.')
+    throw new Error(`Entity "${Entity.ARTICLE}" is missing.`)
   }
 
   await clearArticles(db, schema, entity.id)

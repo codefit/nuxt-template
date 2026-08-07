@@ -1,5 +1,5 @@
 import type { LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
-import type { PendingMedia } from '#shared/types/ui/form'
+import type { EntityMediaMap } from '#shared/types/media/dto'
 
 /** Shared article list row (public cards + dashboard table). */
 export interface ArticleListItem {
@@ -45,9 +45,8 @@ export interface ArticleSharedInput {
   publishedAt: string | null
 }
 
-/** Create / update body from dashboard form. */
+/** Create / update body from dashboard form (binary media uploaded separately). */
 export interface ArticleFormInput extends ArticleSharedInput {
-  media?: PendingMedia[]
   translations: ArticleTranslations
 }
 
@@ -59,4 +58,5 @@ export interface ArticleAdminDetail extends ArticleSharedInput {
   deletedAt: string | null
   archivedAt: string | null
   translations: ArticleTranslations
+  media: EntityMediaMap
 }

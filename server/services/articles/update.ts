@@ -1,6 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { ArticleAdminDetail } from '#shared/types/dto/article'
+import { Entity } from '#shared/types/dto/entity'
 import { localeFilled } from '#shared/utils/translations'
 import {
   assertArticleTranslations,
@@ -72,7 +73,7 @@ export async function updateArticle(
   await syncText(row.excerptId, excerptRows)
   await syncSlug(row.slugId, slugRows)
 
-  const entityId = await requireEntityId('article')
+  const entityId = await requireEntityId(Entity.ARTICLE)
   const [meta] = await db
     .select()
     .from(schema.metas)
@@ -121,8 +122,6 @@ export async function updateArticle(
       updatedAt: now,
     })
     .where(eq(schema.articles.id, id))
-
-  void input.media
 
   const detail = await getArticleById(id)
   if (!detail) {

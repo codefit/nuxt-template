@@ -3,6 +3,8 @@ import { db, schema } from '@nuxthub/db'
 import type { ArticleListItem } from '#shared/types/dto/article'
 import type { BulkResult, TableFilters, TableSelection } from '#shared/types/ui/data-table'
 import type { ResourceBulkResponse } from '#shared/types/ui/resource'
+import { Entity } from '#shared/types/dto/entity'
+import { deleteEntityMedia } from '~~/server/services/media/remove'
 import { runResourceBulk } from '~~/server/utils/bulkRun'
 import { resolveArticleSelection } from './selection'
 
@@ -131,6 +133,11 @@ async function applyMutation(
       updatedAt: now,
     })
     .where(where)
+
+  // Soft-delete is terminal in UI — drop blobs so MinIO/R2 stays clean.
+  for (const id of ids) {
+    await deleteEntityMedia(Entity.ARTICLE, id)
+  }
 }
 
 /**

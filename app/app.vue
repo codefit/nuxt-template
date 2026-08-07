@@ -20,26 +20,6 @@ useHead(() => ({
 }))
 
 useBrandLd()
-
-/**
- * Enable page transition only after hydration.
- * `out-in` during SSR/hydrate can hit Vue Transition with a null vnode.
- */
-const ready = ref(false)
-onMounted(() => {
-  ready.value = true
-})
-
-const pageTransition = computed(() => {
-  if (!ready.value) {
-    return false
-  }
-
-  return {
-    name: 'page',
-    mode: 'out-in' as const,
-  }
-})
 </script>
 
 <template>
@@ -52,7 +32,7 @@ const pageTransition = computed(() => {
     />
     <NuxtRouteAnnouncer />
     <NuxtLayout>
-      <NuxtPage :transition="pageTransition" />
+      <NuxtPage />
     </NuxtLayout>
   </UApp>
 </template>

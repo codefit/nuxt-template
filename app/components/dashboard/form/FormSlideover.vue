@@ -42,6 +42,21 @@ const heading = computed(() => {
   return t('dashboard.form.createTitle')
 })
 
+/**
+ * Nuxt UI Slideover defaults `side:right` → `max-w-md` (~28rem).
+ * Must clear that or width overrides never win.
+ * `inset` adds floating edge offset; tablet = full, lg+ = half viewport.
+ */
+const contentClass = computed(() =>
+  props.ui?.content
+  ?? [
+    'max-w-none',
+    'w-[calc(100%-2rem)]',
+    'lg:w-[calc(50%-1rem)]',
+    'rounded-2xl shadow-xl overflow-hidden',
+  ].join(' '),
+)
+
 onMounted(async () => {
   try {
     formComponent.value = await resolveForm(props.type)
@@ -74,18 +89,23 @@ function onSubmit(payload: unknown) {
 
 <template>
   <USlideover
+    inset
     :title="heading"
     :description="description || undefined"
     :overlay="depth === 0"
     :ui="{
-      content: ui?.content ?? 'w-full max-w-none lg:w-1/2',
-      body: 'flex flex-col gap-4',
+      content: contentClass,
+      header: 'shrink-0 border-b border-default',
+      // Default padding for forms without side tabs (languages, authors, …).
+      // Tabbed forms cancel this via FormTabShell negative margins.
+      body: 'flex min-h-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6',
     }"
     @close="dismiss"
   >
     <template #body>
       <UAlert
         v-if="loadError"
+        class="m-4"
         color="error"
         variant="subtle"
         :title="loadError"
@@ -93,7 +113,7 @@ function onSubmit(payload: unknown) {
 
       <div
         v-else-if="!formComponent"
-        class="flex justify-center py-12"
+        class="flex flex-1 justify-center py-12"
       >
         <UIcon
           name="i-lucide-loader-circle"
@@ -104,6 +124,7 @@ function onSubmit(payload: unknown) {
       <component
         :is="formComponent"
         v-else
+        class="flex min-h-0 flex-1 flex-col"
         :mode="mode"
         :id="id"
         :initial="initial"

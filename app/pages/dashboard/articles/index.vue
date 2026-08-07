@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { ArticleListItem } from '#shared/types/dto/article'
+import { Entity } from '#shared/types/dto/entity'
+import { MediaCollection } from '#shared/types/media/collection'
+import { ImageRole } from '#shared/types/media/imageRole'
+import { ImageSurface } from '#shared/types/media/imageSurface'
 import type {
   BulkAction,
   TableFilter,
@@ -52,6 +56,11 @@ const columns: TableColumn<ArticleListItem>[] = [
     accessorKey: 'id',
     header: '#',
     cell: ({ row }) => `#${row.getValue('id')}`,
+  },
+  {
+    accessorKey: 'image',
+    header: t('dashboard.articles.colImage'),
+    enableSorting: false,
   },
   {
     accessorKey: 'title',
@@ -321,6 +330,28 @@ function rowActions(row: TableRow<ArticleListItem>) {
               :disabled="formBusy"
               @click="openCreate"
             />
+          </template>
+          <template #image-cell="{ row }">
+            <MediaImg
+              v-if="row.original.image"
+              :src="row.original.image"
+              :entity="Entity.ARTICLE"
+              :collection="MediaCollection.PREVIEW"
+              :role="ImageRole.PREVIEW"
+              :surface="ImageSurface.DASHBOARD"
+              :alt="row.original.title"
+              img-class="size-full rounded object-cover"
+              class="block size-[4.25rem] overflow-hidden rounded bg-elevated"
+            />
+            <div
+              v-else
+              class="flex size-[4.25rem] items-center justify-center rounded bg-elevated text-muted"
+            >
+              <UIcon
+                name="i-lucide-image"
+                class="size-5"
+              />
+            </div>
           </template>
           <template #title-cell="{ row }">
             <NuxtLink

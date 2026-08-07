@@ -11,21 +11,11 @@ const localeSchema = z.object({
   metaKeywords: z.string().optional().default(''),
 })
 
-const mediaSchema = z.object({
-  id: z.string(),
-  field: z.string(),
-  name: z.string(),
-  mime: z.string(),
-  size: z.number().nonnegative(),
-  previewUrl: z.string().optional(),
-})
-
 export const articleFormSchema = z.object({
   isPublished: z.boolean(),
   publishedAt: z.string().nullable(),
   authorId: z.number().int().positive().nullable(),
   translations: z.record(z.string(), localeSchema),
-  media: z.array(mediaSchema).optional(),
 })
 
 export type ArticleFormParsed = z.infer<typeof articleFormSchema>

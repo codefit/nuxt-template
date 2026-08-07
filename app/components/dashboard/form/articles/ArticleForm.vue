@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type {
   ArticleAdminDetail,
   ArticleFormInput,
@@ -6,6 +7,9 @@ import type {
   ArticleTranslations,
 } from '#shared/types/dto/article'
 import type { AuthorDetail, AuthorOption } from '#shared/types/dto/author'
+import { Entity } from '#shared/types/dto/entity'
+import { MediaCollection } from '#shared/types/media/collection'
+import type { PendingMediaFile } from '#shared/types/media/dto'
 import type { FormMode } from '#shared/types/ui/form'
 import type { LanguageOption } from '#shared/types/dto/language'
 import { slugify } from '#shared/utils/slug'
@@ -15,6 +19,13 @@ import {
   localeFilled,
   pruneTranslations,
 } from '#shared/utils/translations'
+import type { FormTabItem } from '#shared/types/ui/form'
+import {
+  pendingFromMedia,
+  removePending,
+  saveGalleryOrder,
+  uploadPending,
+} from '~/composables/form/useMediaUpload'
 
 interface Props {
   id?: number | string
@@ -36,6 +47,7 @@ const { open: openForm } = useFormSlideover()
 
 const loading = ref(true)
 const saving = ref(false)
+const orderSaving = ref(false)
 const loadError = ref('')
 const languages = ref<LanguageOption[]>([])
 const authors = ref<AuthorOption[]>([])
@@ -43,18 +55,41 @@ const authorId = ref<string | null | undefined>()
 const activeLang = ref('')
 const defaultCode = ref('cs')
 const slugManual = ref<Record<string, boolean>>({})
+const activeTab = ref('main')
+
+const detail = ref<PendingMediaFile | null>(null)
+const detailReplaceId = ref<number | null>(null)
+const preview = ref<PendingMediaFile | null>(null)
+const previewReplaceId = ref<number | null>(null)
+const gallery = ref<PendingMediaFile[]>([])
 
 const form = reactive<{
   isPublished: boolean
   publishedAt: string | null
   translations: ArticleTranslations
-  media: ArticleFormInput['media']
 }>({
   isPublished: false,
   publishedAt: null,
   translations: {},
-  media: [],
 })
+
+const tabs = computed<FormTabItem[]>(() => [
+  {
+    id: 'main',
+    icon: 'i-lucide-file-text',
+    label: t('dashboard.form.tabMain'),
+  },
+  {
+    id: 'preview',
+    icon: 'i-lucide-image',
+    label: t('dashboard.form.tabPreview'),
+  },
+  {
+    id: 'gallery',
+    icon: 'i-lucide-images',
+    label: t('dashboard.form.tabGallery'),
+  },
+])
 
 const authorOptions = computed(() =>
   authors.value.map(author => ({
@@ -256,6 +291,60 @@ async function loadLanguages() {
   }
 }
 
+function applyMedia(detailRow: ArticleAdminDetail) {
+  detail.value = detailRow.media.image ? pendingFromMedia(detailRow.media.image) : null
+  detailReplaceId.value = null
+  preview.value = detailRow.media.preview ? pendingFromMedia(detailRow.media.preview) : null
+  previewReplaceId.value = null
+  gallery.value = detailRow.media.gallery.map(pendingFromMedia)
+}
+
+function clearSlotMedia() {
+  detail.value = null
+  detailReplaceId.value = null
+  preview.value = null
+  previewReplaceId.value = null
+  gallery.value = []
+}
+
+function pendingRemoval(
+  slot: Ref<PendingMediaFile | null>,
+  replaceId: Ref<number | null>,
+  collection: typeof MediaCollection.IMAGE | typeof MediaCollection.PREVIEW,
+): PendingMediaFile[] {
+  if (replaceId.value && !slot.value?.file) {
+    return [{
+      id: `replace-${replaceId.value}`,
+      collection,
+      name: '',
+      mime: '',
+      size: 0,
+      rank: 0,
+      mediaId: replaceId.value,
+      remove: true,
+    }]
+  }
+  if (slot.value?.remove && slot.value.mediaId) {
+    return [slot.value]
+  }
+  return []
+}
+
+async function syncSlot(
+  modelId: number,
+  slot: Ref<PendingMediaFile | null>,
+  collection: typeof MediaCollection.IMAGE | typeof MediaCollection.PREVIEW,
+) {
+  if (slot.value?.file) {
+    await uploadPending({
+      entity: Entity.ARTICLE,
+      modelId,
+      collection,
+      items: [slot.value],
+    })
+  }
+}
+
 async function loadDetail() {
   if (!props.id || props.mode === 'create') {
     return
@@ -283,6 +372,67 @@ async function loadDetail() {
         slugManual.value[code] = false
       }
     }
+    clearSlotMedia()
+  }
+  else {
+    applyMedia(detail)
+  }
+}
+
+async function syncMedia(modelId: number) {
+  const removeList: PendingMediaFile[] = [
+    ...gallery.value.filter(item => item.remove && item.mediaId),
+    ...pendingRemoval(detail, detailReplaceId, MediaCollection.IMAGE),
+    ...pendingRemoval(preview, previewReplaceId, MediaCollection.PREVIEW),
+  ]
+
+  await removePending(removeList)
+  await syncSlot(modelId, detail, MediaCollection.IMAGE)
+  await syncSlot(modelId, preview, MediaCollection.PREVIEW)
+
+  const galleryFresh = gallery.value.filter(item => item.file && !item.remove)
+  if (galleryFresh.length) {
+    await uploadPending({
+      entity: Entity.ARTICLE,
+      modelId,
+      collection: MediaCollection.GALLERY,
+      items: galleryFresh,
+    })
+  }
+}
+
+async function onSaveOrder() {
+  if (!props.id || props.mode !== 'edit' || orderSaving.value) {
+    return
+  }
+
+  const orderedIds = gallery.value
+    .filter(item => item.mediaId && !item.remove)
+    .map(item => item.mediaId!)
+
+  if (orderedIds.length === 0) {
+    return
+  }
+
+  orderSaving.value = true
+  try {
+    await saveGalleryOrder({
+      entity: Entity.ARTICLE,
+      modelId: Number(props.id),
+      collection: MediaCollection.GALLERY,
+      orderedIds,
+    })
+    toast.add({ title: t('dashboard.form.orderSaved'), color: 'success' })
+  }
+  catch (error: unknown) {
+    const err = error as { data?: { message?: string }, message?: string }
+    toast.add({
+      title: err?.data?.message || err?.message || t('dashboard.form.saveFailed'),
+      color: 'error',
+    })
+  }
+  finally {
+    orderSaving.value = false
   }
 }
 
@@ -302,9 +452,6 @@ onMounted(async () => {
       if (props.initial.translations) {
         Object.assign(form.translations, props.initial.translations)
       }
-      if (props.initial.media) {
-        form.media = props.initial.media
-      }
     }
     await loadDetail()
   }
@@ -322,6 +469,7 @@ async function save() {
   }
 
   if (!validateAllLocales()) {
+    activeTab.value = 'main'
     toast.add({
       title: t('dashboard.form.validationFailed'),
       color: 'error',
@@ -336,7 +484,6 @@ async function save() {
       publishedAt: form.publishedAt,
       authorId: authorId.value ? Number(authorId.value) : null,
       translations: pruneTranslations(form.translations, defaultCode.value),
-      media: form.media,
     }
 
     let saved: ArticleAdminDetail
@@ -345,6 +492,8 @@ async function save() {
         method: 'PATCH',
         body,
       })
+      await syncMedia(saved.id)
+      saved = await $fetch<ArticleAdminDetail>(`/api/articles/id/${saved.id}`)
       toast.add({ title: t('dashboard.articles.toastUpdated'), color: 'success' })
     }
     else {
@@ -352,6 +501,8 @@ async function save() {
         method: 'POST',
         body,
       })
+      await syncMedia(saved.id)
+      saved = await $fetch<ArticleAdminDetail>(`/api/articles/id/${saved.id}`)
       toast.add({ title: t('dashboard.articles.toastCreated'), color: 'success' })
     }
 
@@ -371,9 +522,10 @@ async function save() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex min-h-0 flex-1 flex-col">
     <UAlert
       v-if="loadError"
+      class="m-4"
       color="error"
       variant="subtle"
       :title="loadError"
@@ -381,7 +533,7 @@ async function save() {
 
     <div
       v-else-if="loading"
-      class="flex justify-center py-10"
+      class="flex flex-1 justify-center py-10"
     >
       <UIcon
         name="i-lucide-loader-circle"
@@ -390,157 +542,205 @@ async function save() {
     </div>
 
     <template v-else>
-      <section class="flex flex-col gap-4">
-        <h3 class="text-sm font-medium text-muted">
-          {{ t('dashboard.form.sharedSection') }}
-        </h3>
+      <FormTabShell
+        v-model="activeTab"
+        class="min-h-0 flex-1"
+        :tabs="tabs"
+      >
+        <template #main>
+          <section class="flex flex-col gap-5">
+            <h3 class="text-sm font-medium text-muted">
+              {{ t('dashboard.form.sharedSection') }}
+            </h3>
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,14rem)_1fr] md:items-stretch">
-          <FormMediaDrop
-            v-model="form.media"
-            :label="t('dashboard.form.mediaLabel')"
-            name="media"
-            field="cover"
-            square
-          />
-
-          <div class="flex min-h-0 flex-col gap-4">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormInput
-                v-model="publishedAtDate"
-                type="date"
-                :label="t('dashboard.articles.fieldPublishedAt')"
-                name="publishedAt"
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,14rem)_1fr] md:items-start md:gap-6">
+              <FormMediaSingle
+                v-model="detail"
+                v-model:replace-id="detailReplaceId"
+                :label="t('dashboard.form.detailLabel')"
+                name="detail"
+                :entity="Entity.ARTICLE"
+                :collection="MediaCollection.IMAGE"
+                :hint="t('dashboard.form.detailHint')"
               />
-              <FormAutocomplete
-                v-model="authorId"
-                :label="t('dashboard.articles.fieldAuthor')"
-                name="authorId"
-                :options="authorOptions"
-                :placeholder="t('dashboard.articles.authorHint')"
-                :create-label="t('dashboard.authors.addAuthor')"
-                @create="openCreateAuthor"
+
+              <div class="flex min-h-0 flex-col gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormInput
+                    v-model="publishedAtDate"
+                    type="date"
+                    :label="t('dashboard.articles.fieldPublishedAt')"
+                    name="publishedAt"
+                  />
+                  <FormAutocomplete
+                    v-model="authorId"
+                    :label="t('dashboard.articles.fieldAuthor')"
+                    name="authorId"
+                    :options="authorOptions"
+                    :placeholder="t('dashboard.articles.authorHint')"
+                    :create-label="t('dashboard.authors.addAuthor')"
+                    @create="openCreateAuthor"
+                  />
+                </div>
+                <FormCheckbox
+                  v-model="form.isPublished"
+                  class="mt-auto"
+                  :label="t('dashboard.articles.fieldPublished')"
+                  name="isPublished"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section class="flex flex-col gap-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h3 class="text-sm font-medium text-muted">
+                {{ t('dashboard.form.translationsSection') }}
+              </h3>
+              <FormLangTabs
+                v-model="activeLang"
+                :languages="languages"
               />
             </div>
-            <FormCheckbox
-              v-model="form.isPublished"
-              class="mt-auto"
-              :label="t('dashboard.articles.fieldPublished')"
-              name="isPublished"
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormInput
+                v-model="current.title"
+                :label="t('dashboard.articles.fieldTitle')"
+                name="title"
+                required
+                :locale="activeLocale"
+                v-bind="fieldState('title')"
+                @blur="onTitleBlur"
+              />
+
+              <FormInput
+                v-model="current.slug"
+                :label="t('dashboard.articles.fieldSlug')"
+                name="slug"
+                required
+                :locale="activeLocale"
+                v-bind="fieldState('slug')"
+                @blur="validation.states[fieldPath('slug')] = {
+                  error: current.slug.trim() ? null : t('dashboard.form.required'),
+                  valid: current.slug.trim() !== '',
+                  touched: true,
+                }"
+                @update:model-value="onSlugInput"
+              />
+
+              <FormTextarea
+                v-model="current.excerpt"
+                class="sm:col-span-2"
+                :label="t('dashboard.articles.fieldExcerpt')"
+                name="excerpt"
+                required
+                :rows="3"
+                :locale="activeLocale"
+                v-bind="fieldState('excerpt')"
+                @blur="validation.states[fieldPath('excerpt')] = {
+                  error: current.excerpt.trim() ? null : t('dashboard.form.required'),
+                  valid: current.excerpt.trim() !== '',
+                  touched: true,
+                }"
+              />
+
+              <FormEditor
+                v-model="current.body"
+                class="sm:col-span-2"
+                :label="t('dashboard.articles.fieldBody')"
+                name="body"
+                required
+                :locale="activeLocale"
+                v-bind="fieldState('body')"
+                @blur="validation.states[fieldPath('body')] = {
+                  error: current.body.trim() ? null : t('dashboard.form.required'),
+                  valid: current.body.trim() !== '',
+                  touched: true,
+                }"
+              />
+
+              <FormInput
+                v-model="current.metaTitle"
+                :label="t('dashboard.articles.fieldMetaTitle')"
+                name="metaTitle"
+                required
+                :locale="activeLocale"
+                v-bind="fieldState('metaTitle')"
+                @blur="validation.states[fieldPath('metaTitle')] = {
+                  error: current.metaTitle.trim() ? null : t('dashboard.form.required'),
+                  valid: current.metaTitle.trim() !== '',
+                  touched: true,
+                }"
+              />
+
+              <FormInput
+                v-model="current.metaKeywords"
+                :label="t('dashboard.articles.fieldMetaKeywords')"
+                name="metaKeywords"
+                :locale="activeLocale"
+                v-bind="fieldState('metaKeywords')"
+              />
+
+              <FormTextarea
+                v-model="current.metaDescription"
+                class="sm:col-span-2"
+                :label="t('dashboard.articles.fieldMetaDescription')"
+                name="metaDescription"
+                required
+                :rows="2"
+                :locale="activeLocale"
+                v-bind="fieldState('metaDescription')"
+                @blur="validation.states[fieldPath('metaDescription')] = {
+                  error: current.metaDescription.trim() ? null : t('dashboard.form.required'),
+                  valid: current.metaDescription.trim() !== '',
+                  touched: true,
+                }"
+              />
+            </div>
+          </section>
+        </template>
+
+        <template #preview>
+          <section class="flex flex-col gap-5">
+            <div class="flex flex-col gap-1">
+              <h3 class="text-sm font-medium text-muted">
+                {{ t('dashboard.form.previewLabel') }}
+              </h3>
+              <p class="text-sm text-muted">
+                {{ t('dashboard.form.previewHint') }}
+              </p>
+            </div>
+            <FormMediaSingle
+              v-model="preview"
+              v-model:replace-id="previewReplaceId"
+              name="preview"
+              :entity="Entity.ARTICLE"
+              :collection="MediaCollection.PREVIEW"
             />
-          </div>
-        </div>
-      </section>
+          </section>
+        </template>
 
-      <section class="flex flex-col gap-4">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <h3 class="text-sm font-medium text-muted">
-            {{ t('dashboard.form.translationsSection') }}
-          </h3>
-          <FormLangTabs
-            v-model="activeLang"
-            :languages="languages"
-          />
-        </div>
+        <template #gallery>
+          <section class="flex flex-col gap-5">
+            <h3 class="text-sm font-medium text-muted">
+              {{ t('dashboard.form.gallerySection') }}
+            </h3>
+            <FormMediaGallery
+              v-model="gallery"
+              :label="t('dashboard.form.galleryLabel')"
+              name="gallery"
+              :entity="Entity.ARTICLE"
+              :collection="MediaCollection.GALLERY"
+              :persist-order="mode === 'edit'"
+              :order-pending="orderSaving"
+              @save-order="onSaveOrder"
+            />
+          </section>
+        </template>
+      </FormTabShell>
 
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormInput
-            v-model="current.title"
-            :label="t('dashboard.articles.fieldTitle')"
-            name="title"
-            required
-            :locale="activeLocale"
-            v-bind="fieldState('title')"
-            @blur="onTitleBlur"
-          />
-
-          <FormInput
-            v-model="current.slug"
-            :label="t('dashboard.articles.fieldSlug')"
-            name="slug"
-            required
-            :locale="activeLocale"
-            v-bind="fieldState('slug')"
-            @blur="validation.states[fieldPath('slug')] = {
-              error: current.slug.trim() ? null : t('dashboard.form.required'),
-              valid: current.slug.trim() !== '',
-              touched: true,
-            }"
-            @update:model-value="onSlugInput"
-          />
-
-          <FormTextarea
-            v-model="current.excerpt"
-            class="sm:col-span-2"
-            :label="t('dashboard.articles.fieldExcerpt')"
-            name="excerpt"
-            required
-            :rows="3"
-            :locale="activeLocale"
-            v-bind="fieldState('excerpt')"
-            @blur="validation.states[fieldPath('excerpt')] = {
-              error: current.excerpt.trim() ? null : t('dashboard.form.required'),
-              valid: current.excerpt.trim() !== '',
-              touched: true,
-            }"
-          />
-
-          <FormEditor
-            v-model="current.body"
-            class="sm:col-span-2"
-            :label="t('dashboard.articles.fieldBody')"
-            name="body"
-            required
-            :locale="activeLocale"
-            v-bind="fieldState('body')"
-            @blur="validation.states[fieldPath('body')] = {
-              error: current.body.trim() ? null : t('dashboard.form.required'),
-              valid: current.body.trim() !== '',
-              touched: true,
-            }"
-          />
-
-          <FormInput
-            v-model="current.metaTitle"
-            :label="t('dashboard.articles.fieldMetaTitle')"
-            name="metaTitle"
-            required
-            :locale="activeLocale"
-            v-bind="fieldState('metaTitle')"
-            @blur="validation.states[fieldPath('metaTitle')] = {
-              error: current.metaTitle.trim() ? null : t('dashboard.form.required'),
-              valid: current.metaTitle.trim() !== '',
-              touched: true,
-            }"
-          />
-
-          <FormInput
-            v-model="current.metaKeywords"
-            :label="t('dashboard.articles.fieldMetaKeywords')"
-            name="metaKeywords"
-            :locale="activeLocale"
-            v-bind="fieldState('metaKeywords')"
-          />
-
-          <FormTextarea
-            v-model="current.metaDescription"
-            class="sm:col-span-2"
-            :label="t('dashboard.articles.fieldMetaDescription')"
-            name="metaDescription"
-            required
-            :rows="2"
-            :locale="activeLocale"
-            v-bind="fieldState('metaDescription')"
-            @blur="validation.states[fieldPath('metaDescription')] = {
-              error: current.metaDescription.trim() ? null : t('dashboard.form.required'),
-              valid: current.metaDescription.trim() !== '',
-              touched: true,
-            }"
-          />
-        </div>
-      </section>
-
-      <div class="flex justify-end gap-2 border-t border-default pt-4">
+      <div class="-mx-4 -mb-4 flex shrink-0 justify-end gap-2 border-t border-default px-4 py-3 sm:-mx-6 sm:-mb-6 sm:px-6">
         <UButton
           :label="t('dashboard.form.cancel')"
           color="neutral"

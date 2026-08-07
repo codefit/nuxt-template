@@ -55,9 +55,13 @@ export default defineNuxtConfig({
         'lucide:calendar-range',
         'lucide:plus',
         'lucide:image-plus',
+        'lucide:images',
+        'lucide:image',
         'lucide:upload',
         'lucide:copy',
         'lucide:pencil',
+        'lucide:file-text',
+        'lucide:grip-vertical',
         // Composable-only icons (not found by Vue SFC scan).
         'lucide:layout-dashboard',
         'lucide:languages',
@@ -77,6 +81,38 @@ export default defineNuxtConfig({
       // Railway: DATABASE_URL uses *.railway.internal — reachable at runtime only.
       // SQLite could migrate during build (local file); Postgres cannot.
       applyMigrationsDuringBuild: false,
+    },
+    // Blob: `.data/blob` unless S3_* env is set (MinIO local / R2 / AWS S3).
+    // Same env keys for MinIO → Cloudflare R2 — only endpoint + credentials change.
+    // https://hub.nuxt.com/docs/blob
+    blob: true,
+  },
+  /**
+   * Nuxt Image + Hub Blob:
+   * - Originals live in S3/MinIO/R2, served at `/images/**`
+   * - IPX resizes on the fly (local + Railway) via HTTP alias — so preview/detail
+   *   widths from media config are real file sizes, not just CSS.
+   * - Cloudflare hosting: set NUXT_IMAGE_PROVIDER=cloudflare (no IPX).
+   * @see https://hub.nuxt.com/docs/blob#nuxt-image-integration
+   */
+  image: {
+    provider: process.env.NUXT_IMAGE_PROVIDER || 'ipx',
+    quality: 85,
+    // Allow IPX to fetch blob originals over HTTP (not from public/ FS).
+    domains: [
+      (() => {
+        try {
+          return new URL(
+            (process.env.NUXT_PUBLIC_SITE_URL || site.url).replace(/\/$/, ''),
+          ).host
+        }
+        catch {
+          return 'localhost:3000'
+        }
+      })(),
+    ],
+    alias: {
+      images: `${(process.env.NUXT_PUBLIC_SITE_URL || site.url).replace(/\/$/, '')}/images`,
     },
   },
   colorMode: {
@@ -207,6 +243,8 @@ export default defineNuxtConfig({
     /** Minimum reCAPTCHA v3 score (0–1). Override: NUXT_RECAPTCHA_MIN_SCORE */
     recaptchaMinScore: 0.5,
     session: {
+      // Overridden at runtime by NUXT_SESSION_PASSWORD (min 32 chars in production)
+      password: '',
       maxAge: 60 * 60 * 24 * 7,
     },
     public: {
@@ -220,6 +258,8 @@ export default defineNuxtConfig({
   },
 
   app: {
+    // appear: false (default) — first paint is static; animate only on client navigations
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       title: site.name,
       meta: [
@@ -269,7 +309,8 @@ export default defineNuxtConfig({
     },
   },
   experimental: {
-    viewTransition: true,
+    // Off: conflicts with Vue pageTransition + freezes DOM during async setup (Nuxt docs)
+    viewTransition: false,
   },
   nitro: {
     experimental: {

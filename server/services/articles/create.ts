@@ -7,6 +7,7 @@ import {
 } from '~~/server/services/articles/schema'
 import { getArticleById, requireDefaultCode, resolveUniqueSlugs } from '~~/server/services/articles/getById'
 import { createLongText, createSlug, createText } from '~~/server/services/i18n/content'
+import { Entity } from '#shared/types/dto/entity'
 import { requireEntityId } from '~~/server/services/cache/entities'
 import { getActiveLanguages } from '~~/server/services/cache/languages'
 
@@ -16,7 +17,7 @@ function stamp(): Date {
 
 /**
  * Create article + i18n texts/slugs/long texts + metas.
- * Media is accepted in the payload but not persisted yet.
+ * Binary media is uploaded separately via `/api/media/upload`.
  */
 export async function createArticle(input: ArticleFormParsed): Promise<ArticleAdminDetail> {
   const defaultCode = await requireDefaultCode()
@@ -85,7 +86,7 @@ export async function createArticle(input: ArticleFormParsed): Promise<ArticleAd
     throw createError({ statusCode: 500, message: 'Article insert failed.' })
   }
 
-  const entityId = await requireEntityId('article')
+  const entityId = await requireEntityId(Entity.ARTICLE)
   await db.insert(schema.metas).values({
     entityId,
     modelId: article.id,
@@ -96,9 +97,6 @@ export async function createArticle(input: ArticleFormParsed): Promise<ArticleAd
     createdAt: now,
     updatedAt: now,
   })
-
-  // Media intentionally ignored until upload storage is chosen.
-  void input.media
 
   const detail = await getArticleById(article.id)
   if (!detail) {

@@ -1,0 +1,42 @@
+# Local S3-compatible storage (MinIO) for testing Hub Blob.
+# App / Postgres stay outside Docker — only this service.
+#
+# Start:  npm run minio:up
+# Stop:   npm run minio:down
+# UI:     http://127.0.0.1:9001  (minioadmin / minioadmin)
+#
+# Switch to Cloudflare R2 later: same S3_* env keys, change endpoint + credentials
+# (see .env.example).
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: nuxt-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+  # Creates the default bucket once MinIO is up.
+  minio-init:
+    image: minio/mc:latest
+    container_name: nuxt-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO...';
+      until mc alias set local http://minio:9000 minioadmin minioadmin >/dev/null 2>&1; do
+        sleep 1;
+      done;
+      mc mb -p local/nuxt-media || true;
+      echo 'Bucket nuxt-media ready.';
+      "
+
+volumes:
+  minio_data:

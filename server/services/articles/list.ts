@@ -1,6 +1,5 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
-import { site } from '#shared/config/site'
 import type { ArticleDetail, ArticleListItem } from '#shared/types/dto/article'
 import type { LocaleSlugMap } from '#shared/types/i18n/localeSwitch'
 import type { ResourceListQuery, ResourceListResponse } from '#shared/types/ui/resource'
@@ -13,8 +12,10 @@ import {
   selectArticles,
 } from '~~/server/services/articles/selection'
 import { requireEntityId } from '~~/server/services/cache/entities'
+import { Entity } from '#shared/types/dto/entity'
 import { requireLanguageId } from '~~/server/services/cache/languages'
 import { getEntitySlugMap } from '~~/server/services/i18n/slugMap'
+import { articleCoverUrlMap } from '~~/server/services/articles/covers'
 import {
   listResponse,
   resolveListPagination,
@@ -86,8 +87,8 @@ export async function getArticleBySlug(
   options: { with?: string[] } = {},
 ): Promise<ArticleDetail | null> {
   const languageId = await requireLanguageId(locale)
-  const entityId = await requireEntityId('article')
-  const slugMap = await getEntitySlugMap('article', slug)
+  const entityId = await requireEntityId(Entity.ARTICLE)
+  const slugMap = await getEntitySlugMap(Entity.ARTICLE, slug)
 
   const includeAuthor = options.with?.includes('author') ?? false
 
@@ -166,13 +167,15 @@ export async function getArticleBySlug(
     body = bodyRow?.content ?? ''
   }
 
+  const covers = await articleCoverUrlMap([row.id], 'detail')
+
   const detail: ArticleDetail = {
     id: row.id,
     slug: row.slug,
     title: row.title,
     description: row.description ?? '',
     body,
-    image: site.seo.image,
+    image: covers.get(row.id),
     isPublished: row.isPublished === 1,
     publishedAt: publishedIso(row.publishedAt, row.createdAt),
     modifiedAt: toIso(row.updatedAt),

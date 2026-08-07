@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { ArticleListItem } from '#shared/types/dto/article'
+import { Entity } from '#shared/types/dto/entity'
+import { MediaCollection } from '#shared/types/media/collection'
+import { ImageRole } from '#shared/types/media/imageRole'
+import { ImageSurface } from '#shared/types/media/imageSurface'
 
 interface Props {
   article: ArticleListItem
@@ -29,6 +33,9 @@ const badgeLabel = computed(() => props.badge ?? t('articles.tag'))
 const mediaTone = computed(() =>
   props.index % 2 === 0 ? 'bg-brand-200' : 'bg-accent-100',
 )
+
+/** Listing always sizes as PREVIEW (even when src falls back to detail IMAGE file). */
+const hasCover = computed(() => Boolean(props.article.image))
 
 const asListItem = computed(() => props.position != null && props.position >= 1)
 </script>
@@ -66,10 +73,23 @@ const asListItem = computed(() => props.position != null && props.position >= 1)
         class="group flex h-full flex-col overflow-hidden rounded-3xl border border-default bg-default transition hover:border-brand-300"
       >
         <div
-          class="aspect-[16/9]"
+          class="aspect-[16/9] overflow-hidden"
           :class="mediaTone"
         >
-          <div class="flex size-full items-center justify-center">
+          <MediaImg
+            v-if="hasCover"
+            :src="article.image"
+            :entity="Entity.ARTICLE"
+            :collection="MediaCollection.PREVIEW"
+            :role="ImageRole.PREVIEW"
+            :surface="ImageSurface.CLIENT"
+            :alt="article.title"
+            img-class="size-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          />
+          <div
+            v-else
+            class="flex size-full items-center justify-center"
+          >
             <UIcon
               name="i-lucide-newspaper"
               class="size-12 text-brand-700/40"

@@ -7,6 +7,13 @@ export interface FormLocaleHint {
   name?: string
 }
 
+/** Icon tab inside FormTabShell (form-local visual split). */
+export interface FormTabItem {
+  id: string
+  icon: string
+  label: string
+}
+
 /** Create / edit / copy — shared by every resource form slideover. */
 export type FormMode = 'create' | 'edit' | 'copy'
 

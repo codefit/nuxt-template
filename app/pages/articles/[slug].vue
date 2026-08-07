@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { ArticleDetail } from '#shared/types/dto/article'
+import { Entity } from '#shared/types/dto/entity'
+import { MediaCollection } from '#shared/types/media/collection'
+import { ImageRole } from '#shared/types/media/imageRole'
+import { ImageSurface } from '#shared/types/media/imageSurface'
 import { useArticleLd } from '~/composables/jsonLd/useArticleLd'
 import { provideLocaleSlugMap } from '~/composables/useEntitySlugSwitch'
 
@@ -104,6 +108,29 @@ const imageUrl = computed(() =>
               <span itemprop="name">{{ article.author }}</span>
             </span>
           </p>
+
+          <MediaImg
+            v-if="article.image"
+            class="mb-8 overflow-hidden rounded-2xl"
+            :src="article.image"
+            :entity="Entity.ARTICLE"
+            :collection="MediaCollection.IMAGE"
+            :role="ImageRole.DETAIL"
+            :surface="ImageSurface.CLIENT"
+            :alt="article.title"
+            loading="eager"
+            img-class="aspect-[16/9] w-full object-cover"
+          />
+          <div
+            v-else
+            class="mb-8 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-2xl bg-elevated text-muted"
+            aria-hidden="true"
+          >
+            <UIcon
+              name="i-lucide-image"
+              class="size-12"
+            />
+          </div>
 
           <div
             class="prose"

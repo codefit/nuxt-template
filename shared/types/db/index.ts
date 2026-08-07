@@ -5,6 +5,7 @@ import type {
   languages,
   longTextTranslations,
   longTexts,
+  media,
   messages,
   metas,
   slugTranslations,
@@ -42,3 +43,6 @@ export type NewMeta = typeof metas.$inferInsert
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+
+export type Media = typeof media.$inferSelect
+export type NewMedia = typeof media.$inferInsert

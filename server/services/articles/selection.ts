@@ -1,9 +1,9 @@
 import { and, count, desc, eq, isNull, like, or, type SQL } from 'drizzle-orm'
 import { alias } from 'drizzle-orm/pg-core'
 import { db, schema } from '@nuxthub/db'
-import { site } from '#shared/config/site'
 import type { ArticleListItem } from '#shared/types/dto/article'
 import type { TableFilters, TableSelection } from '#shared/types/ui/data-table'
+import { articleCoverUrlMap } from '~~/server/services/articles/covers'
 import { requireLanguageId } from '~~/server/services/cache/languages'
 import { dateRangeSql, selectionConstraintSql } from '~~/server/utils/filterSql'
 
@@ -188,6 +188,7 @@ export async function selectArticles(
   }
 
   const rows = await query
+  const covers = await articleCoverUrlMap(rows.map(row => row.id), 'preview')
 
   return rows
     .filter(row => Boolean(row.slug))
@@ -197,7 +198,7 @@ export async function selectArticles(
         title: row.title,
         slug: row.slug!,
         description: row.description ?? '',
-        image: site.seo.image,
+        image: covers.get(row.id),
         isPublished: row.isPublished === 1,
         publishedAt: toIso(row.publishedAt),
         modifiedAt: toIso(row.updatedAt) ?? undefined,

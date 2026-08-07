@@ -1,6 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { db, schema } from '@nuxthub/db'
 import type { ArticleAdminDetail, ArticleLocaleInput, ArticleTranslations } from '#shared/types/dto/article'
+import { Entity } from '#shared/types/dto/entity'
 import { ensureUniqueSlug, slugify } from '#shared/utils/slug'
 import { localeFilled } from '#shared/utils/translations'
 import {
@@ -11,6 +12,7 @@ import {
 } from '~~/server/services/i18n/content'
 import { requireEntityId } from '~~/server/services/cache/entities'
 import { getActiveLanguages, getDefaultLanguage } from '~~/server/services/cache/languages'
+import { getEntityMedia } from '~~/server/services/media/list'
 
 function toIso(value: Date | null | undefined): string | null {
   return value ? value.toISOString() : null
@@ -30,14 +32,14 @@ export async function getArticleById(id: number): Promise<ArticleAdminDetail | n
     return null
   }
 
-  const entityId = await requireEntityId('article')
+  const entityId = await requireEntityId(Entity.ARTICLE)
   const [meta] = await db
     .select()
     .from(schema.metas)
     .where(and(eq(schema.metas.entityId, entityId), eq(schema.metas.modelId, id)))
     .limit(1)
 
-  const [languages, textMaps, slugMaps, longMaps] = await Promise.all([
+  const [languages, textMaps, slugMaps, longMaps, media] = await Promise.all([
     getActiveLanguages(),
     loadTextMaps([
       row.nameId,
@@ -48,6 +50,7 @@ export async function getArticleById(id: number): Promise<ArticleAdminDetail | n
     ]),
     loadSlugMaps([row.slugId]),
     loadLongTextMaps([meta?.contentLongId]),
+    getEntityMedia(Entity.ARTICLE, id),
   ])
 
   const titles = (row.nameId && textMaps[row.nameId]) || {}
@@ -94,6 +97,7 @@ export async function getArticleById(id: number): Promise<ArticleAdminDetail | n
     updatedAt: row.updatedAt.toISOString(),
     archivedAt: toIso(row.archivedAt),
     deletedAt: toIso(row.deletedAt),
+    media,
   }
 }
 
