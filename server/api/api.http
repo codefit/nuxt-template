@@ -1,0 +1,245 @@
+###
+# PhpStorm / IntelliJ HTTP Client
+# Run request: Ctrl+Enter na requestu
+#
+# Doména (přepiš nebo použij http-client.env.json):
+@domain = http://localhost:3000
+@locale = cs
+@slug = ahoj-svete
+@articleId = 1
+@messageId = 1
+@languageId = 1
+@mediaId = 1
+#
+# Session: po Login se cookie uloží automaticky (Client Cookies).
+###
+
+### Auth — Login
+POST {{domain}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "secret"
+}
+
+### Auth — Logout
+POST {{domain}}/api/auth/logout
+
+### Auth — Register (jen když authAllowRegister)
+POST {{domain}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Jan",
+  "lastName": "Novák",
+  "email": "jan@example.com",
+  "password": "password123"
+}
+
+### Auth — Forgot password
+POST {{domain}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "admin@example.com"
+}
+
+### Auth — Reset password
+POST {{domain}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "REPLACE_TOKEN",
+  "password": "password123"
+}
+
+### Articles — List (public)
+GET {{domain}}/api/articles?page=1&limit=10&sort=-publishedAt&isPublished=true&with=author&locale={{locale}}
+
+### Articles — List filtered
+GET {{domain}}/api/articles?page=1&limit=10&q=nuxt&createdAt=2024-01-01..2024-12-31&locale={{locale}}
+
+### Articles — By slug (public)
+GET {{domain}}/api/articles/{{slug}}?locale={{locale}}&with=author
+
+### Articles — Admin detail (session)
+GET {{domain}}/api/articles/id/{{articleId}}
+
+### Articles — Create (session)
+POST {{domain}}/api/articles
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "isPublished": false,
+  "publishedAt": null,
+  "translations": {
+    "cs": {
+      "title": "Test článek",
+      "slug": "test-clanek",
+      "excerpt": "Perex",
+      "body": "<p>Obsah</p>",
+      "metaTitle": "Test",
+      "metaDescription": "Desc",
+      "metaKeywords": "test"
+    }
+  }
+}
+
+### Articles — Update (session)
+PATCH {{domain}}/api/articles/id/{{articleId}}
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "isPublished": true,
+  "publishedAt": "2026-03-01T10:00:00.000Z",
+  "translations": {
+    "cs": {
+      "title": "Upravený článek",
+      "slug": "test-clanek",
+      "excerpt": "Perex",
+      "body": "<p>Obsah</p>",
+      "metaTitle": "Test",
+      "metaDescription": "Desc",
+      "metaKeywords": "test"
+    }
+  }
+}
+
+### Articles — Bulk (session)
+POST {{domain}}/api/articles/bulk
+Content-Type: application/json
+
+{
+  "action": "delete",
+  "filters": {},
+  "selection": {
+    "mode": "include",
+    "ids": ["1", "2"]
+  }
+}
+
+### Messages — Create / contact (public · GDPR + reCAPTCHA)
+POST {{domain}}/api/messages
+Content-Type: application/json
+
+{
+  "name": "Jan",
+  "email": "jan@example.com",
+  "message": "Dobrý den, test z HTTP clienta.",
+  "gdpr": true,
+  "recaptchaToken": "REPLACE_RECAPTCHA_TOKEN"
+}
+
+### Messages — List (session)
+GET {{domain}}/api/messages?page=1&limit=10&sort=-createdAt
+
+### Messages — Detail (session)
+GET {{domain}}/api/messages/{{messageId}}
+
+### Messages — Bulk (session)
+POST {{domain}}/api/messages/bulk
+Content-Type: application/json
+
+{
+  "action": "delete",
+  "filters": {},
+  "selection": {
+    "mode": "include",
+    "ids": ["1"]
+  }
+}
+
+### Languages — Options (public)
+GET {{domain}}/api/languages/options
+
+### Languages — List (session)
+GET {{domain}}/api/languages?page=1&limit=10&sort=name
+
+### Languages — Detail (session)
+GET {{domain}}/api/languages/{{languageId}}
+
+### Languages — Update (session)
+PATCH {{domain}}/api/languages/{{languageId}}
+Content-Type: application/json
+
+{
+  "name": "Čeština",
+  "icon": null,
+  "isActive": true,
+  "isDefault": true
+}
+
+### Languages — Bulk (session)
+POST {{domain}}/api/languages/bulk
+Content-Type: application/json
+
+{
+  "action": "activate",
+  "filters": {},
+  "selection": {
+    "mode": "include",
+    "ids": ["1"]
+  }
+}
+
+### Authors — List (session)
+GET {{domain}}/api/authors?q=
+
+### Authors — Create (session)
+POST {{domain}}/api/authors
+Content-Type: application/json
+
+{
+  "name": "Jan Novák",
+  "email": "jan@example.com",
+  "phone": null
+}
+
+### Media — List grouped (session)
+GET {{domain}}/api/media?entity=article&modelId={{articleId}}&grouped=1
+
+### Media — Upload (session)
+POST {{domain}}/api/media/upload
+Content-Type: multipart/form-data; boundary=Boundary
+
+--Boundary
+Content-Disposition: form-data; name="entity"
+
+article
+--Boundary
+Content-Disposition: form-data; name="modelId"
+
+{{articleId}}
+--Boundary
+Content-Disposition: form-data; name="collection"
+
+image
+--Boundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+--Boundary--
+
+### Media — Reorder (session)
+PATCH {{domain}}/api/media/reorder
+Content-Type: application/json
+
+{
+  "entity": "article",
+  "modelId": 1,
+  "collection": "gallery",
+  "orderedIds": [10, 11, 12]
+}
+
+### Media — Delete (session)
+DELETE {{domain}}/api/media/{{mediaId}}
+
+### Slugs — Resolve (public)
+GET {{domain}}/api/slugs/article/{{slug}}
+
+### Mail — Test (session)
+POST {{domain}}/api/mail/test

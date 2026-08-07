@@ -1,0 +1,684 @@
+openapi: 3.1.0
+info:
+  title: Nuxt API
+  version: 1.0.0
+  description: |
+    Nitro JSON API. Admin routes vyžadují session cookie (`nuxt-auth-utils`).
+    Importuj do Swagger UI / Postman / Insomnia / Bruno.
+
+servers:
+  - url: '{domain}'
+    description: Runtime
+    variables:
+      domain:
+        default: http://localhost:3000
+        description: Base URL (bez trailing slash)
+
+tags:
+  - name: auth
+  - name: articles
+  - name: messages
+  - name: languages
+  - name: authors
+  - name: media
+  - name: misc
+
+# ─── reusable ───────────────────────────────────────────────────────────────
+
+components:
+  parameters:
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    limit:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+    q:
+      name: q
+      in: query
+      description: Fulltext → filters.q
+      schema: { type: string }
+    sort:
+      name: sort
+      in: query
+      description: "`-col` = desc · csv · bere se první sloupec"
+      schema: { type: string, example: '-createdAt' }
+    locale:
+      name: locale
+      in: query
+      schema: { type: string, enum: [cs, sk, en], example: cs }
+    with:
+      name: with
+      in: query
+      description: CSV relací (např. author)
+      schema: { type: string, example: author }
+    createdAt:
+      name: createdAt
+      in: query
+      description: Date range `from..to`
+      schema: { type: string, example: '2024-01-01..2024-12-31' }
+
+  schemas:
+    ListMeta:
+      type: object
+      required: [page, limit, total]
+      properties:
+        page: { type: integer }
+        limit: { type: integer }
+        total: { type: integer }
+
+    ArticleListItem:
+      type: object
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        title: { type: string }
+        description: { type: string }
+        author: { type: string }
+        image: { type: string }
+        isPublished: { type: boolean }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        archivedAt: { type: string, format: date-time, nullable: true }
+
+    ArticleListResponse:
+      type: object
+      required: [items, meta]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/ArticleListItem' }
+        meta: { $ref: '#/components/schemas/ListMeta' }
+
+    ArticleDetail:
+      allOf:
+        - $ref: '#/components/schemas/ArticleListItem'
+        - type: object
+          properties:
+            body: { type: string }
+            slugMap:
+              type: object
+              additionalProperties: { type: string }
+              example: { cs: ahoj-svete, en: hello-world, sk: ahoj-svet }
+
+    ArticleLocaleInput:
+      type: object
+      required: [title, slug, excerpt, body, metaTitle, metaDescription, metaKeywords]
+      properties:
+        title: { type: string }
+        slug: { type: string }
+        excerpt: { type: string }
+        body: { type: string }
+        metaTitle: { type: string }
+        metaDescription: { type: string }
+        metaKeywords: { type: string }
+
+    ArticleFormInput:
+      type: object
+      required: [authorId, isPublished, publishedAt, translations]
+      properties:
+        authorId: { type: integer, nullable: true }
+        isPublished: { type: boolean }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        translations:
+          type: object
+          additionalProperties: { $ref: '#/components/schemas/ArticleLocaleInput' }
+
+    BulkBody:
+      type: object
+      required: [action, selection]
+      properties:
+        action: { type: string, example: delete }
+        search: { type: string }
+        filters:
+          type: object
+          additionalProperties: true
+        selection:
+          type: object
+          required: [mode, ids]
+          properties:
+            mode: { type: string, enum: [include, exclude] }
+            ids:
+              type: array
+              items: { type: string }
+
+    BulkResponse:
+      type: object
+      properties:
+        ok: { type: boolean, example: true }
+        mode: { type: string, enum: [include, exclude] }
+        action: { type: string }
+        affected: { type: integer }
+        result: { type: object, additionalProperties: true }
+
+    LoginBody:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    MessageCreate:
+      type: object
+      required: [name, email, message, gdpr, recaptchaToken]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        message: { type: string }
+        gdpr: { type: boolean }
+        recaptchaToken: { type: string }
+
+    AuthorFormInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        email: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+
+    Error:
+      type: object
+      properties:
+        statusCode: { type: integer }
+        statusMessage: { type: string }
+
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: nuxt-session
+      description: Session z POST /api/auth/login (nuxt-auth-utils)
+
+security:
+  - sessionCookie: []
+
+# ─── paths ──────────────────────────────────────────────────────────────────
+
+paths:
+  /api/auth/login:
+    post:
+      tags: [auth]
+      security: []
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginBody' }
+            example:
+              email: admin@example.com
+              password: secret
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                user: { id: 1, email: admin@example.com, name: Admin }
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/auth/logout:
+    post:
+      tags: [auth]
+      summary: Logout
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example: { ok: true }
+
+  /api/auth/register:
+    post:
+      tags: [auth]
+      security: []
+      summary: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, email, password]
+              properties:
+                firstName: { type: string }
+                lastName: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+      responses:
+        '200':
+          description: OK
+
+  /api/auth/forgot-password:
+    post:
+      tags: [auth]
+      security: []
+      summary: Forgot password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '200':
+          description: OK
+
+  /api/auth/reset-password:
+    post:
+      tags: [auth]
+      security: []
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token: { type: string }
+                password: { type: string, minLength: 8 }
+      responses:
+        '200':
+          description: OK
+
+  /api/articles:
+    get:
+      tags: [articles]
+      security: []
+      summary: List articles
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/locale'
+        - $ref: '#/components/parameters/with'
+        - $ref: '#/components/parameters/createdAt'
+        - name: isPublished
+          in: query
+          schema: { type: string, example: 'true' }
+      responses:
+        '200':
+          description: Paginated list
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ArticleListResponse' }
+              example:
+                items:
+                  - id: 1
+                    slug: ahoj-svete
+                    title: Ahoj světe
+                    description: '…'
+                    author: Jan Novák
+                    isPublished: true
+                    publishedAt: '2026-03-01T10:00:00.000Z'
+                    createdAt: '2026-02-20T08:00:00.000Z'
+                    updatedAt: '2026-03-01T10:00:00.000Z'
+                    archivedAt: null
+                meta: { page: 1, limit: 10, total: 42 }
+
+    post:
+      tags: [articles]
+      summary: Create article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ArticleFormInput' }
+      responses:
+        '200':
+          description: Created
+
+  /api/articles/{slug}:
+    get:
+      tags: [articles]
+      security: []
+      summary: Article by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, example: ahoj-svete }
+        - $ref: '#/components/parameters/locale'
+        - $ref: '#/components/parameters/with'
+      responses:
+        '200':
+          description: Detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ArticleDetail' }
+        '404':
+          description: Not found
+
+  /api/articles/id/{id}:
+    get:
+      tags: [articles]
+      summary: Admin article detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, example: 1 }
+      responses:
+        '200':
+          description: Admin detail (all locales + media)
+    patch:
+      tags: [articles]
+      summary: Update article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ArticleFormInput' }
+      responses:
+        '200':
+          description: Updated
+
+  /api/articles/bulk:
+    post:
+      tags: [articles]
+      summary: Bulk articles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BulkBody' }
+            example:
+              action: delete
+              filters: { isPublished: 'false' }
+              selection: { mode: include, ids: ['1', '2'] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BulkResponse' }
+
+  /api/messages:
+    get:
+      tags: [messages]
+      summary: List messages
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/createdAt'
+      responses:
+        '200':
+          description: Paginated list
+    post:
+      tags: [messages]
+      security: []
+      summary: Create message (contact)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MessageCreate' }
+            example:
+              name: Jan
+              email: jan@example.com
+              message: Dobrý den…
+              gdpr: true
+              recaptchaToken: '…'
+      responses:
+        '200':
+          description: Created row
+
+  /api/messages/{id}:
+    get:
+      tags: [messages]
+      summary: Message detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not found
+
+  /api/messages/bulk:
+    post:
+      tags: [messages]
+      summary: Bulk messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BulkBody' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BulkResponse' }
+
+  /api/languages:
+    get:
+      tags: [languages]
+      summary: List languages
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/createdAt'
+        - name: isActive
+          in: query
+          schema: { type: string }
+        - name: isDefault
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Paginated list
+
+  /api/languages/options:
+    get:
+      tags: [languages]
+      security: []
+      summary: Language switcher options
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                - code: cs
+                  name: Čeština
+                  icon: null
+                  isDefault: true
+
+  /api/languages/{id}:
+    get:
+      tags: [languages]
+      summary: Language detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags: [languages]
+      summary: Update language
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                icon: { type: string, nullable: true }
+                name: { type: string }
+                isActive: { type: boolean }
+                isDefault: { type: boolean }
+      responses:
+        '200':
+          description: OK
+
+  /api/languages/bulk:
+    post:
+      tags: [languages]
+      summary: Bulk languages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BulkBody' }
+      responses:
+        '200':
+          description: OK
+
+  /api/authors:
+    get:
+      tags: [authors]
+      summary: List / search authors
+      parameters:
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: OK
+    post:
+      tags: [authors]
+      summary: Create author
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AuthorFormInput' }
+      responses:
+        '200':
+          description: Created
+
+  /api/media:
+    get:
+      tags: [media]
+      summary: List media for entity
+      parameters:
+        - name: entity
+          in: query
+          required: true
+          schema: { type: string, example: article }
+        - name: modelId
+          in: query
+          required: true
+          schema: { type: integer, example: 1 }
+        - name: collection
+          in: query
+          schema: { type: string, example: gallery }
+        - name: grouped
+          in: query
+          description: `1` / `true` → EntityMediaMap
+          schema: { type: string, enum: ['0', '1', 'true', 'false'] }
+      responses:
+        '200':
+          description: Flat list or EntityMediaMap
+          content:
+            application/json:
+              example:
+                image: { id: 10, url: 'https://…', collection: image, rank: 0 }
+                gallery: []
+                icon: null
+                preview: null
+
+  /api/media/upload:
+    post:
+      tags: [media]
+      summary: Upload media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+                entity: { type: string }
+                modelId: { type: integer }
+                collection: { type: string }
+      responses:
+        '200':
+          description: Uploaded
+
+  /api/media/reorder:
+    patch:
+      tags: [media]
+      summary: Reorder media
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+
+  /api/media/{id}:
+    delete:
+      tags: [media]
+      summary: Delete media
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+
+  /api/slugs/{entity}/{slug}:
+    get:
+      tags: [misc]
+      security: []
+      summary: Resolve / check slug
+      parameters:
+        - name: entity
+          in: path
+          required: true
+          schema: { type: string, example: article }
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /api/mail/test:
+    post:
+      tags: [misc]
+      summary: Test mail
+      responses:
+        '200':
+          description: OK
