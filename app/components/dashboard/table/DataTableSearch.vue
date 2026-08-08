@@ -64,6 +64,15 @@ function clear() {
 <template>
   <UInput
     v-model="input"
+    type="search"
+    name="dashboard-table-search"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+    data-1p-ignore
+    data-lpignore="true"
+    data-form-type="other"
     :placeholder="placeholder ?? 'Hledat…'"
     icon="i-lucide-search"
     size="sm"

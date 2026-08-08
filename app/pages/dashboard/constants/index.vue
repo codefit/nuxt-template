@@ -22,9 +22,9 @@ const icons: Record<ConstantGroupKey, string> = {
   general: 'i-lucide-settings-2',
 }
 
-const { data: groups, status } = await useAsyncData(
-  'dashboard-constant-groups',
-  () => $fetch<ConstantGroupSummary[]>('/api/constants/groups'),
+const { data: groups, status } = await useFetch<ConstantGroupSummary[]>(
+  '/api/constants/groups',
+  { key: 'dashboard-constant-groups' },
 )
 
 const cards = computed(() => {

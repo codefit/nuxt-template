@@ -27,22 +27,22 @@ if (!isConstantGroup(groupParam.value)) {
 
 const group = computed(() => groupParam.value as ConstantGroupKey)
 
-usePageSeo({
-  title: () => `${t(`dashboard.constants.groups.${group.value}`)} — ${t('dashboard.constants.seoTitle')}`,
+usePageSeo(() => ({
+  title: `${t(`dashboard.constants.groups.${group.value}`)} — ${t('dashboard.constants.seoTitle')}`,
   description: t('dashboard.constants.seoDescription'),
   noindex: true,
-})
+}))
 
 const search = ref('')
 const formBusy = ref(false)
 const deletingId = ref<number | null>(null)
 
-const { data: items, status, refresh } = await useAsyncData(
-  () => `dashboard-constants-${group.value}`,
-  () => $fetch<ConstantListItem[]>('/api/constants', {
-    query: { group: group.value },
-  }),
-  { watch: [group] },
+const { data: items, status, refresh } = await useFetch<ConstantListItem[]>(
+  '/api/constants',
+  {
+    query: computed(() => ({ group: group.value })),
+    watch: [group],
+  },
 )
 
 const filtered = computed(() => {
@@ -186,6 +186,15 @@ function typeLabel(type: string) {
           <div class="flex flex-wrap items-center gap-2">
             <UInput
               v-model="search"
+              type="search"
+              name="dashboard-constants-search"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              data-1p-ignore
+              data-lpignore="true"
+              data-form-type="other"
               icon="i-lucide-search"
               :placeholder="t('dashboard.constants.searchHint')"
               class="w-64"
