@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { Entity, ENTITY_KEYS } from '#shared/types/dto/entity'
 import {
   SEED_ARTICLES,
@@ -153,11 +153,65 @@ async function createLongText(
 }
 
 /**
- * Remove existing articles + their metas so seed can recreate a full demo set.
+ * Remove existing articles + metas + orphaned i18n rows (texts / slugs / long_texts).
+ * Deleting articles alone leaves slug_translations and breaks unique (languageId, content).
  */
 async function clearArticles(db: Db, schema: Schema, entityId: number): Promise<void> {
+  const rows = await db
+    .select({
+      nameId: schema.articles.nameId,
+      slugId: schema.articles.slugId,
+      excerptId: schema.articles.excerptId,
+    })
+    .from(schema.articles)
+
+  const metas = await db
+    .select({
+      contentLongId: schema.metas.contentLongId,
+      metaTitleId: schema.metas.metaTitleId,
+      metaDescriptionId: schema.metas.metaDescriptionId,
+      metaKeywordsId: schema.metas.metaKeywordsId,
+    })
+    .from(schema.metas)
+    .where(eq(schema.metas.entityId, entityId))
+
+  const textIds = new Set<number>()
+  const longIds = new Set<number>()
+
+  for (const row of rows) {
+    textIds.add(row.nameId)
+    if (row.excerptId) {
+      textIds.add(row.excerptId)
+    }
+  }
+
+  for (const meta of metas) {
+    if (meta.metaTitleId) {
+      textIds.add(meta.metaTitleId)
+    }
+    if (meta.metaDescriptionId) {
+      textIds.add(meta.metaDescriptionId)
+    }
+    if (meta.metaKeywordsId) {
+      textIds.add(meta.metaKeywordsId)
+    }
+    if (meta.contentLongId) {
+      longIds.add(meta.contentLongId)
+    }
+  }
+
   await db.delete(schema.metas).where(eq(schema.metas.entityId, entityId))
   await db.delete(schema.articles)
+
+  // Slugs are article-only — wipe all (incl. orphans from a previous failed seed).
+  await db.delete(schema.slugs)
+
+  if (textIds.size > 0) {
+    await db.delete(schema.texts).where(inArray(schema.texts.id, [...textIds]))
+  }
+  if (longIds.size > 0) {
+    await db.delete(schema.longTexts).where(inArray(schema.longTexts.id, [...longIds]))
+  }
 }
 
 function localeCodes(
@@ -259,6 +313,15 @@ async function seedArticles(
       })),
     )
 
+    const metaKeywordsId = await createText(
+      db,
+      schema,
+      codes.map(code => ({
+        languageId: languageIds[code],
+        content: article.locales[code]!.metaKeywords,
+      })),
+    )
+
     const publishedAt = new Date(article.publishedAt)
     const [row] = await db
       .insert(schema.articles)
@@ -279,6 +342,7 @@ async function seedArticles(
       contentLongId,
       metaTitleId,
       metaDescriptionId,
+      metaKeywordsId,
       createdAt: now,
       updatedAt: now,
     })

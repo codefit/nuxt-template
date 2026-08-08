@@ -10,6 +10,7 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const config = useRuntimeConfig()
 const { loggedIn, fetch: refreshSession } = useUserSession()
+const { signUp: trackSignUp } = useDataLayer()
 
 usePageSeo(() => ({
   title: t('auth.register.seoTitle'),
@@ -55,6 +56,7 @@ async function submit() {
       body: { ...form },
     })
     await refreshSession()
+    trackSignUp('email')
     await navigateTo(localePath('dashboard'))
   }
   catch (err: unknown) {

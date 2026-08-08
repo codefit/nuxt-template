@@ -13,6 +13,7 @@ declare global {
 /**
  * Safe dataLayer push for GTM / consent-aware tags.
  * Always available — GTM container may load later or stay empty in dev.
+ * Event names follow GA4 recommended events where applicable.
  */
 export function useDataLayer() {
   const route = useRoute()
@@ -35,19 +36,41 @@ export function useDataLayer() {
     ensure().push(payload)
   }
 
+  /** SPA / virtual page view — GA4 `page_view` params for a GTM trigger. */
   function pageView(path?: string, title?: string) {
+    const pagePath = path ?? route.fullPath
+
     push({
-      event: 'nuxt_page_view',
-      page_path: path ?? route.fullPath,
+      event: 'page_view',
+      page_path: pagePath,
       page_title: title ?? (import.meta.client ? document.title : undefined),
-      page_location:
-        import.meta.client ? window.location.href : absolute(route.fullPath),
+      page_location: import.meta.client
+        ? window.location.href
+        : absolute(pagePath),
+    })
+  }
+
+  /** GA4 recommended `login` event. */
+  function login(method = 'email') {
+    push({
+      event: 'login',
+      method,
+    })
+  }
+
+  /** GA4 recommended `sign_up` event. */
+  function signUp(method = 'email') {
+    push({
+      event: 'sign_up',
+      method,
     })
   }
 
   return {
     push,
     pageView,
+    login,
+    signUp,
     ensure,
   }
 }

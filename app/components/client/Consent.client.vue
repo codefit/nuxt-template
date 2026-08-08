@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Public-site cookie banner (vanilla-cookieconsent).
- * `.client.vue` — CSR only; mount from `layouts/default` (not dashboard).
+ * `.client.vue` — CSR only; mount from public layouts (`default`, `auth`).
  */
 import 'vanilla-cookieconsent/dist/cookieconsent.css'
 import * as Cc from 'vanilla-cookieconsent'

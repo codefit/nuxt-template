@@ -42,10 +42,12 @@ watch(page, (_next, prev) => {
   document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 })
 
-usePageSeo({
-  title: t('articles.seoTitle'),
+usePageSeo(() => ({
+  title: page.value > 1
+    ? `${t('articles.seoTitle')} (${page.value})`
+    : t('articles.seoTitle'),
   description: t('articles.seoDescription'),
-})
+}))
 </script>
 
 <template>

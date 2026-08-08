@@ -4,7 +4,14 @@ import type { ArticleDetail } from '#shared/types/dto/article'
 
 type ArticleLdSource = Pick<
   ArticleDetail,
-  'slug' | 'title' | 'description' | 'image' | 'author' | 'publishedAt' | 'modifiedAt'
+  | 'slug'
+  | 'title'
+  | 'description'
+  | 'metaDescription'
+  | 'image'
+  | 'author'
+  | 'publishedAt'
+  | 'modifiedAt'
 >
 
 /**
@@ -29,13 +36,14 @@ export function useArticleLd(
     const path = localePath({ name: 'articles-slug', params: { slug: item.slug } })
     const url = absolute(path)
     const image = absolute(item.image || site.seo.image)
+    const description = item.metaDescription?.trim() || item.description
 
     return {
       '@context': 'https://schema.org',
       '@type': 'Article',
       '@id': `${url}#article`,
       headline: item.title,
-      description: item.description,
+      description,
       image: [image],
       datePublished: item.publishedAt,
       dateModified: item.modifiedAt || item.publishedAt,

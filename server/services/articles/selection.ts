@@ -10,6 +10,15 @@ import { dateRangeSql, selectionConstraintSql } from '~~/server/utils/filterSql'
 export const articleNameTranslation = alias(schema.textTranslations, 'article_name_translation')
 export const articleExcerptTranslation = alias(schema.textTranslations, 'article_excerpt_translation')
 export const articleSlugTranslation = alias(schema.slugTranslations, 'article_slug_translation')
+export const articleMetaTitleTranslation = alias(schema.textTranslations, 'article_meta_title_translation')
+export const articleMetaDescriptionTranslation = alias(
+  schema.textTranslations,
+  'article_meta_description_translation',
+)
+export const articleMetaKeywordsTranslation = alias(
+  schema.textTranslations,
+  'article_meta_keywords_translation',
+)
 
 // --- Search / filter SQL ----------------------------------------------------
 

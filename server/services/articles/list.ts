@@ -6,6 +6,9 @@ import type { ResourceListQuery, ResourceListResponse } from '#shared/types/ui/r
 import {
   articleExcerptTranslation,
   articleFilterSql,
+  articleMetaDescriptionTranslation,
+  articleMetaKeywordsTranslation,
+  articleMetaTitleTranslation,
   articleNameTranslation,
   articleSlugTranslation,
   countArticles,
@@ -105,6 +108,9 @@ export async function getArticleBySlug(
       slug: articleSlugTranslation.content,
       title: articleNameTranslation.content,
       description: articleExcerptTranslation.content,
+      metaTitle: articleMetaTitleTranslation.content,
+      metaDescription: articleMetaDescriptionTranslation.content,
+      metaKeywords: articleMetaKeywordsTranslation.content,
       isPublished: schema.articles.isPublished,
       publishedAt: schema.articles.publishedAt,
       updatedAt: schema.articles.updatedAt,
@@ -134,6 +140,18 @@ export async function getArticleBySlug(
         eq(schema.metas.modelId, schema.articles.id),
       ),
     )
+    .leftJoin(articleMetaTitleTranslation, and(
+      eq(articleMetaTitleTranslation.textId, schema.metas.metaTitleId),
+      eq(articleMetaTitleTranslation.languageId, languageId),
+    ))
+    .leftJoin(articleMetaDescriptionTranslation, and(
+      eq(articleMetaDescriptionTranslation.textId, schema.metas.metaDescriptionId),
+      eq(articleMetaDescriptionTranslation.languageId, languageId),
+    ))
+    .leftJoin(articleMetaKeywordsTranslation, and(
+      eq(articleMetaKeywordsTranslation.textId, schema.metas.metaKeywordsId),
+      eq(articleMetaKeywordsTranslation.languageId, languageId),
+    ))
     .leftJoin(
       schema.authors,
       and(
@@ -184,6 +202,9 @@ export async function getArticleBySlug(
     slug: row.slug,
     title: row.title,
     description: row.description ?? '',
+    metaTitle: row.metaTitle?.trim() || '',
+    metaDescription: row.metaDescription?.trim() || '',
+    metaKeywords: row.metaKeywords?.trim() || '',
     body,
     image: covers.get(row.id),
     gallery,

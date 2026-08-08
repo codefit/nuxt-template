@@ -1,7 +1,0 @@
-User-Agent: *
-Allow: /
-
-# Disallow admin / API if added later
-# Disallow: /api/
-
-Sitemap: https://www.example.com/sitemap.xml

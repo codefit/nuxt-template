@@ -31,10 +31,15 @@ provideLocaleSlugMap(computed(() => article.value?.slugMap ?? null))
 
 usePageSeo(() => {
   const item = article.value
+  const keywords = item?.metaKeywords
+    ?.split(',')
+    .map(part => part.trim())
+    .filter(Boolean)
 
   return {
-    title: item?.title ?? t('articles.seoTitle'),
-    description: item?.description,
+    title: item?.metaTitle?.trim() || item?.title || t('articles.seoTitle'),
+    description: item?.metaDescription?.trim() || item?.description,
+    keywords: keywords?.length ? keywords : undefined,
     image: item?.image,
     type: 'article',
     publishedTime: item?.publishedAt,

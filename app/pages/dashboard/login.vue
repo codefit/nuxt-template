@@ -10,6 +10,7 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const { loggedIn, fetch: refreshSession } = useUserSession()
 const route = useRoute()
+const { login: trackLogin } = useDataLayer()
 
 usePageSeo(() => ({
   title: t('auth.login.seoTitle'),
@@ -55,6 +56,7 @@ async function submit() {
       },
     })
     await refreshSession()
+    trackLogin('email')
     await navigateTo(redirectTarget())
   }
   catch (err: unknown) {

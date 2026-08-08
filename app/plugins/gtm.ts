@@ -67,7 +67,10 @@ export default defineNuxtPlugin(() => {
     const router = useRouter()
 
     router.afterEach((to) => {
-      pageView(to.fullPath)
+      // Title from useHead settles after navigation; wait one tick for page_title.
+      nextTick(() => {
+        pageView(to.fullPath)
+      })
     })
   }
 })

@@ -16,6 +16,7 @@ export type LocaleCopy = {
   body: string
   metaTitle: string
   metaDescription: string
+  metaKeywords: string
 }
 
 /**
@@ -66,6 +67,7 @@ function copyCs(index: number): LocaleCopy {
     slug,
     metaTitle: name,
     metaDescription: excerpt,
+    metaKeywords: `nuxt, seo, ${slugify(topic).replace(/-/g, ' ')}, dil ${n}`,
     body: paragraphs([
       `Toto je článek číslo ${n} v českém jazyce. Téma: ${topic}.`,
       'Defaultní jazyk musí mít name, excerpt, slug i body — bez toho aplikace článek v CS nevyrenderuje.',
@@ -87,6 +89,7 @@ function copySk(index: number): LocaleCopy {
     slug,
     metaTitle: name,
     metaDescription: excerpt,
+    metaKeywords: `nuxt, seo, ${slugify(topic).replace(/-/g, ' ')}, cast ${n}`,
     body: paragraphs([
       `Toto je článok číslo ${n} v slovenčine. Téma: ${topic}.`,
       'Ak tento preklad v seede chýba, výpis/detail v SK článok neuvidí (alebo spadne na 404).',
@@ -107,6 +110,7 @@ function copyEn(index: number): LocaleCopy {
     slug,
     metaTitle: name,
     metaDescription: excerpt,
+    metaKeywords: `nuxt, seo, ${slugify(topic).replace(/-/g, ' ')}, part ${n}`,
     body: paragraphs([
       `This is article number ${n} in English. Topic: ${topic}.`,
       'If this locale is omitted in the seed, EN list/detail will skip or 404 the article.',

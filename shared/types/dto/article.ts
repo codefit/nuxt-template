@@ -24,6 +24,12 @@ export interface ArticleDetail extends Omit<ArticleListItem, 'publishedAt'> {
   slugMap: LocaleSlugMap
   /** Ordered gallery URLs (GALLERY collection), excluding the cover `image`. */
   gallery: string[]
+  /** SEO title from metas (falls back to `title` on the client when empty). */
+  metaTitle: string
+  /** SEO description from metas (falls back to `description` / excerpt when empty). */
+  metaDescription: string
+  /** Optional comma-separated keywords from metas. */
+  metaKeywords: string
 }
 
 /** Per-locale fields stored in texts / slugs / long_texts / metas. */
