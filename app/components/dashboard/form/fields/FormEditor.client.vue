@@ -33,7 +33,7 @@ const init = {
   branding: false,
   promotion: false,
   plugins: 'lists link code',
-  toolbar: 'undo redo | styles | bold italic underline | bullist numlist | link | code',
+  toolbar: 'undo redo | styles | bold italic underline | bullist numlist | link',
   // Bundled skins (see utils/hugerte.client.ts)
   skin_url: 'default',
   content_css: 'default',
