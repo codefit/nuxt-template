@@ -20,6 +20,7 @@ tags:
   - name: messages
   - name: languages
   - name: authors
+  - name: constants
   - name: media
   - name: misc
 
@@ -182,6 +183,31 @@ components:
         name: { type: string }
         email: { type: string, nullable: true }
         phone: { type: string, nullable: true }
+
+    ConstantFormInput:
+      type: object
+      required: [group, key, type, value, label, isActive, isPrivate]
+      properties:
+        group: { type: string, enum: [company, analytics, contact, general] }
+        key: { type: string, example: company_name }
+        type: { type: string, enum: [text] }
+        value: { type: string }
+        label: { type: string }
+        description: { type: string, nullable: true }
+        isActive: { type: boolean }
+        isPrivate: { type: boolean }
+
+    ConstantUpdateInput:
+      type: object
+      required: [group, type, value, label, isActive, isPrivate]
+      properties:
+        group: { type: string, enum: [company, analytics, contact, general] }
+        type: { type: string, enum: [text] }
+        value: { type: string }
+        label: { type: string }
+        description: { type: string, nullable: true }
+        isActive: { type: boolean }
+        isPrivate: { type: boolean }
 
     Error:
       type: object
@@ -637,6 +663,88 @@ paths:
       responses:
         '200':
           description: OK
+
+  /api/constants/public:
+    get:
+      tags: [constants]
+      summary: Active + non-private map (key → value)
+      security: []
+      responses:
+        '200':
+          description: ConstantPublicMap
+
+  /api/constants/groups:
+    get:
+      tags: [constants]
+      summary: Counts per group (admin)
+      responses:
+        '200':
+          description: ConstantGroupSummary[]
+
+  /api/constants:
+    get:
+      tags: [constants]
+      summary: Admin list for one group
+      parameters:
+        - name: group
+          in: query
+          required: true
+          schema: { type: string, enum: [company, analytics, contact, general] }
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: ConstantListItem[]
+    post:
+      tags: [constants]
+      summary: Create constant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConstantFormInput' }
+      responses:
+        '200':
+          description: Created
+
+  /api/constants/{id}:
+    get:
+      tags: [constants]
+      summary: Constant detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: ConstantDetail
+    patch:
+      tags: [constants]
+      summary: Update constant (key immutable)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConstantUpdateInput' }
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [constants]
+      summary: Delete constant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: '{ ok: true }'
 
   /api/media:
     get:

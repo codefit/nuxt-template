@@ -431,6 +431,54 @@
       "bulkDeleteTitle": "Delete authors",
       "bulkDeleteDesc": "Really delete {count} authors? Soft-deleted authors disappear from pickers."
     },
+    "constants": {
+      "seoTitle": "Constants — Dashboard",
+      "seoDescription": "Manage site settings in the dashboard.",
+      "title": "Constants",
+      "lead": "Site settings by group — company, analytics, contact and general.",
+      "back": "Back to groups",
+      "legendPublic": "Public",
+      "legendPrivate": "Private",
+      "searchHint": "Search key, label and value…",
+      "empty": "No constants in this group yet.",
+      "groupNotFound": "Group not found.",
+      "addRecord": "New constant",
+      "createTitle": "New constant",
+      "editTitle": "Edit constant",
+      "actionEdit": "Edit",
+      "actionDelete": "Delete",
+      "actionDeleteTitle": "Delete constant",
+      "actionDeleteDesc": "Really delete constant “{key}”?",
+      "fieldGroup": "Group",
+      "fieldKey": "Key",
+      "fieldType": "Type",
+      "fieldLabel": "Label",
+      "fieldValue": "Value",
+      "fieldDescription": "Description",
+      "fieldActive": "Active",
+      "fieldPrivate": "Private",
+      "keyHint": "Key cannot be changed after create.",
+      "privateHint": "Private constants never enter the public cache or client payload.",
+      "typeText": "Text",
+      "activeYes": "Active",
+      "activeNo": "Inactive",
+      "loadFailed": "Could not load the constant.",
+      "toastCreated": "Constant created.",
+      "toastUpdated": "Constant saved.",
+      "toastDeleted": "Constant deleted.",
+      "groups": {
+        "company": "Company",
+        "analytics": "Analytics",
+        "contact": "Contact details",
+        "general": "General"
+      },
+      "groupLeads": {
+        "company": "Name, company ID and billing details.",
+        "analytics": "Tracking IDs and server-only secrets.",
+        "contact": "Email, phone and address for the site.",
+        "general": "Header/footer notices and tagline."
+      }
+    },
     "languages": {
       "seoTitle": "Languages — Dashboard",
       "seoDescription": "Manage languages in the dashboard.",
@@ -574,7 +622,13 @@
       "emailExists": "An account with this email already exists.",
       "resetConfig": "Site URL is not configured for password reset.",
       "resetInvalid": "Password reset link is invalid.",
-      "resetExpired": "Password reset link has expired."
+      "resetExpired": "Password reset link has expired.",
+      "invalidConstantId": "Invalid constant ID.",
+      "invalidConstantGroup": "Invalid constant group.",
+      "constantNotFound": "Constant not found.",
+      "constantCreateFailed": "Could not create the constant.",
+      "constantUpdateFailed": "Could not save the constant.",
+      "constantDeleteFailed": "Could not delete the constant."
     }
   },
   "auth": {

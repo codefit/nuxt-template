@@ -27,6 +27,10 @@ function isPublicApi(method: string, path: string): boolean {
     return true
   }
 
+  if (method === 'GET' && path === '/api/constants/public') {
+    return true
+  }
+
   if (method === 'GET' && path.startsWith('/api/slugs/')) {
     return true
   }

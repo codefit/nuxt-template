@@ -30,7 +30,7 @@ echo.
 echo DOMAIN=%DOMAIN%
 echo.
 echo Commands:
-echo   login ^| logout ^| articles ^| article ^| messages ^| contact ^| languages ^| authors ^| media ^| slug
+echo   login ^| logout ^| articles ^| article ^| messages ^| contact ^| languages ^| authors ^| constants ^| media ^| slug
 echo.
 echo Examples:
 echo   set DOMAIN=http://localhost:3000
@@ -92,6 +92,13 @@ exit /b 0
 :authors
 curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/authors?page=1&limit=25"
 curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/authors/options"
+echo.
+exit /b 0
+
+:constants
+curl -sS "%DOMAIN%/api/constants/public"
+curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/constants/groups"
+curl -sS -c "%COOKIE%" -b "%COOKIE%" "%DOMAIN%/api/constants?group=company"
 echo.
 exit /b 0
 

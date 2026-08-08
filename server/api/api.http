@@ -227,6 +227,50 @@ Content-Type: application/json
   }
 }
 
+### Constants — Public map
+GET {{domain}}/api/constants/public
+
+### Constants — Groups (session)
+GET {{domain}}/api/constants/groups
+
+### Constants — List by group (session)
+GET {{domain}}/api/constants?group=company
+
+### Constants — Create (session)
+POST {{domain}}/api/constants
+Content-Type: application/json
+
+{
+  "group": "general",
+  "key": "demo_banner",
+  "type": "text",
+  "value": "Hello",
+  "label": "Demo banner",
+  "description": null,
+  "isActive": true,
+  "isPrivate": false
+}
+
+### Constants — Detail (session)
+GET {{domain}}/api/constants/1
+
+### Constants — Update (session)
+PATCH {{domain}}/api/constants/1
+Content-Type: application/json
+
+{
+  "group": "general",
+  "type": "text",
+  "value": "Updated",
+  "label": "Demo banner",
+  "description": null,
+  "isActive": true,
+  "isPrivate": false
+}
+
+### Constants — Delete (session)
+DELETE {{domain}}/api/constants/1
+
 ### Media — List grouped (session)
 GET {{domain}}/api/media?entity=article&modelId={{articleId}}&grouped=1
 

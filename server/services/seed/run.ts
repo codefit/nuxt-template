@@ -1,6 +1,11 @@
 import { eq } from 'drizzle-orm'
 import { Entity, ENTITY_KEYS } from '#shared/types/dto/entity'
-import { SEED_ARTICLES, SEED_LANGUAGES, type SeedLocale } from '~~/server/services/seed/data'
+import {
+  SEED_ARTICLES,
+  SEED_CONSTANTS,
+  SEED_LANGUAGES,
+  type SeedLocale,
+} from '~~/server/services/seed/data'
 
 type Hub = typeof import('@nuxthub/db')
 type Db = Hub['db']
@@ -10,6 +15,7 @@ export type SeedResult = {
   languages: number
   entities: number
   articles: number
+  constants: number
   skippedArticles: boolean
   syncedSlugs: number
   users: number
@@ -283,6 +289,40 @@ async function seedArticles(
   return { created, skipped: false, syncedSlugs: 0 }
 }
 
+async function seedConstants(db: Db, schema: Schema): Promise<number> {
+  if (!schema.constants) {
+    throw new Error('Schema is missing constants table.')
+  }
+
+  const existing = await db
+    .select({ key: schema.constants.key })
+    .from(schema.constants)
+  const have = new Set(existing.map(row => row.key))
+  const missing = SEED_CONSTANTS.filter(item => !have.has(item.key))
+
+  if (missing.length === 0) {
+    return 0
+  }
+
+  const now = stamp()
+  await db.insert(schema.constants).values(
+    missing.map(item => ({
+      group: item.group,
+      key: item.key,
+      type: item.type,
+      value: item.value,
+      label: item.label,
+      description: item.description,
+      isActive: item.isActive,
+      isPrivate: item.isPrivate,
+      createdAt: now,
+      updatedAt: now,
+    })),
+  )
+
+  return missing.length
+}
+
 async function seedAdmin(db: Db, schema: Schema): Promise<number> {
   if (!schema.users) {
     throw new Error('Schema is missing users table.')
@@ -333,12 +373,14 @@ export async function seedDatabase(opts?: { db?: Db, schema?: Schema }): Promise
 
   const languages = await seedLanguages(db, schema)
   const entities = await seedEntities(db, schema)
+  const constants = await seedConstants(db, schema)
   const users = await seedAdmin(db, schema)
   const articles = await seedArticles(db, schema)
 
   return {
     languages,
     entities,
+    constants,
     articles: articles.created,
     skippedArticles: articles.skipped,
     syncedSlugs: articles.syncedSlugs,

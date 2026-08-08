@@ -98,11 +98,10 @@ export function useDashboardNav() {
         placeholder: true,
       },
       {
-        to: '#',
+        to: localePath('dashboard-constants'),
         label: t('dashboard.nav.constants'),
         icon: 'i-lucide-sliders-horizontal',
-        active: false,
-        placeholder: true,
+        active: name.value.startsWith('dashboard-constants'),
       },
     ]
 

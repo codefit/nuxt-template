@@ -431,6 +431,54 @@
       "bulkDeleteTitle": "Zmazať autorov",
       "bulkDeleteDesc": "Naozaj zmazať {count} autorov? Soft-zmazaní autori zmiznú z výberu."
     },
+    "constants": {
+      "seoTitle": "Konštanty — Dashboard",
+      "seoDescription": "Správa nastavení webu v dashboarde.",
+      "title": "Konštanty",
+      "lead": "Nastavenia webu podľa skupín — firma, analytika, kontakt a všeobecné.",
+      "back": "Späť na skupiny",
+      "legendPublic": "Verejná",
+      "legendPrivate": "Privátna",
+      "searchHint": "Hľadať v kľúči, názve a hodnote…",
+      "empty": "V tejto skupine zatiaľ nie sú žiadne konštanty.",
+      "groupNotFound": "Skupina nenájdená.",
+      "addRecord": "Nová konštanta",
+      "createTitle": "Nová konštanta",
+      "editTitle": "Upraviť konštantu",
+      "actionEdit": "Upraviť",
+      "actionDelete": "Zmazať",
+      "actionDeleteTitle": "Zmazať konštantu",
+      "actionDeleteDesc": "Naozaj zmazať konštantu „{key}“?",
+      "fieldGroup": "Skupina",
+      "fieldKey": "Kľúč",
+      "fieldType": "Typ",
+      "fieldLabel": "Názov",
+      "fieldValue": "Hodnota",
+      "fieldDescription": "Popis",
+      "fieldActive": "Aktívna",
+      "fieldPrivate": "Súkromná",
+      "keyHint": "Kľúč nie je možné po vytvorení meniť.",
+      "privateHint": "Súkromné konštanty sa nedostanú do verejnej cache ani na klienta.",
+      "typeText": "Text",
+      "activeYes": "Aktívna",
+      "activeNo": "Neaktívna",
+      "loadFailed": "Konštantu sa nepodarilo načítať.",
+      "toastCreated": "Konštanta bola vytvorená.",
+      "toastUpdated": "Konštanta bola uložená.",
+      "toastDeleted": "Konštanta bola zmazaná.",
+      "groups": {
+        "company": "Firma",
+        "analytics": "Analytika",
+        "contact": "Kontaktné údaje",
+        "general": "Všeobecné"
+      },
+      "groupLeads": {
+        "company": "Názov, IČO, DIČ a firemné údaje.",
+        "analytics": "Meracie ID a serverové tajné kľúče.",
+        "contact": "E-mail, telefón a adresa pre web.",
+        "general": "Hlášky v hlavičke, pätičke a slogan."
+      }
+    },
     "languages": {
       "seoTitle": "Jazyky — Dashboard",
       "seoDescription": "Správa jazykov v dashboarde.",
@@ -574,7 +622,13 @@
       "emailExists": "Účet s týmto e-mailom už existuje.",
       "resetConfig": "Chýba konfigurácia URL webu pre reset hesla.",
       "resetInvalid": "Odkaz na reset hesla je neplatný.",
-      "resetExpired": "Odkaz na reset hesla vypršal."
+      "resetExpired": "Odkaz na reset hesla vypršal.",
+      "invalidConstantId": "Neplatné ID konštanty.",
+      "invalidConstantGroup": "Neplatná skupina konštánt.",
+      "constantNotFound": "Konštanta nenájdená.",
+      "constantCreateFailed": "Vytvorenie konštanty sa nepodarilo.",
+      "constantUpdateFailed": "Uloženie konštanty sa nepodarilo.",
+      "constantDeleteFailed": "Zmazanie konštanty sa nepodarilo."
     }
   },
   "auth": {

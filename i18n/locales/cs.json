@@ -288,6 +288,54 @@
       "bulkDeleteTitle": "Smazat autory",
       "bulkDeleteDesc": "Opravdu smazat {count} autorů? Soft-smazaní autoři zmizí z výběru."
     },
+    "constants": {
+      "seoTitle": "Konstanty — Dashboard",
+      "seoDescription": "Správa nastavení webu v dashboardu.",
+      "title": "Konstanty",
+      "lead": "Nastavení webu podle skupin — firma, analytika, kontakt a obecné.",
+      "back": "Zpět na skupiny",
+      "legendPublic": "Veřejná",
+      "legendPrivate": "Privátní",
+      "searchHint": "Hledat v klíči, názvu a hodnotě…",
+      "empty": "V této skupině zatím nejsou žádné konstanty.",
+      "groupNotFound": "Skupina nenalezena.",
+      "addRecord": "Nová konstanta",
+      "createTitle": "Nová konstanta",
+      "editTitle": "Upravit konstantu",
+      "actionEdit": "Upravit",
+      "actionDelete": "Smazat",
+      "actionDeleteTitle": "Smazat konstantu",
+      "actionDeleteDesc": "Opravdu smazat konstantu „{key}“?",
+      "fieldGroup": "Skupina",
+      "fieldKey": "Klíč",
+      "fieldType": "Typ",
+      "fieldLabel": "Název",
+      "fieldValue": "Hodnota",
+      "fieldDescription": "Popis",
+      "fieldActive": "Aktivní",
+      "fieldPrivate": "Soukromá",
+      "keyHint": "Klíč nelze po vytvoření měnit.",
+      "privateHint": "Soukromé konstanty se nedostanou do veřejné cache ani na klienta.",
+      "typeText": "Text",
+      "activeYes": "Aktivní",
+      "activeNo": "Neaktivní",
+      "loadFailed": "Konstantu se nepodařilo načíst.",
+      "toastCreated": "Konstanta byla vytvořena.",
+      "toastUpdated": "Konstanta byla uložena.",
+      "toastDeleted": "Konstanta byla smazána.",
+      "groups": {
+        "company": "Firma",
+        "analytics": "Analytika",
+        "contact": "Kontaktní údaje",
+        "general": "Obecné"
+      },
+      "groupLeads": {
+        "company": "Název, IČO, DIČ a firemní údaje.",
+        "analytics": "Měřicí ID a serverové tajné klíče.",
+        "contact": "E-mail, telefon a adresa pro web.",
+        "general": "Hlášky v hlavičce, patičce a slogan."
+      }
+    },
     "languages": {
       "seoTitle": "Jazyky — Dashboard",
       "seoDescription": "Správa jazyků v dashboardu.",
@@ -431,7 +479,13 @@
       "emailExists": "Účet s tímto e-mailem už existuje.",
       "resetConfig": "Chybí konfigurace URL webu pro reset hesla.",
       "resetInvalid": "Odkaz pro reset hesla je neplatný.",
-      "resetExpired": "Odkaz pro reset hesla vypršel."
+      "resetExpired": "Odkaz pro reset hesla vypršel.",
+      "invalidConstantId": "Neplatné ID konstanty.",
+      "invalidConstantGroup": "Neplatná skupina konstant.",
+      "constantNotFound": "Konstanta nenalezena.",
+      "constantCreateFailed": "Vytvoření konstanty se nepovedlo.",
+      "constantUpdateFailed": "Uložení konstanty se nepovedlo.",
+      "constantDeleteFailed": "Smazání konstanty se nepovedlo."
     }
   },
   "auth": {

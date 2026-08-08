@@ -1,6 +1,7 @@
 import type {
   articles,
   authors,
+  constants,
   entities,
   languages,
   longTextTranslations,
@@ -46,3 +47,6 @@ export type NewUser = typeof users.$inferInsert
 
 export type Media = typeof media.$inferSelect
 export type NewMedia = typeof media.$inferInsert
+
+export type Constant = typeof constants.$inferSelect
+export type NewConstant = typeof constants.$inferInsert

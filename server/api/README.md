@@ -280,6 +280,20 @@ Media nepatří do article body — `/api/media`.
 | PATCH | `/api/authors/:id` | session · `AuthorFormInput` |
 | POST | `/api/authors/bulk` | session · export / soft-delete |
 
+### Constants
+
+| Method | Path | Auth | Notes |
+|--------|------|------|-------|
+| GET | `/api/constants/public` | public | aktivní + neprivate mapa `key → value` (server cache) |
+| GET | `/api/constants/groups` | session | počty per skupina |
+| GET | `/api/constants?group=` | session | fresh list (+ volitelné `q`) |
+| GET | `/api/constants/:id` | session | detail |
+| POST | `/api/constants` | session | create · `key` unique snake_case |
+| PATCH | `/api/constants/:id` | session | update · `key` immutable · clear cache |
+| DELETE | `/api/constants/:id` | session | hard delete · clear cache |
+
+Skupiny: `company` · `analytics` · `contact` · `general`. Klient: `useConstants().read(key)`.
+
 ### Media
 
 | Method | Path | Notes |

@@ -150,3 +150,139 @@ function buildSeedArticles(count = 50): ArticleSeed[] {
 
 /** Demo articles (content lives in DB translations, not i18n JSON). */
 export const SEED_ARTICLES: ArticleSeed[] = buildSeedArticles(50)
+
+export type SeedConstant = {
+  group: 'company' | 'analytics' | 'contact' | 'general'
+  key: string
+  type: 'text'
+  value: string
+  label: string
+  description: string
+  isActive: 0 | 1
+  isPrivate: 0 | 1
+}
+
+/** Default site settings — upserted by key (skipped if key exists). */
+export const SEED_CONSTANTS: SeedConstant[] = [
+  {
+    group: 'company',
+    key: 'company_name',
+    type: 'text',
+    value: 'Ukázková firma s.r.o.',
+    label: 'Název firmy',
+    description: 'Oficiální název společnosti zobrazovaný na webu.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'company',
+    key: 'company_ico',
+    type: 'text',
+    value: '12345678',
+    label: 'IČO',
+    description: 'Identifikační číslo osoby.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'company',
+    key: 'company_dic',
+    type: 'text',
+    value: 'CZ12345678',
+    label: 'DIČ',
+    description: 'Daňové identifikační číslo.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'contact',
+    key: 'contact_email',
+    type: 'text',
+    value: 'info@example.com',
+    label: 'E-mail',
+    description: 'Veřejný kontaktní e-mail (např. patička).',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'contact',
+    key: 'contact_phone',
+    type: 'text',
+    value: '+420 123 456 789',
+    label: 'Telefon',
+    description: 'Veřejný kontaktní telefon.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'contact',
+    key: 'contact_address',
+    type: 'text',
+    value: 'Ulice 1, 110 00 Praha',
+    label: 'Adresa',
+    description: 'Sídlo / korespondenční adresa.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'analytics',
+    key: 'analytics_ga_id',
+    type: 'text',
+    value: '',
+    label: 'Google Analytics ID',
+    description: 'Measurement ID (G-…).',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'analytics',
+    key: 'analytics_gtm_id',
+    type: 'text',
+    value: '',
+    label: 'Google Tag Manager ID',
+    description: 'Container ID (GTM-…).',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'analytics',
+    key: 'analytics_api_secret',
+    type: 'text',
+    value: '',
+    label: 'GA API secret',
+    description: 'Server-only tajný klíč — nikdy na klienta.',
+    isActive: 1,
+    isPrivate: 1,
+  },
+  {
+    group: 'general',
+    key: 'header_notice',
+    type: 'text',
+    value: '',
+    label: 'Hláška v hlavičce',
+    description: 'Krátký text nad / v hlavičce (prázdné = skryté).',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'general',
+    key: 'footer_notice',
+    type: 'text',
+    value: 'Všechna práva vyhrazena.',
+    label: 'Hláška v patičce',
+    description: 'Doplňkový text v patičce webu.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+  {
+    group: 'general',
+    key: 'site_tagline',
+    type: 'text',
+    value: 'Moderní web na Nuxtu',
+    label: 'Slogan webu',
+    description: 'Krátký tagline pro SEO / brand.',
+    isActive: 1,
+    isPrivate: 0,
+  },
+]
+

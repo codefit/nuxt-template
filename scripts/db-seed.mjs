@@ -36,6 +36,7 @@ const authors = await jiti.import(join(root, 'server/db/schema/authors.ts'))
 const articles = await jiti.import(join(root, 'server/db/schema/articles.ts'))
 const metas = await jiti.import(join(root, 'server/db/schema/metas.ts'))
 const users = await jiti.import(join(root, 'server/db/schema/users.ts'))
+const constants = await jiti.import(join(root, 'server/db/schema/constants.ts'))
 
 const schema = {
   ...messages,
@@ -45,6 +46,7 @@ const schema = {
   ...articles,
   ...metas,
   ...users,
+  ...constants,
 }
 
 const { seedDatabase } = await jiti.import(join(root, 'server/services/seed/run.ts'))

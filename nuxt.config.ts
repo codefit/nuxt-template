@@ -209,6 +209,16 @@ export default defineNuxtConfig({
         sk: '/dashboard/languages',
         en: '/dashboard/languages',
       },
+      'dashboard/constants': {
+        cs: '/dashboard/constants',
+        sk: '/dashboard/constants',
+        en: '/dashboard/constants',
+      },
+      'dashboard/constants/[group]': {
+        cs: '/dashboard/constants/[group]',
+        sk: '/dashboard/constants/[group]',
+        en: '/dashboard/constants/[group]',
+      },
       'dashboard/login': {
         cs: '/dashboard/login',
         sk: '/dashboard/login',
