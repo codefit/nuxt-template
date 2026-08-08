@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormLocaleHint } from '#shared/types/ui/form'
+import { dashboardFieldProps, dashboardTextareaUi } from '~/utils/dashboardForm'
 
 interface Props {
   name: string
@@ -38,7 +39,9 @@ const emit = defineEmits<{
       :placeholder="placeholder"
       :rows="rows"
       :disabled="disabled"
+      v-bind="dashboardFieldProps"
       class="w-full"
+      :ui="dashboardTextareaUi"
       autoresize
       @blur="emit('blur')"
     />
