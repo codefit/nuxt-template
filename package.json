@@ -16,7 +16,7 @@
     "db:seed": "node scripts/db-seed.mjs",
     "db:create": "node scripts/db-create.mjs",
     "feed:generate": "node scripts/feed-generate.mjs",
-    "sitemap:generate": "node scripts/sitemap-generate.mjs",
+    "sitemap:preview": "node scripts/sitemap-generate.mjs",
     "minio:up": "docker compose up -d minio && docker compose run --rm minio-init",
     "minio:down": "docker compose down",
     "minio:logs": "docker compose logs -f minio"

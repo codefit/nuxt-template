@@ -1,30 +1,23 @@
-import { writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import type { SitemapEntry, SitemapWritten } from '#shared/types/export/sitemap'
+import type { SitemapEntry, SitemapResult } from '#shared/types/export/sitemap'
 import { buildSitemap } from '~~/server/services/sitemap/build'
 import { resolveSitemapRoutes } from '~~/server/services/sitemap/routes'
 
-const green = (text: string) => `\x1b[32m${text}\x1b[0m`
-
 const defaultSiteUrl = 'https://www.example.com'
 
+/**
+ * Build sitemap XML in memory (served by `server/routes/sitemap.xml.ts`).
+ * Kept for tasks / local preview — does not write to disk.
+ */
 export async function generateSitemap(
   entries: SitemapEntry[] = [],
   siteUrl = defaultSiteUrl,
-): Promise<SitemapWritten> {
+): Promise<SitemapResult> {
   const data = entries.length > 0 ? entries : await resolveSitemapRoutes()
   const xml = buildSitemap(data, siteUrl)
-  const path = join(process.cwd(), 'public', 'sitemap.xml')
 
-  await writeFile(path, xml, 'utf8')
-
-  const written: SitemapWritten = {
-    path,
+  return {
+    xml,
     bytes: xml.length,
     count: data.length,
   }
-
-  console.log(`${green('Sitemap OK')} → sitemap.xml (${data.length} URL)`)
-
-  return written
 }

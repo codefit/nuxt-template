@@ -14,8 +14,12 @@ export interface SitemapEntry {
   lastmod?: string
 }
 
-export interface SitemapWritten {
-  path: string
+/** In-memory sitemap build result (no disk write). */
+export interface SitemapResult {
+  xml: string
   bytes: number
   count: number
 }
+
+/** @deprecated Use SitemapResult */
+export type SitemapWritten = SitemapResult & { path?: string }
