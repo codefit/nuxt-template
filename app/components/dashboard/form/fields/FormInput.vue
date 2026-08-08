@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormLocaleHint } from '#shared/types/ui/form'
+import { dashboardFieldProps, dashboardFieldUi } from '~/utils/dashboardForm'
 
 interface Props {
   name: string
@@ -13,7 +14,7 @@ interface Props {
   placeholder?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   type: 'text',
 })
 
@@ -22,6 +23,11 @@ const model = defineModel<string>({ default: '' })
 const emit = defineEmits<{
   blur: []
 }>()
+
+const fieldUi = computed(() => ({
+  ...dashboardFieldUi,
+  ...(props.valid && !props.error ? { trailing: 'pe-8' } : {}),
+}))
 </script>
 
 <template>
@@ -38,8 +44,9 @@ const emit = defineEmits<{
       :type="type"
       :placeholder="placeholder"
       :disabled="disabled"
+      v-bind="dashboardFieldProps"
       class="w-full"
-      :ui="valid && !error ? { trailing: 'pe-8' } : undefined"
+      :ui="fieldUi"
       @blur="emit('blur')"
     />
   </FormField>

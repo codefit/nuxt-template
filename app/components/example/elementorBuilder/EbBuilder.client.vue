@@ -258,6 +258,17 @@ const moveSection = (fromId: string, toId: string) => {
   sections.value.splice(to, 0, item)
 }
 
+const shiftSection = (index: number, delta: -1 | 1) => {
+  const target = index + delta
+  if (target < 0 || target >= sections.value.length) return
+  const list = sections.value
+  const a = list[index]
+  const b = list[target]
+  if (!a || !b) return
+  list[index] = b
+  list[target] = a
+}
+
 const moveColumn = (sectionId: string, fromId: string, toId: string) => {
   if (fromId === toId) return
   const section = sections.value.find((s) => s.id === sectionId)
@@ -542,7 +553,7 @@ watch(preview, (on) => {
         >
           <div :class="canvasClass">
             <div
-              v-for="section in sections"
+              v-for="(section, sectionIndex) in sections"
               :key="section.id"
               class="group/section relative"
               :class="[
@@ -574,7 +585,32 @@ watch(preview, (on) => {
                 </button>
                 <button
                   type="button"
-                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-neutral-500 shadow-sm ring-1 ring-black/5 hover:bg-neutral-50"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-neutral-600 shadow-sm hover:bg-neutral-300 disabled:pointer-events-none disabled:opacity-35"
+                  :disabled="sectionIndex === 0"
+                  title="Posunout nahoru"
+                  @click.stop="shiftSection(sectionIndex, -1)"
+                >
+                  <UIcon
+                    name="i-lucide-chevron-up"
+                    class="size-3.5"
+                  />
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-neutral-600 shadow-sm hover:bg-neutral-300 disabled:pointer-events-none disabled:opacity-35"
+                  :disabled="sectionIndex >= sections.length - 1"
+                  title="Posunout dolů"
+                  @click.stop="shiftSection(sectionIndex, 1)"
+                >
+                  <UIcon
+                    name="i-lucide-chevron-down"
+                    class="size-3.5"
+                  />
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white shadow-sm hover:bg-orange-600"
+                  title="Duplikovat"
                   @click.stop="duplicateSection(section.id)"
                 >
                   <UIcon
@@ -584,7 +620,8 @@ watch(preview, (on) => {
                 </button>
                 <button
                   type="button"
-                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-red-500 shadow-sm ring-1 ring-black/5 hover:bg-red-50"
+                  class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
+                  title="Smazat"
                   @click.stop="removeSection(section.id)"
                 >
                   <UIcon
@@ -636,7 +673,7 @@ watch(preview, (on) => {
                     </button>
                     <button
                       type="button"
-                      class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-red-500 shadow-sm ring-1 ring-black/5"
+                      class="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
                       @click.stop="removeColumn(section.id, column.id)"
                     >
                       <UIcon
@@ -681,7 +718,7 @@ watch(preview, (on) => {
                         </div>
                         <button
                           type="button"
-                          class="rounded-full p-1 text-neutral-400 hover:bg-red-50 hover:text-red-600"
+                          class="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
                           @click.stop="removeWidget(section.id, column.id, widget.id)"
                         >
                           <UIcon

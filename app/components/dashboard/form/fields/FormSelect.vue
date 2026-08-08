@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { dashboardFieldProps, dashboardFieldUi } from '~/utils/dashboardForm'
+
 interface SelectOption {
   label: string
   value: string | number
@@ -34,7 +36,9 @@ const model = defineModel<string | number | undefined>()
       :placeholder="placeholder"
       :disabled="disabled"
       value-key="value"
+      v-bind="dashboardFieldProps"
       class="w-full"
+      :ui="dashboardFieldUi"
     />
   </FormField>
 </template>

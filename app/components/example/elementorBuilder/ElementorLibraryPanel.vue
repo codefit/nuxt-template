@@ -106,7 +106,9 @@ const onCustom = () => {
         <button
           type="button"
           class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-          :class="leftTab === 'blocks' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
+          :class="leftTab === 'blocks'
+            ? 'bg-violet-600 text-white shadow-sm'
+            : 'text-neutral-500 hover:bg-white/70 hover:text-violet-700'"
           @click="leftTab = 'blocks'"
         >
           Blocks
@@ -114,7 +116,9 @@ const onCustom = () => {
         <button
           type="button"
           class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-          :class="leftTab === 'structure' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
+          :class="leftTab === 'structure'
+            ? 'bg-sky-600 text-white shadow-sm'
+            : 'text-neutral-500 hover:bg-white/70 hover:text-sky-700'"
           @click="leftTab = 'structure'"
         >
           Grid
@@ -122,7 +126,9 @@ const onCustom = () => {
         <button
           type="button"
           class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-          :class="leftTab === 'widgets' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
+          :class="leftTab === 'widgets'
+            ? 'bg-emerald-600 text-white shadow-sm'
+            : 'text-neutral-500 hover:bg-white/70 hover:text-emerald-700'"
           @click="leftTab = 'widgets'"
         >
           Widgety
