@@ -1,27 +1,25 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 /**
  * Elementor-like page builder (example). Widgets live in ./widgets.
  */
-import { BLOCKS, blockGroups } from './blocks'
+import { BLOCKS } from './blocks'
 import { createId, createWidget } from './defaults'
 import {
   CANVAS_MAX,
-  LAYOUTS,
   SECTION_GRID,
   colClasses,
   colsFromSpans,
   createCols,
   gapClass,
   parseColSpans,
-  spansSum,
 } from './grid'
-import { PLUGINS, pluginMeta } from './plugins'
+import { pluginMeta } from './plugins'
 import { createDesign, designStyle } from './design'
 import { randomHeading, randomText } from './lorem'
 import { createColumnSpacing, createSectionSpacing, spacingStyle } from './spacing'
+import { downloadPreviewHtml } from './exportHtml'
 import type {
   CanvasMaxId,
-  ColSpan,
   ColumnNode,
   DragPayload,
   PluginId,
@@ -30,12 +28,8 @@ import type {
   Selection,
   WidgetNode,
 } from './types'
-import ElementorBgFields from './ElementorBgFields.vue'
-import ElementorBlockSkeleton from './ElementorBlockSkeleton.vue'
-import ElementorColFields from './ElementorColFields.vue'
-import ElementorInspector from './ElementorInspector.vue'
-import ElementorSelect from './ElementorSelect.vue'
-import ElementorSpacingFields from './ElementorSpacingFields.vue'
+import ElementorInspectorRail from './ElementorInspectorRail.vue'
+import ElementorLibraryPanel from './ElementorLibraryPanel.vue'
 import ElementorWidgetHost from './ElementorWidgetHost.vue'
 
 const createColumn = (cols: ResponsiveCols = createCols(12)): ColumnNode => ({
@@ -63,32 +57,9 @@ const blockStyle = (spacing: SectionNode['spacing'], design: SectionNode['design
 const sections = ref<SectionNode[]>([])
 const selected = ref<Selection>(null)
 const preview = ref(false)
-const leftTab = ref<'blocks' | 'structure' | 'widgets'>('blocks')
-const customGrid = ref('4,8')
-const customError = ref('')
-
-const customSpans = computed(() => parseColSpans(customGrid.value))
-
-const customPreview = computed(() => {
-  const spans = customSpans.value
-  if (!spans) return [] as ColSpan[]
-  return spans
-})
-
-const customSum = computed(() => {
-  const spans = customSpans.value
-  return spans ? spansSum(spans) : 0
-})
-
-const applyCustomGrid = () => {
-  const spans = parseColSpans(customGrid.value)
-  if (!spans?.length) {
-    customError.value = 'Zadej čísla 1–12, např. 4,8 nebo 2/8/2'
-    return
-  }
-  customError.value = ''
-  addSection(colsFromSpans(spans))
-}
+const libraryOpen = ref(false)
+const inspectorOpen = ref(false)
+const libraryTab = ref<'blocks' | 'structure' | 'widgets'>('blocks')
 const dragOver = ref<string | null>(null)
 const dragging = ref<DragPayload | null>(null)
 const canvasMax = ref<CanvasMaxId>('xl')
@@ -123,45 +94,18 @@ const structureLabel = computed(() => {
   return pluginMeta(selectedWidget.value?.plugin ?? 'heading').label
 })
 
-const pluginsByGroup = computed(() => {
-  const groups: Record<string, typeof PLUGINS> = {
-    basic: [],
-    media: [],
-    content: [],
-    feedback: [],
-  }
-  for (const plugin of PLUGINS) groups[plugin.group]!.push(plugin)
-  return groups
-})
+const isNarrow = () =>
+  import.meta.client && window.matchMedia('(max-width: 1023px)').matches
 
-const groupLabel: Record<string, string> = {
-  basic: 'Základní',
-  media: 'Média',
-  content: 'Obsah',
-  feedback: 'Feedback',
+const openLibrary = (tab: 'blocks' | 'structure' | 'widgets' = 'blocks') => {
+  libraryTab.value = tab
+  libraryOpen.value = true
+  inspectorOpen.value = false
 }
 
-const groupTone: Record<string, { card: string; icon: string; chip: string }> = {
-  basic: {
-    card: 'bg-emerald-50 hover:bg-emerald-100/80',
-    icon: 'bg-emerald-500 text-white',
-    chip: 'text-emerald-700',
-  },
-  media: {
-    card: 'bg-rose-50 hover:bg-rose-100/80',
-    icon: 'bg-rose-500 text-white',
-    chip: 'text-rose-700',
-  },
-  content: {
-    card: 'bg-sky-50 hover:bg-sky-100/80',
-    icon: 'bg-sky-500 text-white',
-    chip: 'text-sky-700',
-  },
-  feedback: {
-    card: 'bg-amber-50 hover:bg-amber-100/80',
-    icon: 'bg-amber-500 text-white',
-    chip: 'text-amber-700',
-  },
+const onEmptyColumn = (sectionId: string, columnId: string) => {
+  selected.value = { kind: 'column', sectionId, columnId }
+  if (isNarrow()) openLibrary('widgets')
 }
 
 const sectionClass = (section: SectionNode) => `${SECTION_GRID} ${gapClass(section.gap)}`
@@ -171,22 +115,6 @@ const columnSurfaceClass = (surface: ColumnNode['surface']) =>
     ? 'h-full rounded-2xl bg-white shadow-[0_10px_40px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 transition hover:shadow-[0_16px_50px_rgba(15,23,42,0.1)]'
     : 'h-full'
 
-const layoutPreviewSpans = (colsList: ResponsiveCols[]) =>
-  colsList.map((c) => c.md ?? c.sm ?? c.base)
-
-const blocksByGroup = computed(() => {
-  const groups: Record<string, typeof BLOCKS> = {
-    product: [],
-    features: [],
-    steps: [],
-    trust: [],
-    content: [],
-    about: [],
-  }
-  for (const block of BLOCKS) groups[block.group]!.push(block)
-  return groups
-})
-
 const insertBlock = (blockId: string) => {
   const def = BLOCKS.find((b) => b.id === blockId)
   if (!def) return
@@ -194,6 +122,12 @@ const insertBlock = (blockId: string) => {
   sections.value.push(...built)
   const first = built[0]
   if (first) selected.value = { kind: 'section', sectionId: first.id }
+}
+
+const applyCustomLayout = (raw: string) => {
+  const spans = parseColSpans(raw)
+  if (!spans?.length) return
+  addSection(colsFromSpans(spans))
 }
 
 const setDrag = (event: DragEvent, payload: DragPayload) => {
@@ -365,11 +299,40 @@ const onColumnDrop = (event: DragEvent, sectionId: string, columnId: string) => 
   }
 }
 
+const toast = useToast()
+const confirm = useConfirmDialog()
+const exporting = ref(false)
+
 const onExport = async () => {
   await navigator.clipboard.writeText(JSON.stringify(sections.value, null, 2))
+  toast.add({ title: 'JSON zkopírován', color: 'success' })
 }
 
-const onReset = () => {
+const onDownloadHtml = async () => {
+  if (exporting.value) return
+  exporting.value = true
+  try {
+    await downloadPreviewHtml(sections.value, {
+      maxWidth: canvasMaxMeta.value.width,
+      title: 'PageBuilder preview',
+    })
+    toast.add({ title: 'HTML náhled stažen', color: 'success' })
+  } catch {
+    toast.add({ title: 'Export selhal', color: 'error' })
+  } finally {
+    exporting.value = false
+  }
+}
+
+const onReset = async () => {
+  if (!sections.value.length) return
+  const ok = await confirm({
+    title: 'Vymazat celý dokument?',
+    description: 'Všechny sekce a widgety se zahodí. Tuto akci nelze vrátit zpět.',
+    confirmLabel: 'Vymazat',
+    confirmColor: 'error',
+  })
+  if (!ok) return
   sections.value = []
   selected.value = null
   preview.value = false
@@ -378,8 +341,25 @@ const onReset = () => {
 
 const togglePreview = () => {
   preview.value = !preview.value
-  if (preview.value) selected.value = null
+  if (preview.value) {
+    selected.value = null
+    libraryOpen.value = false
+    inspectorOpen.value = false
+  }
 }
+
+watch(selected, (next) => {
+  if (preview.value || !next) return
+  // Na mobilu otevři inspector jen u widgetu (nastavení vloženého obsahu),
+  // ne po přidání sekce/sloupce.
+  if (isNarrow() && next.kind === 'widget') inspectorOpen.value = true
+})
+
+watch(preview, (on) => {
+  if (!on) return
+  libraryOpen.value = false
+  inspectorOpen.value = false
+})
 </script>
 
 <template>
@@ -405,6 +385,30 @@ const togglePreview = () => {
       </div>
 
       <div class="ml-auto flex items-center gap-1.5">
+        <UButton
+          v-show="!preview"
+          size="sm"
+          color="neutral"
+          variant="soft"
+          icon="i-lucide-panel-left"
+          square
+          class="lg:hidden"
+          :ui="libraryOpen ? { base: 'bg-neutral-900 text-white hover:bg-neutral-800' } : undefined"
+          title="Knihovna"
+          @click="libraryOpen = !libraryOpen"
+        />
+        <UButton
+          v-show="!preview"
+          size="sm"
+          color="neutral"
+          variant="soft"
+          icon="i-lucide-panel-right"
+          square
+          class="lg:hidden"
+          :ui="inspectorOpen ? { base: 'bg-neutral-900 text-white hover:bg-neutral-800' } : undefined"
+          title="Inspector"
+          @click="inspectorOpen = !inspectorOpen"
+        />
         <div class="mr-1 hidden items-center gap-1.5 lg:flex">
           <USelect
             v-model="canvasMax"
@@ -436,6 +440,16 @@ const togglePreview = () => {
         />
         <UButton
           size="sm"
+          color="neutral"
+          variant="soft"
+          icon="i-lucide-download"
+          class="hidden sm:inline-flex"
+          label="HTML"
+          :loading="exporting"
+          @click="onDownloadHtml"
+        />
+        <UButton
+          size="sm"
           :color="preview ? 'neutral' : undefined"
           :variant="preview ? 'soft' : 'solid'"
           :ui="preview ? undefined : { base: 'bg-neutral-900 text-white hover:bg-neutral-800' }"
@@ -449,202 +463,39 @@ const togglePreview = () => {
     <div class="flex min-h-0 flex-1 gap-3 p-3">
       <aside
         v-show="!preview"
-        class="flex w-[272px] shrink-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+        class="hidden w-[272px] shrink-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:flex"
       >
-        <div class="p-2.5">
-          <div class="flex rounded-xl bg-neutral-100/80 p-1">
-            <button
-              type="button"
-              class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-              :class="leftTab === 'blocks' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
-              @click="leftTab = 'blocks'"
-            >
-              Blocks
-            </button>
-            <button
-              type="button"
-              class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-              :class="leftTab === 'structure' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
-              @click="leftTab = 'structure'"
-            >
-              Grid
-            </button>
-            <button
-              type="button"
-              class="flex-1 rounded-lg px-1.5 py-2 text-[11px] font-semibold transition"
-              :class="leftTab === 'widgets' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'"
-              @click="leftTab = 'widgets'"
-            >
-              Widgety
-            </button>
-          </div>
-        </div>
-
-        <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
-          <template v-if="leftTab === 'blocks'">
-            <div
-              v-for="(list, group) in blocksByGroup"
-              :key="group"
-              class="mb-5"
-            >
-              <p class="mb-2 px-0.5 text-[11px] font-semibold text-neutral-400">
-                {{ blockGroups[group as keyof typeof blockGroups] }}
-              </p>
-              <div class="space-y-2">
-                <button
-                  v-for="block in list"
-                  :key="block.id"
-                  type="button"
-                  class="group/block w-full rounded-2xl bg-neutral-50 p-3 text-left transition hover:bg-neutral-100/90 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
-                  @click="insertBlock(block.id)"
-                >
-                  <div class="mb-1.5 flex items-center justify-between gap-2">
-                    <span class="text-xs font-semibold text-neutral-800">{{ block.label }}</span>
-                    <span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-neutral-400 shadow-sm">
-                      {{ block.code }}
-                    </span>
-                  </div>
-                  <p class="text-[10px] leading-snug text-neutral-500">
-                    {{ block.description }}
-                  </p>
-                  <div class="mt-2.5">
-                    <ElementorBlockSkeleton :type="block.skeleton" />
-                  </div>
-                </button>
-              </div>
-            </div>
-            <p class="px-0.5 text-[11px] leading-relaxed text-neutral-400">
-              Vloží hotovou sekci. Nadpisy a texty pak edituj přímo kliknutím na plátně.
-            </p>
-          </template>
-
-          <template v-else-if="leftTab === 'structure'">
-            <div class="mb-4 space-y-2.5 rounded-2xl bg-neutral-50 p-3">
-              <p class="text-[11px] font-semibold text-neutral-400">
-                Vlastní grid
-              </p>
-              <input
-                v-model="customGrid"
-                type="text"
-                placeholder="4,8 nebo 2/8/2"
-                class="w-full rounded-xl border-0 bg-white px-3 py-2 text-xs tabular-nums shadow-sm outline-none ring-1 ring-black/5 focus:ring-2 focus:ring-neutral-900/10"
-                @keydown.enter.prevent="applyCustomGrid"
-              >
-              <div
-                v-if="customPreview.length"
-                class="flex h-8 w-full gap-1"
-              >
-                <span
-                  v-for="(span, i) in customPreview"
-                  :key="i"
-                  class="flex items-center justify-center rounded-lg bg-neutral-800 text-[9px] font-semibold text-white"
-                  :style="{ flex: span }"
-                >
-                  {{ span }}
-                </span>
-              </div>
-              <p
-                class="text-[10px]"
-                :class="customSum === 12 ? 'text-neutral-400' : 'text-amber-600'"
-              >
-                Součet md: {{ customSum || '—' }}/12
-                <span v-if="customSum && customSum !== 12"> (může zalamovat)</span>
-              </p>
-              <p
-                v-if="customError"
-                class="text-[10px] text-red-600"
-              >
-                {{ customError }}
-              </p>
-              <UButton
-                block
-                size="sm"
-                color="neutral"
-                :ui="{ base: 'bg-neutral-900 text-white hover:bg-neutral-800' }"
-                icon="i-lucide-plus"
-                label="Vložit layout"
-                @click="applyCustomGrid"
-              />
-              <p class="text-[10px] leading-relaxed text-neutral-400">
-                Formát: <code class="text-neutral-500">4,8</code>,
-                <code class="text-neutral-500">2/8/2</code>,
-                <code class="text-neutral-500">2x8</code>
-              </p>
-            </div>
-
-            <p class="mb-2 px-0.5 text-[11px] font-semibold text-neutral-400">
-              Presety
-            </p>
-            <div class="mb-4 grid grid-cols-2 gap-2">
-              <button
-                v-for="layout in LAYOUTS"
-                :key="layout.id"
-                type="button"
-                draggable="true"
-                class="flex flex-col items-center gap-2 rounded-2xl bg-neutral-50 px-2 py-3 text-left transition hover:bg-white hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
-                @dragstart="setDrag($event, { type: 'preset', cols: layout.cols })"
-                @dragend="clearDrag"
-                @click="addSection(layout.cols)"
-              >
-                <div class="flex h-8 w-full gap-1">
-                  <span
-                    v-for="(span, i) in layoutPreviewSpans(layout.cols)"
-                    :key="i"
-                    class="rounded-md bg-neutral-300"
-                    :style="{ flex: span }"
-                  />
-                </div>
-                <span class="w-full text-center text-[10px] font-semibold text-neutral-600">
-                  {{ layout.label }}
-                </span>
-              </button>
-            </div>
-            <p class="px-0.5 text-[11px] leading-relaxed text-neutral-400">
-              Mobile-first (base 12), od <code class="text-neutral-500">md:</code> platí zadané sloupce.
-            </p>
-          </template>
-
-          <template v-else>
-            <div
-              v-for="(list, group) in pluginsByGroup"
-              :key="group"
-              class="mb-4"
-            >
-              <p
-                class="mb-2 px-0.5 text-[11px] font-semibold"
-                :class="groupTone[group]?.chip ?? 'text-neutral-400'"
-              >
-                {{ groupLabel[group] }}
-              </p>
-              <div class="grid grid-cols-2 gap-2">
-                <button
-                  v-for="plugin in list"
-                  :key="plugin.id"
-                  type="button"
-                  draggable="true"
-                  class="flex flex-col items-center gap-2 rounded-2xl px-2 py-3 text-center transition hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)]"
-                  :class="groupTone[group]?.card ?? 'bg-neutral-50'"
-                  @dragstart="setDrag($event, { type: 'plugin', plugin: plugin.id })"
-                  @dragend="clearDrag"
-                >
-                  <span
-                    class="flex size-10 items-center justify-center rounded-xl shadow-sm"
-                    :class="groupTone[group]?.icon ?? 'bg-neutral-800 text-white'"
-                  >
-                    <UIcon
-                      :name="plugin.icon"
-                      class="size-4"
-                    />
-                  </span>
-                  <span class="w-full truncate text-[11px] font-semibold text-neutral-700">
-                    {{ plugin.label }}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </template>
-        </div>
+        <ElementorLibraryPanel
+          v-model:tab="libraryTab"
+          @insert-block="insertBlock"
+          @add-section="addSection"
+          @apply-custom="applyCustomLayout"
+          @drag-start="setDrag"
+          @drag-end="clearDrag"
+        />
       </aside>
+
+      <USlideover
+        v-model:open="libraryOpen"
+        side="left"
+        title="Knihovna"
+        :overlay="false"
+        :ui="{
+          content: 'max-w-none w-[min(100vw,18rem)] sm:w-80 lg:hidden',
+          body: 'flex min-h-0 flex-1 flex-col overflow-hidden p-0',
+        }"
+      >
+        <template #body>
+          <ElementorLibraryPanel
+            v-model:tab="libraryTab"
+            @insert-block="insertBlock"
+            @add-section="addSection"
+            @apply-custom="applyCustomLayout"
+            @drag-start="setDrag"
+            @drag-end="clearDrag"
+          />
+        </template>
+      </USlideover>
 
       <main class="relative min-w-0 flex-1 overflow-hidden rounded-2xl bg-[#f7f8fa] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
         <div
@@ -848,16 +699,19 @@ const togglePreview = () => {
                     </div>
                   </div>
 
-                  <div
+                  <button
                     v-else
-                    class="flex min-h-28 flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-neutral-200 bg-neutral-50/50 p-5 text-center"
+                    type="button"
+                    class="flex min-h-28 w-full flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-neutral-200 bg-neutral-50/50 p-5 text-center transition hover:border-neutral-300 hover:bg-neutral-50"
+                    @click.stop="onEmptyColumn(section.id, column.id)"
                   >
                     <UIcon
                       name="i-lucide-circle-plus"
                       class="size-6 text-neutral-300"
                     />
                     <p class="text-xs text-neutral-400">
-                      Přetáhni widget sem
+                      <span class="lg:hidden">Přidat widget</span>
+                      <span class="hidden lg:inline">Přetáhni widget sem</span>
                     </p>
                     <UButton
                       size="xs"
@@ -865,9 +719,10 @@ const togglePreview = () => {
                       variant="soft"
                       icon="i-lucide-heading"
                       label="Nadpis"
+                      class="pointer-events-auto"
                       @click.stop="insertWidget(section.id, column.id, 'heading')"
                     />
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -886,7 +741,7 @@ const togglePreview = () => {
                 Prázdný editor
               </p>
               <p class="mb-5 text-xs text-neutral-400">
-                Přidej sekci, grid layout nebo hotový block zleva.
+                Přidej sekci, grid layout nebo hotový block z knihovny.
               </p>
               <UButton
                 size="sm"
@@ -916,7 +771,7 @@ const togglePreview = () => {
 
       <aside
         v-show="!preview"
-        class="flex w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+        class="hidden w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:flex"
       >
         <div class="px-4 py-3.5">
           <p class="text-[11px] font-semibold text-neutral-400">
@@ -926,160 +781,40 @@ const togglePreview = () => {
             {{ structureLabel }}
           </p>
         </div>
-
-        <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4">
-          <template v-if="!selected">
-            <div class="rounded-2xl bg-neutral-50 p-4">
-              <p class="text-xs leading-relaxed text-neutral-500">
-                Klikni na sekci, sloupec nebo widget — tady se objeví nastavení.
-              </p>
-            </div>
-            <div class="space-y-1.5 lg:hidden">
-              <ElementorSelect
-                v-model="canvasMax"
-                label="Canvas max-width"
-                :items="CANVAS_MAX.map((opt) => ({ label: opt.label, value: opt.id }))"
-              />
-            </div>
-          </template>
-
-          <template v-else-if="selected.kind === 'section' && selectedSection">
-            <div class="space-y-2 rounded-2xl bg-neutral-50 p-3">
-              <div class="flex items-center justify-between">
-                <label class="text-xs font-semibold text-neutral-600">Gap</label>
-                <span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold tabular-nums text-neutral-500 shadow-sm">
-                  {{ selectedSection.gap }}px
-                </span>
-              </div>
-              <input
-                v-model.number="selectedSection.gap"
-                type="range"
-                min="0"
-                max="48"
-                step="4"
-                class="el-range w-full"
-              >
-            </div>
-            <ElementorBgFields v-model="selectedSection.design" />
-            <ElementorSpacingFields v-model="selectedSection.spacing" />
-            <div class="space-y-2">
-              <label class="text-xs font-semibold text-neutral-500">Layout preset</label>
-              <div class="flex flex-wrap gap-1.5">
-                <button
-                  v-for="layout in LAYOUTS"
-                  :key="layout.id"
-                  type="button"
-                  class="rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-semibold text-neutral-600 transition hover:bg-neutral-900 hover:text-white"
-                  @click="applyPreset(selectedSection.id, layout.cols)"
-                >
-                  {{ layout.label }}
-                </button>
-              </div>
-            </div>
-            <UButton
-              block
-              size="sm"
-              color="neutral"
-              variant="soft"
-              icon="i-lucide-plus"
-              label="Přidat sloupec"
-              @click="addColumn(selectedSection.id)"
-            />
-          </template>
-
-          <template v-else-if="selected.kind === 'column' && selectedColumn">
-            <ElementorColFields v-model="selectedColumn.cols" />
-            <div class="space-y-2">
-              <label class="text-xs font-semibold text-neutral-500">Povrch sloupce</label>
-              <div class="flex gap-1 rounded-xl bg-neutral-100 p-1">
-                <button
-                  type="button"
-                  class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
-                  :class="selectedColumn.surface === 'plain' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500'"
-                  @click="selectedColumn.surface = 'plain'"
-                >
-                  Plain
-                </button>
-                <button
-                  type="button"
-                  class="flex-1 rounded-lg py-1.5 text-xs font-semibold transition"
-                  :class="selectedColumn.surface === 'card' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500'"
-                  @click="selectedColumn.surface = 'card'"
-                >
-                  Card
-                </button>
-              </div>
-            </div>
-            <ElementorBgFields v-model="selectedColumn.design" />
-            <ElementorSpacingFields v-model="selectedColumn.spacing" />
-            <div class="space-y-2">
-              <label class="text-xs font-semibold text-neutral-500">Vložit widget</label>
-              <div class="grid grid-cols-2 gap-1.5">
-                <button
-                  v-for="plugin in PLUGINS"
-                  :key="plugin.id"
-                  type="button"
-                  class="flex items-center gap-1.5 rounded-xl px-2 py-2 text-left text-[10px] font-semibold text-neutral-700 transition"
-                  :class="groupTone[plugin.group]?.card ?? 'bg-neutral-50'"
-                  @click="insertWidget(selected.sectionId, selected.columnId, plugin.id)"
-                >
-                  <span
-                    class="flex size-6 shrink-0 items-center justify-center rounded-lg"
-                    :class="groupTone[plugin.group]?.icon ?? 'bg-neutral-800 text-white'"
-                  >
-                    <UIcon
-                      :name="plugin.icon"
-                      class="size-3"
-                    />
-                  </span>
-                  <span class="truncate">{{ plugin.label }}</span>
-                </button>
-              </div>
-            </div>
-          </template>
-
-          <ElementorInspector
-            v-else-if="selected.kind === 'widget' && selectedColumn && selectedWidgetIndex >= 0"
-            v-model="selectedColumn.widgets[selectedWidgetIndex]"
-          />
-        </div>
+        <ElementorInspectorRail
+          :selected="selected"
+          :section="selectedSection"
+          :column="selectedColumn"
+          :widget-index="selectedWidgetIndex"
+          v-model:canvas-max="canvasMax"
+          @apply-preset="applyPreset"
+          @add-column="addColumn"
+        />
       </aside>
+
+      <USlideover
+        v-model:open="inspectorOpen"
+        side="right"
+        :title="structureLabel"
+        :overlay="false"
+        :ui="{
+          content: 'max-w-none w-[min(100vw,20rem)] sm:w-[22rem] lg:hidden',
+          body: 'flex min-h-0 flex-1 flex-col overflow-hidden p-0',
+        }"
+      >
+        <template #body>
+          <ElementorInspectorRail
+            :selected="selected"
+            :section="selectedSection"
+            :column="selectedColumn"
+            :widget-index="selectedWidgetIndex"
+            show-canvas-select
+            v-model:canvas-max="canvasMax"
+            @apply-preset="applyPreset"
+            @add-column="addColumn"
+          />
+        </template>
+      </USlideover>
     </div>
   </div>
 </template>
-
-<style scoped>
-.el-range {
-  appearance: none;
-  height: 1.25rem;
-  background: transparent;
-}
-.el-range::-webkit-slider-runnable-track {
-  height: 3px;
-  border-radius: 999px;
-  background: #e5e7eb;
-}
-.el-range::-webkit-slider-thumb {
-  appearance: none;
-  margin-top: -5px;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: #171717;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-.el-range::-moz-range-track {
-  height: 3px;
-  border-radius: 999px;
-  background: #e5e7eb;
-}
-.el-range::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border: 0;
-  border-radius: 999px;
-  background: #171717;
-  cursor: pointer;
-}
-</style>

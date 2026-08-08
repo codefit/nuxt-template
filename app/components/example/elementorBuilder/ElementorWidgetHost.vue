@@ -3,8 +3,10 @@ import type { WidgetNode } from './types'
 import EbHeading from './widgets/EbHeading.vue'
 import EbText from './widgets/EbText.vue'
 import EbButton from './widgets/EbButton.vue'
+import EbButtonGroup from './widgets/EbButtonGroup.vue'
 import EbIcon from './widgets/EbIcon.vue'
 import EbImage from './widgets/EbImage.vue'
+import EbVideo from './widgets/EbVideo.vue'
 import EbMaps from './widgets/EbMaps.vue'
 import EbIconList from './widgets/EbIconList.vue'
 import EbSocial from './widgets/EbSocial.vue'
@@ -42,6 +44,11 @@ const widget = defineModel<WidgetNode>({ required: true })
     v-model="widget.data"
     :preview="preview"
   />
+  <EbButtonGroup
+    v-else-if="widget.plugin === 'button-group'"
+    v-model="widget.data"
+    :preview="preview"
+  />
   <EbIcon
     v-else-if="widget.plugin === 'icon'"
     v-model="widget.data"
@@ -49,6 +56,11 @@ const widget = defineModel<WidgetNode>({ required: true })
   />
   <EbImage
     v-else-if="widget.plugin === 'image'"
+    v-model="widget.data"
+    :preview="preview"
+  />
+  <EbVideo
+    v-else-if="widget.plugin === 'video'"
     v-model="widget.data"
     :preview="preview"
   />

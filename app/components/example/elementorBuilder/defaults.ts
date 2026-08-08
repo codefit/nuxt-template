@@ -27,6 +27,26 @@ export const defaultData = <K extends PluginId>(plugin: K): WidgetDataMap[K] => 
       align: 'left',
       block: false,
     },
+    'button-group': {
+      align: 'left',
+      gap: 12,
+      items: [
+        {
+          id: uid(),
+          label: 'Primární',
+          href: '#',
+          color: 'primary',
+          variant: 'solid',
+        },
+        {
+          id: uid(),
+          label: 'Sekundární',
+          href: '#',
+          color: 'neutral',
+          variant: 'outline',
+        },
+      ],
+    },
     icon: {
       name: 'i-lucide-star',
       size: 22,
@@ -42,6 +62,16 @@ export const defaultData = <K extends PluginId>(plugin: K): WidgetDataMap[K] => 
       objectPosition: 'center',
       height: 240,
       radius: 12,
+    },
+    video: {
+      src: '',
+      height: 320,
+      radius: 12,
+      objectFit: 'contain',
+      controls: true,
+      autoplay: false,
+      muted: true,
+      loop: false,
     },
     maps: { query: 'Praha, Czech Republic', height: 280, zoom: 14 },
     'icon-list': {

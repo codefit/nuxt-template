@@ -73,6 +73,17 @@ const addTab = () => {
     body: 'Obsah…',
   })
 }
+
+const addButton = () => {
+  if (widget.value.plugin !== 'button-group') return
+  widget.value.data.items.push({
+    id: createId(),
+    label: 'Tlačítko',
+    href: '#',
+    color: 'neutral',
+    variant: 'outline',
+  })
+}
 </script>
 
 <template>
@@ -173,6 +184,72 @@ const addTab = () => {
       <UCheckbox
         v-model="widget.data.block"
         label="Celá šířka"
+      />
+    </template>
+
+    <template v-else-if="widget.plugin === 'button-group'">
+      <ElementorSelect
+        v-model="widget.data.align"
+        label="Zarovnání"
+        :items="alignItems"
+      />
+      <label class="block space-y-1">
+        <span class="text-xs font-medium text-neutral-600">Mezera ({{ widget.data.gap }}px)</span>
+        <input
+          v-model.number="widget.data.gap"
+          type="range"
+          min="4"
+          max="32"
+          step="2"
+          class="w-full accent-brand-800"
+        >
+      </label>
+      <div
+        v-for="(item, index) in widget.data.items"
+        :key="item.id"
+        class="space-y-2 rounded-md border border-neutral-200 p-2"
+      >
+        <p class="text-[10px] font-semibold tracking-wide text-neutral-400 uppercase">
+          Tlačítko {{ index + 1 }}
+        </p>
+        <UInput
+          v-model="item.label"
+          size="sm"
+          placeholder="Popisek"
+        />
+        <UInput
+          v-model="item.href"
+          size="sm"
+          placeholder="Odkaz"
+        />
+        <ElementorSelect
+          v-model="item.color"
+          label="Barva"
+          :items="['primary', 'neutral', 'error']"
+        />
+        <ElementorSelect
+          v-model="item.variant"
+          label="Variant"
+          :items="['solid', 'outline', 'soft', 'ghost', 'link']"
+        />
+        <UButton
+          size="xs"
+          color="error"
+          variant="ghost"
+          icon="i-lucide-trash-2"
+          label="Smazat"
+          :disabled="widget.data.items.length <= 1"
+          @click="widget.data.items.splice(index, 1)"
+        />
+      </div>
+      <UButton
+        block
+        size="sm"
+        color="neutral"
+        variant="soft"
+        icon="i-lucide-plus"
+        label="Přidat tlačítko"
+        @click="addButton"
       />
     </template>
 
@@ -283,6 +360,61 @@ const addTab = () => {
           { label: 'left', value: 'left' },
           { label: 'right', value: 'right' },
         ]"
+      />
+    </template>
+
+    <template v-else-if="widget.plugin === 'video'">
+      <p class="text-xs leading-relaxed text-neutral-500">
+        Soubor zůstává jen v prohlížeči (blob URL). Po refreshi zmizí. Do HTML exportu se video nebalí (soubory bývají velké).
+      </p>
+      <label class="block space-y-1.5">
+        <span class="text-xs font-semibold text-neutral-500">Výška rámečku ({{ widget.data.height }}px)</span>
+        <input
+          v-model.number="widget.data.height"
+          type="range"
+          min="120"
+          max="720"
+          step="8"
+          class="w-full accent-neutral-900"
+        >
+      </label>
+      <label class="block space-y-1.5">
+        <span class="text-xs font-semibold text-neutral-500">Zaoblení ({{ widget.data.radius }}px)</span>
+        <input
+          v-model.number="widget.data.radius"
+          type="range"
+          min="0"
+          max="30"
+          step="1"
+          class="w-full accent-neutral-900"
+        >
+      </label>
+      <ElementorSelect
+        v-model="widget.data.objectFit"
+        label="object-fit"
+        :items="[
+          { label: 'cover', value: 'cover' },
+          { label: 'contain', value: 'contain' },
+          { label: 'fill', value: 'fill' },
+          { label: 'none', value: 'none' },
+          { label: 'scale-down', value: 'scale-down' },
+        ]"
+      />
+      <UCheckbox
+        v-model="widget.data.controls"
+        label="Ovládání"
+      />
+      <UCheckbox
+        v-model="widget.data.autoplay"
+        label="Autoplay"
+      />
+      <UCheckbox
+        v-model="widget.data.muted"
+        label="Ztlumeno"
+      />
+      <UCheckbox
+        v-model="widget.data.loop"
+        label="Smyčka"
       />
     </template>
 

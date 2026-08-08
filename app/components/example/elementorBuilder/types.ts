@@ -2,8 +2,10 @@ export type PluginId =
   | 'heading'
   | 'text'
   | 'button'
+  | 'button-group'
   | 'icon'
   | 'image'
+  | 'video'
   | 'maps'
   | 'icon-list'
   | 'social'
@@ -78,6 +80,21 @@ export interface ButtonData {
   block: boolean
 }
 
+export interface ButtonGroupItem {
+  id: string
+  label: string
+  href: string
+  color: ButtonColor
+  variant: ButtonVariant
+}
+
+export interface ButtonGroupData {
+  items: ButtonGroupItem[]
+  align: TextAlign
+  /** Gap between buttons in px */
+  gap: number
+}
+
 export interface IconData {
   name: string
   size: number
@@ -98,6 +115,20 @@ export interface ImageData {
   height: number
   /** Border radius 0–30 px */
   radius: number
+}
+
+export interface VideoData {
+  /** blob: URL — session only, never uploaded */
+  src: string
+  /** Frame height in px; width is always 100% of column */
+  height: number
+  /** Border radius 0–30 px */
+  radius: number
+  objectFit: ObjectFit
+  controls: boolean
+  autoplay: boolean
+  muted: boolean
+  loop: boolean
 }
 
 export interface MapsData {
@@ -203,8 +234,10 @@ export type WidgetDataMap = {
   heading: HeadingData
   text: TextData
   button: ButtonData
+  'button-group': ButtonGroupData
   icon: IconData
   image: ImageData
+  video: VideoData
   maps: MapsData
   'icon-list': IconListData
   social: SocialData
