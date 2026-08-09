@@ -493,7 +493,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Copy — below visual on mobile, left on desktop -->
-    <section class="order-2 flex min-h-0 flex-1 flex-col lg:order-1 lg:max-w-[42%] lg:py-4">
+    <section class="order-2 flex min-h-0 flex-1 flex-col lg:order-1 lg:max-w-[42%]">
       <header class="flex shrink-0 items-start justify-between gap-4">
         <motion.p
           class="text-lg font-extrabold tracking-tight"
@@ -507,19 +507,21 @@ onUnmounted(() => {
             class="h-14"
           >
         </motion.p>
-        <motion.p
-          class="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-neutral-500 ring-1 ring-black/5"
+        <motion.div
+          class="shrink-0"
           :initial="{ opacity: 0, x: 12 }"
           :animate="ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }"
           :transition="{ duration: 0.5, delay: ready ? 0.08 : 0, ease: easeOut }"
         >
-          Made By <NuxtLink
-            href="https://codefit.cz"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[#85c369]"
-          ><u>Codefit Webdesign</u></NuxtLink>
-        </motion.p>
+          <NuxtLink href="https://www.cerave.cz/" target="_blank" rel="noopener noreferrer">
+            <img
+              src="/images/example/dermatology.png"
+              alt="Doporučováno Dermatology"
+              class="h-16 w-16 object-contain sm:h-20 sm:w-20"
+            >
+          </NuxtLink>
+          
+        </motion.div>
       </header>
 
       <!-- Vertical section swiper — same transform transition for arrows, dots, wheel -->
@@ -935,13 +937,13 @@ onUnmounted(() => {
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
 
         <motion.div
-          class="absolute bottom-5 left-5 z-10 rounded-[30px] bg-white/95 px-8 py-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6"
+          class="absolute bottom-5 left-5 z-10 rounded-[30px] bg-white/95 px-4 py-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6 lg:px-6"
           :initial="{ opacity: 0, y: 24 }"
           :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }"
           :transition="{ duration: 0.55, delay: ready ? 0.2 : 0, ease: easeOut }"
         >
           <p class="text-sm font-bold text-neutral-900">
-            Doporučováno dermatology
+            Hodnocení produktu
           </p>
           <div
             class="mt-1.5 flex items-center gap-0.5"
@@ -1009,11 +1011,13 @@ onUnmounted(() => {
           :href="productUrl"
           target="_blank"
           rel="noopener noreferrer"
-          class="relative z-[1] rounded-full bg-[#0070ce] px-6 py-3.5 text-sm font-bold text-white"
+          class="relative z-[1] rounded-xl bg-[#0070ce] px-6 py-3.5 text-sm font-bold text-white sm:rounded-full"
+          aria-label="Zobrazit produkt"
           :whileHover="{ scale: 1.03, backgroundColor: '#005bab', transition: softSpring }"
           :whilePress="{ scale: 0.97, transition: softSpring }"
         >
-          Zobrazit produkt <span>&#x21e2;</span>
+          <span class="hidden sm:inline">Zobrazit produkt&nbsp;</span>
+          <span aria-hidden="true">&#x21e2;</span>
         </motion.a>
       </motion.div>
     </motion.section>
@@ -1077,7 +1081,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.85rem;
+  padding: 0 0.85rem 0.85rem 0;
   border-bottom-right-radius: var(--r);
 }
 
@@ -1106,7 +1110,7 @@ onUnmounted(() => {
   bottom: 0;
   align-items: center;
   justify-content: center;
-  padding: 0.85rem;
+  padding: 0.85rem 0 0 0.85rem;
   border-top-left-radius: var(--r);
 }
 
