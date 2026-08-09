@@ -2,16 +2,91 @@
 /**
  * Isolated product landing example — full-viewport toggles, no site chrome.
  */
+import { AnimatePresence, motion, useAnimate } from 'motion-v'
+
 definePageMeta({
   layout: 'landing',
   pageTransition: false,
 })
 
 useHead({
-  title: 'Vichy Capital Soleil — landing example',
+  title: 'CeraVe Hydratační čisticí pěnící olej — landing example',
 })
 
-type SectionId = 'intro' | 'benefits' | 'actives' | 'usage' | 'details'
+const productUrl = 'https://www.dervit.cz/zbozi/cerave-cistici-penici-olej-473ml'
+
+const easeOut = [0.22, 1, 0.36, 1] as const
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: easeOut },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.22, ease: 'easeIn' },
+  },
+}
+
+const heroGroup = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.04 },
+  },
+  exit: {
+    transition: { staggerChildren: 0.04, staggerDirection: -1 },
+  },
+}
+
+const softSpring = { type: 'spring' as const, stiffness: 420, damping: 28 }
+
+/** Brand splash covers first paint; content animates only after reveal. */
+const splash = ref(true)
+const ready = ref(false)
+const [splashScope, runSplash] = useAnimate()
+
+const show = computed(() => (ready.value ? 'visible' : 'hidden'))
+
+async function playSplash() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const root = splashScope.value
+  if (reduce || !root) {
+    splash.value = false
+    ready.value = true
+    return
+  }
+
+  // Fade logo in
+  await runSplash(
+    '[data-splash-logo]',
+    { opacity: [0, 1], y: [12, 0] },
+    { duration: 0.7, ease: easeOut },
+  )
+
+  // Short calm beat
+  await runSplash(root, { opacity: 1 }, { delay: 0.4, duration: 0.01 })
+
+  // Soft dissolve out
+  await Promise.all([
+    runSplash(
+      '[data-splash-logo]',
+      { opacity: 0, y: -8 },
+      { duration: 0.45, ease: easeOut },
+    ),
+    runSplash(
+      root,
+      { opacity: 0 },
+      { duration: 0.5, ease: easeOut, delay: 0.05 },
+    ),
+  ])
+  splash.value = false
+  ready.value = true
+}
+
+type SectionId = 'intro' | 'benefits' | 'actives' | 'usage'
 
 interface Section {
   id: SectionId
@@ -42,82 +117,71 @@ const sections: Section[] = [
   {
     id: 'intro',
     label: 'Úvod',
-    eyebrow: 'Capital Soleil · SPF 30',
-    title: 'Ochranný sprej s beta-karotenem pro sjednocené opálení.',
-    lead: 'Ultralehký ochranný sprej s betakarotenem a mineralizující termální vodou Vichy. Velmi lehká textura podobná vodě, snadno se roztírá a nezanechává bílé stopy.',
+    eyebrow: 'CeraVe · 473 ml',
+    title: 'Hydratační čisticí pěnící olej pro suchou a citlivou pokožku.',
+    lead: 'Pěnící olejová formule vyvinutá ve spolupráci s dermatology. Jemně čistí, hydratuje a zklidňuje pokožku, aniž by narušila ochrannou kožní bariéru.',
     points: [
-      'SPF 30 — vysoká UV ochrana',
-      '200 ml sprej na celé tělo',
-      'Hypoalergenní, testováno na citlivé pleti',
+      'Pro normální až velmi suchou pokožku',
+      'Vhodné i pro atopickou pokožku a kojence',
+      'Bez mýdla, bez parfemace, hypoalergenní',
     ],
     cta: 'Prozkoumat výhody',
-    panel: '/images/example/hero-1.avif',
-    tone: 'from-amber-200/40 via-transparent to-sky-200/30',
+    panel: '/images/example/Claid-AI-756dc01a6a814482a495751b51d39413.webp',
+    tone: 'from-sky-200/35 via-transparent to-blue-100/30',
   },
   {
     id: 'benefits',
     label: 'Výhody',
-    eyebrow: 'Proč Capital Soleil',
-    title: 'Bronzový tón, svěžest a ochrana v jednom gestu.',
-    lead: 'Složení je obohaceno o betakaroten pro podporu sjednoceného tónu pleti a zvýraznění opálení. Koriguje a předchází známkám stárnutí způsobených slunečním zářením.',
+    eyebrow: 'Proč CeraVe',
+    title: 'Čistí a hydratuje v jednom kroku — bez mastných reziduí.',
+    lead: 'Unikátní pěnící olejová formule kombinuje relipidační oleje s ceramidy. Čistí nečistoty a zároveň pomáhá pokožce doplnit hydrataci.',
     points: [
-      'Zvýraznění bronzového tónu díky betakarotenu',
-      'Odolný vůči vodě a potu',
-      'Příjemná parfemace',
-      'Působí proti vráskám, ztrátě elasticity a jasu',
+      'Šetrné čištění bez vysoušení',
+      'Hydratace a výživa během mytí',
+      'Zklidňuje podráždění a zarudnutí',
+      'Nekomedogenní, vyvážené pH',
     ],
     cta: 'Aktivní složky',
-    panel: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1400&q=80',
-    tone: 'from-orange-200/35 via-transparent to-yellow-100/40',
+    panel: '/images/example/Claid-AI-5b8e179ee67b4bcabfe2d8ab35c94e1b.webp',
+    tone: 'from-cyan-100/40 via-transparent to-sky-200/25',
   },
   {
     id: 'actives',
     label: 'Složky',
     eyebrow: 'Aktivní péče',
-    title: 'Betakaroten, vitamin E a termální voda Vichy.',
-    lead: 'Klíčové aktivní složky podporují jednotný tón opálení, chrání před volnými radikály a doplňují péči mineralizující termální vodou vulkanického původu.',
+    title: 'Tři esenciální ceramidy, skvalen a kyselina hyaluronová.',
+    lead: 'Klíčové složky obnovují kožní bariéru, dodávají lipidy a podporují hydrataci. Formule obsahuje ceramidy 1, 3 a 6-II spolu s relipidačními oleji.',
     points: [
-      'Betakaroten — zvýrazňuje a sjednocuje tón opálení',
-      'Vitamin E — antioxidant proti volným radikálům',
-      'Termální voda Vichy vulkanického původu',
+      'Ceramidy NP, AP a EOP — obnova bariéry',
+      'Skvalen a triglyceridy — relipidace',
+      'Kyselina hyaluronová a niacinamid',
     ],
     cta: 'Jak aplikovat',
-    panel: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1400&q=80',
-    tone: 'from-lime-200/30 via-transparent to-amber-100/35',
+    panel: '/images/example/Claid-AI-7b698b6158a34e129d1f7d6b2b8c59d5.webp',
+    tone: 'from-blue-100/35 via-transparent to-teal-100/30',
   },
   {
     id: 'usage',
     label: 'Aplikace',
     eyebrow: 'Doporučené použití',
-    title: 'Protřepejte, naneste dostatečné množství, opakujte.',
-    lead: 'Pro optimální ochranu před sluneční expozicí důkladně protřepejte a aplikujte systematicky otáčivým pohybem na celé tělo. Ochrana se snižuje při nedostatečném protřepání.',
+    title: 'Vmasírujte do navlhčené pokožky a opláchněte.',
+    lead: 'Přípravek naneste na navlhčenou pokožku obličeje nebo těla, jemně vmasírujte a důkladně opláchněte vodou. Vyhněte se kontaktu s očima.',
     points: [
-      'Opakujte zejména při potu, koupání nebo osušení',
-      'Na obličej nestříkejte přímo — nejdřív do dlaní',
-      'Vyhněte se okolí očí',
-    ],
-    cta: 'Detaily produktu',
-    panel: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1400&q=80',
-    tone: 'from-sky-200/35 via-transparent to-stone-100/40',
-  },
-  {
-    id: 'details',
-    label: 'Detaily',
-    eyebrow: 'Informace o produktu',
-    title: 'Vichy Capital Soleil · 200 ml · Francie.',
-    lead: 'Ochranný sprej s beta-karotenem SPF 30. Forma: sprej. Určeno pro citlivou pokožku. Země původu Francie, výrobce L\'Oréal Česká republika s.r.o.',
-    points: [
-      'Kód výrobku 370720 · EAN 3337875585217',
-      'Balení obsahuje 200 ml',
-      'Hodnocení zákazníků 94 % (6 hodnocení)',
+      'Používejte ráno i večer dle potřeby',
+      'Vhodné na obličej i tělo',
+      'Při kontaktu s očima ihned vypláchněte',
     ],
     cta: 'Zpět na úvod',
-    panel: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1400&q=80',
-    tone: 'from-yellow-200/40 via-transparent to-orange-100/30',
+    panel: '/images/example/Claid-AI-3d86bf2580d1474cad5b69d8376fdff0.webp',
+    tone: 'from-slate-200/30 via-transparent to-sky-100/35',
   },
 ]
 
 const active = ref<SectionId>('intro')
+
+/** Presentation: auto-cycle sections. Flip to false to pause. */
+const autoplay = ref(true)
+const autoMs = 4000
 
 const current = computed(() =>
   sections.find(section => section.id === active.value) ?? sections[0],
@@ -128,20 +192,42 @@ const nextId = computed<SectionId>(() => {
   return sections[(index + 1) % sections.length]!.id
 })
 
+let autoTimer: ReturnType<typeof setInterval> | undefined
+
+function stopAuto() {
+  if (!autoTimer) {
+    return
+  }
+  clearInterval(autoTimer)
+  autoTimer = undefined
+}
+
+function startAuto() {
+  stopAuto()
+  if (!autoplay.value || import.meta.server) {
+    return
+  }
+  autoTimer = setInterval(() => {
+    active.value = nextId.value
+  }, autoMs)
+}
+
 function select(id: SectionId) {
   active.value = id
+  startAuto()
 }
 
 function goNext() {
   active.value = nextId.value
+  startAuto()
 }
 
-const pillPos: Record<SectionId, string> = {
-  intro: 'left-[22%] top-[14%]',
-  benefits: 'right-[14%] top-[22%]',
-  actives: 'left-[20%] top-[42%]',
-  usage: 'right-[12%] top-[52%]',
-  details: 'left-[24%] bottom-[30%]',
+function onVisibility() {
+  if (document.hidden) {
+    stopAuto()
+    return
+  }
+  startAuto()
 }
 
 const socials = [
@@ -173,31 +259,31 @@ interface Variant {
 
 const variants: Variant[] = [
   {
-    id: 'spf30',
-    label: 'Sprej SPF 30',
-    price: '699 Kč',
-    image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80',
+    id: 'oil',
+    label: 'Čisticí olej',
+    price: '340 Kč',
+    image: '/images/example/Claid-AI-756dc01a6a814482a495751b51d39413.webp',
     section: 'intro',
   },
   {
-    id: 'spf50',
-    label: 'Krém SPF 50+',
-    price: '699 Kč',
-    image: 'https://images.unsplash.com/photo-1570172619604-71de189aa7ea?auto=format&fit=crop&w=600&q=80',
+    id: 'hydrate',
+    label: 'Hydratace',
+    price: '473 ml',
+    image: '/images/example/Claid-AI-5b8e179ee67b4bcabfe2d8ab35c94e1b.webp',
     section: 'benefits',
   },
   {
-    id: 'spots',
-    label: 'Proti skvrnám',
-    price: '699 Kč',
-    image: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80',
+    id: 'ceramides',
+    label: '3 ceramidy',
+    price: '473 ml',
+    image: '/images/example/Claid-AI-7b698b6158a34e129d1f7d6b2b8c59d5.webp',
     section: 'actives',
   },
   {
-    id: 'water',
-    label: 'Solar Water',
-    price: '649 Kč',
-    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80',
+    id: 'routine',
+    label: 'Aplikace',
+    price: '473 ml',
+    image: '/images/example/Claid-AI-3d86bf2580d1474cad5b69d8376fdff0.webp',
     section: 'usage',
   },
 ]
@@ -354,7 +440,15 @@ watch(stackPage, async () => {
   syncTracks()
 })
 
-onMounted(() => {
+watch(autoplay, (on) => {
+  if (on) {
+    startAuto()
+    return
+  }
+  stopAuto()
+})
+
+onMounted(async () => {
   media = window.matchMedia('(min-width: 1024px)')
   syncDesktop()
   media.addEventListener('change', syncDesktop)
@@ -364,26 +458,68 @@ onMounted(() => {
 
   syncTracks()
   window.addEventListener('resize', syncTracks)
+  document.addEventListener('visibilitychange', onVisibility)
+
+  await playSplash()
+  startAuto()
 })
 
 onUnmounted(() => {
+  stopAuto()
   media?.removeEventListener('change', syncDesktop)
   viewportEl?.removeEventListener('wheel', onStackWheel)
   window.removeEventListener('resize', syncTracks)
+  document.removeEventListener('visibilitychange', onVisibility)
 })
 </script>
 
 <template>
-  <div class="mx-auto flex min-h-dvh w-full max-w-[1600px] flex-col gap-6 px-5 py-5 sm:px-8 lg:h-dvh lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-10 lg:py-8">
+  <div class="relative mx-auto flex min-h-dvh w-full max-w-[1600px] flex-col gap-6 px-5 py-5 sm:px-8 lg:h-dvh lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-10 lg:py-8">
+    <!-- Brand splash — soft dissolve into page -->
+    <div
+      v-if="splash"
+      ref="splashScope"
+      data-splash-root
+      class="fixed inset-0 z-[80] flex items-center justify-center bg-[#f3f3f1]"
+      aria-hidden="true"
+    >
+      <img
+        data-splash-logo
+        src="/images/example/cerave.svg"
+        alt=""
+        class="h-16 w-auto sm:h-20"
+        style="opacity: 0; transform: translateY(12px)"
+      >
+    </div>
+
     <!-- Copy — below visual on mobile, left on desktop -->
     <section class="order-2 flex min-h-0 flex-1 flex-col lg:order-1 lg:max-w-[42%] lg:py-4">
-      <header class="flex shrink-0 items-center justify-between gap-4">
-        <p class="text-lg font-extrabold tracking-tight">
-          VICHY<span class="text-amber-500">+</span>
-        </p>
-        <p class="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-neutral-500 ring-1 ring-black/5">
-          Example landing
-        </p>
+      <header class="flex shrink-0 items-start justify-between gap-4">
+        <motion.p
+          class="text-lg font-extrabold tracking-tight"
+          :initial="{ opacity: 0, y: -12 }"
+          :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: -12 }"
+          :transition="{ duration: 0.55, ease: easeOut }"
+        >
+          <img
+            src="/images/example/cerave.svg"
+            alt="CeraVe"
+            class="h-14"
+          >
+        </motion.p>
+        <motion.p
+          class="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-neutral-500 ring-1 ring-black/5"
+          :initial="{ opacity: 0, x: 12 }"
+          :animate="ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }"
+          :transition="{ duration: 0.5, delay: ready ? 0.08 : 0, ease: easeOut }"
+        >
+          Made By <NuxtLink
+            href="https://codefit.cz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[#85c369]"
+          ><u>Codefit Webdesign</u></NuxtLink>
+        </motion.p>
       </header>
 
       <!-- Vertical section swiper — same transform transition for arrows, dots, wheel -->
@@ -402,65 +538,85 @@ onUnmounted(() => {
             :key="slide.id"
             class="flex min-h-0 flex-col justify-center lg:h-full lg:shrink-0"
           >
-            <Transition
-              mode="out-in"
-              enter-active-class="transition duration-300 ease-out"
-              enter-from-class="translate-y-3 opacity-0"
-              enter-to-class="translate-y-0 opacity-100"
-              leave-active-class="transition duration-200 ease-in"
-              leave-from-class="translate-y-0 opacity-100"
-              leave-to-class="-translate-y-2 opacity-0"
-            >
+            <AnimatePresence mode="wait">
               <!-- Slide: nadpis + popis + tlačítka -->
-              <div
+              <motion.div
                 v-if="slide.id === 'hero'"
                 :key="`hero-${current.id}`"
                 class="max-w-xl"
+                :variants="heroGroup"
+                initial="hidden"
+                :animate="show"
+                exit="exit"
               >
-                <p class="mb-3 text-sm font-medium text-neutral-500">
+                <motion.p
+                  class="mb-3 text-sm font-medium text-neutral-500"
+                  :variants="fadeUp"
+                >
                   {{ current.eyebrow }}
-                </p>
+                </motion.p>
 
-                <h1 class="line-clamp-2 min-h-[2.2em] text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-950 sm:text-4xl xl:text-5xl">
+                <motion.h1
+                  class="line-clamp-2 min-h-[2.2em] text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-950 sm:text-4xl xl:text-5xl"
+                  :variants="fadeUp"
+                >
                   {{ current.title }}
-                </h1>
+                </motion.h1>
 
-                <p class="mt-5 line-clamp-3 min-h-[4.875em] max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base">
+                <motion.p
+                  class="mt-5 line-clamp-3 min-h-[4.875em] max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base"
+                  :variants="fadeUp"
+                >
                   {{ current.lead }}
-                </p>
+                </motion.p>
 
-                <div class="mt-8 flex flex-nowrap items-center gap-3 overflow-x-auto hide-scroll">
-                  <button
+                <motion.div
+                  class="mt-8 flex flex-nowrap items-center gap-3 overflow-x-auto hide-scroll"
+                  :variants="fadeUp"
+                >
+                  <motion.button
                     type="button"
-                    class="shrink-0 rounded-2xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+                    class="shrink-0 rounded-2xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-white"
+                    :whileHover="{ scale: 1.03, backgroundColor: '#262626' }"
+                    :whilePress="{ scale: 0.97 }"
+                    :transition="softSpring"
                     @click="goNext"
                   >
                     {{ current.cta }}
-                  </button>
-                  <a
-                    href="https://www.lekarna.cz/vichy-ideal-soleil-eau-prot-bronz-spf-30-200-ml/"
+                  </motion.button>
+                  <motion.a
+                    :href="productUrl"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="shrink-0 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-neutral-800 ring-1 ring-black/8 transition hover:bg-neutral-50"
+                    class="shrink-0 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-neutral-800 ring-1 ring-black/8"
+                    :whileHover="{ scale: 1.03, backgroundColor: '#fafafa' }"
+                    :whilePress="{ scale: 0.97 }"
+                    :transition="softSpring"
                   >
-                    699 Kč · 200 ml
-                  </a>
-                </div>
+                    340 Kč · 473 ml
+                  </motion.a>
+                </motion.div>
 
-                <button
+                <motion.button
                   type="button"
-                  class="mt-6 hidden text-sm font-semibold text-neutral-900 underline decoration-neutral-900/35 underline-offset-4 transition hover:decoration-neutral-900 lg:inline-flex"
+                  class="mt-6 hidden text-sm font-semibold text-neutral-900 underline decoration-neutral-900/35 underline-offset-4 lg:inline-flex"
+                  :variants="fadeUp"
+                  :whileHover="{ opacity: 0.7 }"
                   @click="goStack(1)"
                 >
                   Klíčové vlastnosti a varianty
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
 
               <!-- Slide: vlastnosti + varianty -->
-              <div
+              <motion.div
                 v-else-if="slide.id === 'offers'"
                 :key="`offers-${current.id}`"
                 class="flex max-w-xl flex-col gap-8"
+                :initial="{ opacity: 0, y: 20 }"
+                :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }"
+                :exit="{ opacity: 0, y: -12 }"
+                :transition="{ duration: 0.4, ease: easeOut }"
               >
                 <div>
                   <div class="mb-2.5 flex items-center justify-between gap-3">
@@ -517,24 +673,28 @@ onUnmounted(() => {
                     aria-label="Klíčové vlastnosti"
                     @scroll.passive="onTrackScroll"
                   >
-                    <li
-                      v-for="point in current.points"
+                    <motion.li
+                      v-for="(point, index) in current.points"
                       :key="point"
                       data-point
                       class="flex w-[78%] shrink-0 snap-start items-start gap-3 rounded-2xl bg-white/70 px-4 py-3.5 text-sm text-neutral-700 ring-1 ring-black/5 sm:w-[58%] lg:w-[calc((100%-1.5rem)/2.5)]"
+                      :initial="{ opacity: 0, y: 14 }"
+                      :animate="{ opacity: 1, y: 0 }"
+                      :transition="{ duration: 0.4, delay: index * 0.05, ease: easeOut }"
+                      :whileHover="{ y: -2, backgroundColor: 'rgba(255,255,255,0.92)' }"
                     >
-                      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-300 text-sm font-bold text-neutral-900">
+                      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#0070ce]/15 text-sm font-bold text-[#0070ce]">
                         +
                       </span>
                       <span class="line-clamp-3 leading-snug">{{ point }}</span>
-                    </li>
+                    </motion.li>
                   </ul>
                 </div>
 
                 <div>
                   <div class="mb-3 flex items-center justify-between gap-3">
                     <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                      Varianty produktu
+                      Náhledy produktu
                     </p>
                     <div class="flex gap-1.5">
                       <button
@@ -583,16 +743,21 @@ onUnmounted(() => {
                     class="hide-scroll flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory"
                     role="region"
                     aria-roledescription="carousel"
-                    aria-label="Varianty produktu"
+                    aria-label="Náhledy produktu"
                     @scroll.passive="onTrackScroll"
                   >
-                    <button
-                      v-for="item in variants"
+                    <motion.button
+                      v-for="(item, index) in variants"
                       :key="item.id"
                       type="button"
                       data-card
-                      class="group relative h-36 w-[9.5rem] shrink-0 snap-start overflow-hidden rounded-2xl text-left shadow-sm ring-1 ring-black/5 transition hover:ring-amber-300/80 sm:h-40 sm:w-40"
-                      :class="active === item.section ? 'ring-2 ring-amber-400' : ''"
+                      class="group relative h-36 w-[9.5rem] shrink-0 snap-start overflow-hidden rounded-2xl text-left shadow-sm ring-1 ring-black/5 sm:h-40 sm:w-40"
+                      :class="active === item.section ? 'ring-2 ring-[#0070ce]' : ''"
+                      :initial="{ opacity: 0, scale: 0.94 }"
+                      :animate="{ opacity: 1, scale: 1 }"
+                      :transition="{ duration: 0.4, delay: 0.08 + index * 0.05, ease: easeOut }"
+                      :whileHover="{ y: -4 }"
+                      :whilePress="{ scale: 0.97 }"
                       @click="select(item.section)"
                     >
                       <img
@@ -623,26 +788,32 @@ onUnmounted(() => {
                           </svg>
                         </span>
                       </div>
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
-            </Transition>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
-        <div
+        <motion.div
           class="pointer-events-none absolute end-0 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-1.5 lg:pointer-events-auto lg:flex"
           aria-label="Navigace panelů"
+          :initial="{ opacity: 0, x: 12 }"
+          :animate="ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }"
+          :transition="{ duration: 0.45, delay: ready ? 0.2 : 0, ease: easeOut }"
         >
-          <button
+          <motion.button
             type="button"
-            class="flex size-7 items-center justify-center rounded-full text-neutral-800 transition"
+            class="flex size-7 items-center justify-center rounded-full text-neutral-800"
             :class="canPrev
-              ? 'bg-white ring-1 ring-black/8 hover:bg-neutral-50'
+              ? 'bg-white ring-1 ring-black/8'
               : 'cursor-not-allowed bg-white/50 text-neutral-400 opacity-35 ring-1 ring-black/5'"
             :disabled="!canPrev"
             aria-label="Předchozí panel"
+            :whileHover="canPrev ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
+            :whilePress="canPrev ? { scale: 0.94 } : undefined"
+            :transition="softSpring"
             @click="stepStack(-1)"
           >
             <svg
@@ -655,28 +826,38 @@ onUnmounted(() => {
             >
               <path d="M18 15l-6-6-6 6" />
             </svg>
-          </button>
+          </motion.button>
 
-          <div class="flex flex-col items-center gap-2 py-1">
+          <div class="relative flex flex-col items-center gap-2 py-1">
             <button
               v-for="(slide, index) in stackSlides"
               :key="slide.id"
               type="button"
-              class="size-2 rounded-full transition"
-              :class="stackPage === index ? 'scale-125 bg-neutral-900' : 'bg-neutral-300 hover:bg-neutral-500'"
+              class="relative z-10 size-2 rounded-full"
+              :class="stackPage === index ? 'bg-transparent' : 'bg-neutral-300 hover:bg-neutral-500'"
               :aria-label="slide.label"
               @click="goStack(index)"
-            />
+            >
+              <motion.span
+                v-if="stackPage === index"
+                layoutId="stack-dot"
+                class="absolute inset-0 rounded-full bg-neutral-900"
+                :transition="{ type: 'spring', stiffness: 420, damping: 30 }"
+              />
+            </button>
           </div>
 
-          <button
+          <motion.button
             type="button"
-            class="flex size-7 items-center justify-center rounded-full text-neutral-800 transition"
+            class="flex size-7 items-center justify-center rounded-full text-neutral-800"
             :class="canNext
-              ? 'bg-white ring-1 ring-black/8 hover:bg-neutral-50'
+              ? 'bg-white ring-1 ring-black/8'
               : 'cursor-not-allowed bg-white/50 text-neutral-400 opacity-35 ring-1 ring-black/5'"
             :disabled="!canNext"
             aria-label="Další panel"
+            :whileHover="canNext ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
+            :whilePress="canNext ? { scale: 0.94 } : undefined"
+            :transition="softSpring"
             @click="stepStack(1)"
           >
             <svg
@@ -689,47 +870,63 @@ onUnmounted(() => {
             >
               <path d="M6 9l6 6 6-6" />
             </svg>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
 
-      <nav
+      <motion.nav
         class="flex shrink-0 flex-wrap gap-2"
         aria-label="Sekce produktu"
+        :initial="{ opacity: 0, y: 14 }"
+        :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }"
+        :transition="{ duration: 0.45, delay: ready ? 0.15 : 0, ease: easeOut }"
       >
-        <button
-          v-for="section in sections"
+        <motion.button
+          v-for="(section, index) in sections"
           :key="section.id"
           type="button"
-          class="rounded-full px-3.5 py-2 text-xs font-semibold transition"
+          class="relative rounded-full px-3.5 py-2 text-xs font-semibold"
           :class="active === section.id
-            ? 'bg-neutral-950 text-white'
-            : 'bg-white/80 text-neutral-600 ring-1 ring-black/5 hover:bg-white'"
+            ? 'text-white'
+            : 'bg-white/80 text-neutral-600 ring-1 ring-black/5'"
+          :initial="{ opacity: 0, y: 10 }"
+          :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }"
+          :transition="{ duration: 0.4, delay: ready ? 0.18 + index * 0.05 : 0, ease: easeOut }"
+          :whileHover="active === section.id ? undefined : { scale: 1.04, backgroundColor: '#ffffff' }"
+          :whilePress="{ scale: 0.96 }"
           @click="select(section.id)"
         >
-          {{ section.label }}
-        </button>
-      </nav>
+          <motion.span
+            v-if="active === section.id"
+            layoutId="section-pill"
+            class="absolute inset-0 rounded-full bg-neutral-950"
+            :transition="{ type: 'spring', stiffness: 380, damping: 32 }"
+          />
+          <span class="relative z-10">{{ section.label }}</span>
+        </motion.button>
+      </motion.nav>
     </section>
 
     <!-- Visual panel — first on mobile, right on desktop -->
-    <section class="landing-stage relative order-1 min-h-[420px] flex-1 lg:order-2 lg:min-h-0">
+    <motion.section
+      class="landing-stage relative order-1 min-h-[420px] flex-1 lg:order-2 lg:min-h-0"
+      :initial="{ opacity: 0 }"
+      :animate="ready ? { opacity: 1 } : { opacity: 0 }"
+      :transition="{ duration: 0.65, ease: easeOut }"
+    >
       <div class="landing-panel absolute inset-0 bg-[#deded9]">
-        <Transition
-          mode="out-in"
-          enter-active-class="transition duration-500 ease-out"
-          enter-from-class="scale-105 opacity-0"
-          enter-to-class="scale-100 opacity-100"
-          leave-active-class="transition duration-300 ease-in"
-          leave-from-class="scale-100 opacity-100"
-          leave-to-class="scale-[1.02] opacity-0"
-        >
-          <div
-            :key="current.id"
-            class="absolute inset-0 bg-cover bg-center"
-            :style="{ backgroundImage: `url('${current.panel}')` }"
-          />
-        </Transition>
+        <motion.div
+          v-for="section in sections"
+          :key="section.id"
+          class="landing-panel-media absolute inset-0 bg-cover bg-center"
+          :style="{ backgroundImage: `url('${section.panel}')` }"
+          :aria-hidden="active !== section.id"
+          :initial="false"
+          :animate="active === section.id
+            ? { opacity: 1, scale: 1 }
+            : { opacity: 0, scale: 1.045 }"
+          :transition="{ duration: 0.75, ease: easeOut }"
+        />
 
         <div
           class="pointer-events-none absolute inset-0 bg-gradient-to-br"
@@ -737,63 +934,51 @@ onUnmounted(() => {
         />
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
 
-        <button
-          v-for="section in sections"
-          :key="section.id"
-          type="button"
-          class="absolute z-30 flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold shadow-lg backdrop-blur-md transition duration-300"
-          :class="[
-            pillPos[section.id],
-            active === section.id
-              ? 'scale-105 bg-amber-300 text-neutral-950'
-              : 'bg-white/90 text-neutral-800 hover:bg-white',
-          ]"
-          @click="select(section.id)"
+        <motion.div
+          class="absolute bottom-5 left-5 z-10 rounded-[30px] bg-white/95 px-8 py-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6"
+          :initial="{ opacity: 0, y: 24 }"
+          :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }"
+          :transition="{ duration: 0.55, delay: ready ? 0.2 : 0, ease: easeOut }"
         >
-          <span
-            class="flex size-5 items-center justify-center rounded-full text-[11px] font-bold"
-            :class="active === section.id ? 'bg-neutral-950 text-amber-300' : 'bg-amber-300 text-neutral-950'"
-          >
-            {{ active === section.id ? '✓' : '+' }}
-          </span>
-          {{ section.label }}
-        </button>
-
-        <div class="absolute bottom-[22%] left-[12%] z-10 max-w-[220px] rounded-2xl bg-white/95 p-3 shadow-xl backdrop-blur">
           <p class="text-sm font-bold text-neutral-900">
-            4.9 · hodnocení
+            Doporučováno dermatology
           </p>
-          <p class="mt-1 text-xs text-neutral-500">
-            94 % spokojenost · 6 recenzí
-          </p>
-          <div class="mt-3 flex -space-x-2">
-            <span
-              v-for="n in 4"
+          <div
+            class="mt-1.5 flex items-center gap-0.5"
+            aria-hidden="true"
+          >
+            <svg
+              v-for="n in 5"
               :key="n"
-              class="size-7 rounded-full bg-gradient-to-br ring-2 ring-white"
-              :class="{
-                'from-amber-200 to-orange-400': n === 1,
-                'from-sky-200 to-blue-400': n === 2,
-                'from-lime-200 to-emerald-400': n === 3,
-                'from-rose-200 to-pink-400': n === 4,
-              }"
-            />
+              viewBox="0 0 20 20"
+              class="size-4 fill-amber-400"
+            >
+              <path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.52L10 14.27l-4.94 2.46.94-5.52-4-3.9 5.53-.8L10 1.5z" />
+            </svg>
           </div>
-        </div>
+          <p class="mt-1.5 text-xs text-neutral-500">
+            Bez parfemace · hypoalergenní
+          </p>
+        </motion.div>
       </div>
 
-      <div
+      <motion.div
         class="landing-cutout landing-cutout--tl"
         aria-label="Sociální sítě"
+        :initial="{ opacity: 0 }"
+        :animate="ready ? { opacity: 1 } : { opacity: 0 }"
+        :transition="{ duration: 0.5, delay: ready ? 0.28 : 0, ease: easeOut }"
       >
-        <a
+        <motion.a
           v-for="item in socials"
           :key="item.label"
           :href="item.href"
           :aria-label="item.label"
-          class="relative z-[1] flex size-11 items-center justify-center rounded-xl bg-[#2f2f2f] text-white transition hover:bg-neutral-800"
+          class="relative z-[1] flex size-11 items-center justify-center rounded-xl bg-[#85c369] text-white"
           target="_blank"
           rel="noopener noreferrer"
+          :whileHover="{ scale: 1.06, backgroundColor: '#262626', transition: softSpring }"
+          :whilePress="{ scale: 0.96, transition: softSpring }"
         >
           <svg
             viewBox="0 0 24 24"
@@ -811,19 +996,27 @@ onUnmounted(() => {
               :d="item.extra"
             />
           </svg>
-        </a>
-      </div>
+        </motion.a>
+      </motion.div>
 
-      <div class="landing-cutout landing-cutout--br">
-        <button
-          type="button"
-          class="relative z-[1] rounded-full bg-amber-300 px-6 py-3.5 text-sm font-bold text-neutral-950 transition hover:bg-amber-200"
-          @click="goNext"
+      <motion.div
+        class="landing-cutout landing-cutout--br"
+        :initial="{ opacity: 0 }"
+        :animate="ready ? { opacity: 1 } : { opacity: 0 }"
+        :transition="{ duration: 0.5, delay: ready ? 0.32 : 0, ease: easeOut }"
+      >
+        <motion.a
+          :href="productUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="relative z-[1] rounded-full bg-[#0070ce] px-6 py-3.5 text-sm font-bold text-white"
+          :whileHover="{ scale: 1.03, backgroundColor: '#005bab', transition: softSpring }"
+          :whilePress="{ scale: 0.97, transition: softSpring }"
         >
-          Další sekce
-        </button>
-      </div>
-    </section>
+          Zobrazit produkt <span>&#x21e2;</span>
+        </motion.a>
+      </motion.div>
+    </motion.section>
   </div>
 </template>
 
@@ -849,6 +1042,17 @@ onUnmounted(() => {
 .landing-panel {
   border-radius: var(--or);
   overflow: hidden;
+}
+
+.landing-panel-media {
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.landing-panel-media[aria-hidden='false'] {
+  z-index: 1;
 }
 
 .landing-cutout {

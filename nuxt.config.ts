@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     'nuxt-easy-lightbox',
     '@pinia/nuxt',
     'nuxt-auth-utils',
+    'motion-v/nuxt',
   ],
   components: [
     {
