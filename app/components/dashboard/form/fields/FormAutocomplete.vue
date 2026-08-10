@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { dashboardFieldProps, dashboardFieldUi } from '~/utils/dashboardForm'
+
 interface SelectOption {
   label: string
   value: string
@@ -33,24 +35,31 @@ const emit = defineEmits<{
     :valid="valid"
     :required="required"
   >
-    <div class="flex items-start gap-2">
+    <div class="flex items-center gap-2">
       <UInputMenu
         v-model="model"
         :items="options"
         value-key="value"
         :placeholder="placeholder"
         :disabled="disabled"
+        v-bind="dashboardFieldProps"
         clear
         class="min-w-0 flex-1"
+        :ui="dashboardFieldUi"
       />
       <UButton
         v-if="createLabel"
         icon="i-lucide-plus"
         color="neutral"
-        variant="subtle"
+        variant="soft"
+        square
         :aria-label="createLabel"
         :title="createLabel"
-        class="shrink-0"
+        class="size-11 shrink-0 rounded-xl"
+        :ui="{
+          base: 'p-0 inline-flex items-center justify-center',
+          leadingIcon: 'size-5',
+        }"
         @click="emit('create')"
       />
     </div>

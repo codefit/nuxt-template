@@ -78,7 +78,7 @@ function clear() {
     size="sm"
     class="w-72 max-w-full shrink-0"
     :ui="{
-      base: 'h-9 py-0',
+      base: 'h-9 rounded-xl py-0',
     }"
     aria-label="Hledat"
   >
