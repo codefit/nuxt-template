@@ -1,7 +1,4 @@
 <script setup lang="ts">
-/**
- * Isolated product landing example — full-viewport toggles, no site chrome.
- */
 import { AnimatePresence, motion, useAnimate } from 'motion-v'
 
 definePageMeta({
@@ -15,14 +12,15 @@ useHead({
 
 const productUrl = 'https://www.dervit.cz/zbozi/cerave-cistici-penici-olej-473ml'
 
-const easeOut = [0.22, 1, 0.36, 1] as const
+const ease = [0.22, 1, 0.36, 1] as const
+const spring = { type: 'spring' as const, stiffness: 420, damping: 28 }
 
-const fadeUp = {
+const fade = {
   hidden: { opacity: 0, y: 18 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: easeOut },
+    transition: { duration: 0.5, ease },
   },
   exit: {
     opacity: 0,
@@ -31,7 +29,7 @@ const fadeUp = {
   },
 }
 
-const heroGroup = {
+const stagger = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.07, delayChildren: 0.04 },
@@ -41,51 +39,44 @@ const heroGroup = {
   },
 }
 
-const softSpring = { type: 'spring' as const, stiffness: 420, damping: 28 }
-
-/** Brand splash covers first paint; content animates only after reveal. */
+// —— Splash ——
 const splash = ref(true)
 const ready = ref(false)
-const [splashScope, runSplash] = useAnimate()
+const [splashRoot, animate] = useAnimate()
+const phase = computed(() => (ready.value ? 'visible' : 'hidden'))
 
-const show = computed(() => (ready.value ? 'visible' : 'hidden'))
-
-async function playSplash() {
+async function playIntro() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const root = splashScope.value
+  const root = splashRoot.value
   if (reduce || !root) {
     splash.value = false
     ready.value = true
     return
   }
 
-  // Fade logo in
-  await runSplash(
+  await animate(
     '[data-splash-logo]',
     { opacity: [0, 1], y: [12, 0] },
-    { duration: 0.7, ease: easeOut },
+    { duration: 0.7, ease },
   )
-
-  // Short calm beat
-  await runSplash(root, { opacity: 1 }, { delay: 0.4, duration: 0.01 })
-
-  // Soft dissolve out
+  await animate(root, { opacity: 1 }, { delay: 0.4, duration: 0.01 })
   await Promise.all([
-    runSplash(
+    animate(
       '[data-splash-logo]',
       { opacity: 0, y: -8 },
-      { duration: 0.45, ease: easeOut },
+      { duration: 0.45, ease },
     ),
-    runSplash(
+    animate(
       root,
       { opacity: 0 },
-      { duration: 0.5, ease: easeOut, delay: 0.05 },
+      { duration: 0.5, ease, delay: 0.05 },
     ),
   ])
   splash.value = false
   ready.value = true
 }
 
+// —— Sections (tabs + autoplay) ——
 type SectionId = 'intro' | 'benefits' | 'actives' | 'usage'
 
 interface Section {
@@ -99,19 +90,6 @@ interface Section {
   panel: string
   tone: string
 }
-
-/** Vertical stack panels — add entries to extend the left-column swiper. */
-type StackId = 'hero' | 'offers'
-
-interface StackSlide {
-  id: StackId
-  label: string
-}
-
-const stackSlides: StackSlide[] = [
-  { id: 'hero', label: 'Text' },
-  { id: 'offers', label: 'Vlastnosti' },
-]
 
 const sections: Section[] = [
   {
@@ -178,78 +156,58 @@ const sections: Section[] = [
 ]
 
 const active = ref<SectionId>('intro')
-
-/** Presentation: auto-cycle sections. Flip to false to pause. */
 const autoplay = ref(true)
-const autoMs = 4000
+const interval = 4000
 
 const current = computed(() =>
-  sections.find(section => section.id === active.value) ?? sections[0],
+  sections.find(item => item.id === active.value) ?? sections[0],
 )
 
-const nextId = computed<SectionId>(() => {
-  const index = sections.findIndex(section => section.id === active.value)
+const nextKey = computed<SectionId>(() => {
+  const index = sections.findIndex(item => item.id === active.value)
   return sections[(index + 1) % sections.length]!.id
 })
 
-let autoTimer: ReturnType<typeof setInterval> | undefined
+let cycleTimer: ReturnType<typeof setInterval> | undefined
 
-function stopAuto() {
-  if (!autoTimer) {
+function stopCycle() {
+  if (!cycleTimer) {
     return
   }
-  clearInterval(autoTimer)
-  autoTimer = undefined
+  clearInterval(cycleTimer)
+  cycleTimer = undefined
 }
 
-function startAuto() {
-  stopAuto()
+function startCycle() {
+  stopCycle()
   if (!autoplay.value || import.meta.server) {
     return
   }
-  autoTimer = setInterval(() => {
-    active.value = nextId.value
-  }, autoMs)
+  cycleTimer = setInterval(() => {
+    active.value = nextKey.value
+  }, interval)
 }
 
-function select(id: SectionId) {
+function open(id: SectionId) {
   active.value = id
-  startAuto()
+  startCycle()
 }
 
-function goNext() {
-  active.value = nextId.value
-  startAuto()
+function advance() {
+  active.value = nextKey.value
+  startCycle()
 }
 
-function onVisibility() {
+function onHidden() {
   if (document.hidden) {
-    stopAuto()
+    stopCycle()
     return
   }
-  startAuto()
+  startCycle()
 }
 
-const socials = [
-  {
-    label: 'Facebook',
-    href: '#',
-    path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
-  },
-  {
-    label: 'Instagram',
-    href: '#',
-    path: 'M16 3H8a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5h8a5 5 0 0 0 5-5V8a5 5 0 0 0-5-5z',
-    extra: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM17.5 6.5h.01',
-  },
-  {
-    label: 'LinkedIn',
-    href: '#',
-    path: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
-  },
-] as const
-
-interface Variant {
+// —— Previews (thumbnail cards → section) ——
+interface Preview {
   id: string
   label: string
   price: string
@@ -257,7 +215,7 @@ interface Variant {
   section: SectionId
 }
 
-const variants: Variant[] = [
+const previews: Preview[] = [
   {
     id: 'oil',
     label: 'Čisticí olej',
@@ -288,93 +246,130 @@ const variants: Variant[] = [
   },
 ]
 
-const stackViewport = useTemplateRef<HTMLElement>('stackViewport')
+const socials = [
+  {
+    label: 'Facebook',
+    href: '#',
+    path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
+  },
+  {
+    label: 'Instagram',
+    href: '#',
+    path: 'M16 3H8a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5h8a5 5 0 0 0 5-5V8a5 5 0 0 0-5-5z',
+    extra: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM17.5 6.5h.01',
+  },
+  {
+    label: 'LinkedIn',
+    href: '#',
+    path: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  },
+] as const
 
-const stackPage = ref(0)
-const stackBusy = ref(false)
-const isDesktop = ref(false)
+// —— Slides (left column vertical pages on desktop) ——
+type SlideId = 'hero' | 'offers'
 
-const canPrev = computed(() => stackPage.value > 0)
-const canNext = computed(() => stackPage.value < stackSlides.length - 1)
+interface Slide {
+  id: SlideId
+  label: string
+}
 
-const stackStyle = computed(() => {
-  if (!isDesktop.value) {
+const slides: Slide[] = [
+  { id: 'hero', label: 'Text' },
+  { id: 'offers', label: 'Vlastnosti' },
+]
+
+const viewport = useTemplateRef<HTMLElement>('viewport')
+const slide = ref(0)
+const sliding = ref(false)
+const desktop = ref(false)
+
+const hasPrev = computed(() => slide.value > 0)
+const hasNext = computed(() => slide.value < slides.length - 1)
+
+const shift = computed(() => {
+  if (!desktop.value) {
     return undefined
   }
   return {
-    transform: `translate3d(0, ${-stackPage.value * 100}%, 0)`,
+    transform: `translate3d(0, ${-slide.value * 100}%, 0)`,
   }
 })
 
-function goStack(page: number) {
-  if (!isDesktop.value) {
+function goSlide(index: number) {
+  if (!desktop.value) {
     return
   }
 
-  const next = Math.max(0, Math.min(page, stackSlides.length - 1))
-  if (next === stackPage.value) {
+  const next = Math.max(0, Math.min(index, slides.length - 1))
+  if (next === slide.value) {
     return
   }
 
-  stackPage.value = next
-  stackBusy.value = true
+  slide.value = next
+  sliding.value = true
 }
 
-function stepStack(dir: 1 | -1) {
-  if (stackBusy.value) {
+function stepSlide(dir: 1 | -1) {
+  if (sliding.value) {
     return
   }
-  goStack(stackPage.value + dir)
+  goSlide(slide.value + dir)
 }
 
-function onStackTransitionEnd(event: TransitionEvent) {
+function onSlideEnd(event: TransitionEvent) {
   if (event.propertyName !== 'transform') {
     return
   }
-  stackBusy.value = false
+  sliding.value = false
 }
 
-function onStackWheel(event: WheelEvent) {
-  if (!isDesktop.value || stackBusy.value) {
+function onWheel(event: WheelEvent) {
+  if (!desktop.value || sliding.value) {
     return
   }
   if (Math.abs(event.deltaY) < 12) {
     return
   }
   event.preventDefault()
-  stepStack(event.deltaY > 0 ? 1 : -1)
+  stepSlide(event.deltaY > 0 ? 1 : -1)
 }
 
-const pointsNav = reactive({ canPrev: false, canNext: false })
-const variantsNav = reactive({ canPrev: false, canNext: false })
+// —— Rows (horizontal carousels) ——
+interface RowEdge {
+  prev: boolean
+  next: boolean
+}
 
-const arrowClass = (on: boolean) =>
+const pointsEdge = reactive<RowEdge>({ prev: false, next: false })
+const previewEdge = reactive<RowEdge>({ prev: false, next: false })
+
+const arrowTone = (on: boolean) =>
   on
     ? 'bg-white text-neutral-800 ring-1 ring-black/8 hover:bg-neutral-50'
     : 'cursor-not-allowed bg-white/50 text-neutral-400 opacity-35 ring-1 ring-black/5'
 
-function trackEdge(el: HTMLElement | null | undefined) {
+function rowEdge(el: HTMLElement | null | undefined): RowEdge {
   if (!el) {
-    return { canPrev: false, canNext: false }
+    return { prev: false, next: false }
   }
   const max = el.scrollWidth - el.clientWidth
   if (max <= 2) {
-    return { canPrev: false, canNext: false }
+    return { prev: false, next: false }
   }
   return {
-    canPrev: el.scrollLeft > 2,
-    canNext: el.scrollLeft < max - 2,
+    prev: el.scrollLeft > 2,
+    next: el.scrollLeft < max - 2,
   }
 }
 
-function syncTracks() {
-  const root = stackViewport.value
-  Object.assign(pointsNav, trackEdge(root?.querySelector('[data-points-track]')))
-  Object.assign(variantsNav, trackEdge(root?.querySelector('[data-variants-track]')))
+function syncRows() {
+  const root = viewport.value
+  Object.assign(pointsEdge, rowEdge(root?.querySelector('[data-points-row]')))
+  Object.assign(previewEdge, rowEdge(root?.querySelector('[data-previews-row]')))
 }
 
-function scrollTrack(root: ParentNode | null | undefined, trackSel: string, cardSel: string, dir: 1 | -1) {
-  const el = root?.querySelector<HTMLElement>(trackSel)
+function scrollRow(rowSel: string, cardSel: string, dir: 1 | -1) {
+  const el = viewport.value?.querySelector<HTMLElement>(rowSel)
   if (!el) {
     return
   }
@@ -382,103 +377,103 @@ function scrollTrack(root: ParentNode | null | undefined, trackSel: string, card
   const step = card ? card.offsetWidth + 12 : 180
   const left = Math.max(0, Math.min(el.scrollWidth - el.clientWidth, el.scrollLeft + dir * step))
 
-  // iOS often ignores smooth scrollTo on overflow rows — assign left directly.
-  if (!isDesktop.value) {
+  // iOS often ignores smooth scrollTo on overflow rows
+  if (!desktop.value) {
     el.scrollLeft = left
-    syncTracks()
+    syncRows()
     return
   }
 
   el.scrollTo({ left, behavior: 'smooth' })
 }
 
-function scrollBy(dir: 1 | -1) {
-  scrollTrack(stackViewport.value, '[data-variants-track]', '[data-card]', dir)
-}
-
 function scrollPoints(dir: 1 | -1) {
-  scrollTrack(stackViewport.value, '[data-points-track]', '[data-point]', dir)
+  scrollRow('[data-points-row]', '[data-point]', dir)
 }
 
-function onTrackScroll(event: Event) {
+function scrollPreviews(dir: 1 | -1) {
+  scrollRow('[data-previews-row]', '[data-preview]', dir)
+}
+
+function onRowScroll(event: Event) {
   const el = event.currentTarget
   if (!(el instanceof HTMLElement)) {
     return
   }
-  if (el.hasAttribute('data-points-track')) {
-    Object.assign(pointsNav, trackEdge(el))
+  if (el.hasAttribute('data-points-row')) {
+    Object.assign(pointsEdge, rowEdge(el))
     return
   }
-  if (el.hasAttribute('data-variants-track')) {
-    Object.assign(variantsNav, trackEdge(el))
+  if (el.hasAttribute('data-previews-row')) {
+    Object.assign(previewEdge, rowEdge(el))
   }
 }
 
-let media: MediaQueryList | undefined
-let viewportEl: HTMLElement | undefined
+// —— Lifecycle ——
+let query: MediaQueryList | undefined
+let wheelRoot: HTMLElement | undefined
 
-function syncDesktop() {
-  isDesktop.value = media?.matches ?? false
-  if (!isDesktop.value) {
-    stackBusy.value = false
+function setDesktop() {
+  desktop.value = query?.matches ?? false
+  if (!desktop.value) {
+    sliding.value = false
   }
 }
 
 watch(active, async () => {
-  if (stackPage.value === 0) {
-    stackBusy.value = false
+  if (slide.value === 0) {
+    sliding.value = false
   }
   else {
-    goStack(0)
+    goSlide(0)
   }
   await nextTick()
-  syncTracks()
+  syncRows()
 })
 
-watch(stackPage, async () => {
+watch(slide, async () => {
   await nextTick()
-  syncTracks()
+  syncRows()
 })
 
 watch(autoplay, (on) => {
   if (on) {
-    startAuto()
+    startCycle()
     return
   }
-  stopAuto()
+  stopCycle()
 })
 
 onMounted(async () => {
-  media = window.matchMedia('(min-width: 1024px)')
-  syncDesktop()
-  media.addEventListener('change', syncDesktop)
+  query = window.matchMedia('(min-width: 1024px)')
+  setDesktop()
+  query.addEventListener('change', setDesktop)
 
-  viewportEl = stackViewport.value ?? undefined
-  viewportEl?.addEventListener('wheel', onStackWheel, { passive: false })
+  wheelRoot = viewport.value ?? undefined
+  wheelRoot?.addEventListener('wheel', onWheel, { passive: false })
 
-  syncTracks()
-  window.addEventListener('resize', syncTracks)
-  document.addEventListener('visibilitychange', onVisibility)
+  syncRows()
+  window.addEventListener('resize', syncRows)
+  document.addEventListener('visibilitychange', onHidden)
 
-  await playSplash()
-  startAuto()
+  await playIntro()
+  startCycle()
 })
 
 onUnmounted(() => {
-  stopAuto()
-  media?.removeEventListener('change', syncDesktop)
-  viewportEl?.removeEventListener('wheel', onStackWheel)
-  window.removeEventListener('resize', syncTracks)
-  document.removeEventListener('visibilitychange', onVisibility)
+  stopCycle()
+  query?.removeEventListener('change', setDesktop)
+  wheelRoot?.removeEventListener('wheel', onWheel)
+  window.removeEventListener('resize', syncRows)
+  document.removeEventListener('visibilitychange', onHidden)
 })
 </script>
 
 <template>
   <div class="relative mx-auto flex min-h-dvh w-full max-w-[1600px] flex-col gap-6 px-5 py-5 sm:px-8 lg:h-dvh lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-10 lg:py-8">
-    <!-- Brand splash — soft dissolve into page -->
     <div
       v-if="splash"
-      ref="splashScope"
+      ref="splashRoot"
       data-splash-root
       class="fixed inset-0 z-[80] flex items-center justify-center bg-[#f3f3f1]"
       aria-hidden="true"
@@ -492,14 +487,13 @@ onUnmounted(() => {
       >
     </div>
 
-    <!-- Copy — below visual on mobile, left on desktop -->
     <section class="order-2 flex min-h-0 flex-1 flex-col lg:order-1 lg:max-w-[42%]">
       <header class="flex shrink-0 items-start justify-between gap-4">
         <motion.p
           class="text-lg font-extrabold tracking-tight"
           :initial="{ opacity: 0, y: -12 }"
           :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: -12 }"
-          :transition="{ duration: 0.55, ease: easeOut }"
+          :transition="{ duration: 0.55, ease }"
         >
           <img
             src="/images/example/cerave.svg"
@@ -511,78 +505,79 @@ onUnmounted(() => {
           class="shrink-0"
           :initial="{ opacity: 0, x: 12 }"
           :animate="ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }"
-          :transition="{ duration: 0.5, delay: ready ? 0.08 : 0, ease: easeOut }"
+          :transition="{ duration: 0.5, delay: ready ? 0.08 : 0, ease }"
         >
-          <NuxtLink href="https://www.cerave.cz/" target="_blank" rel="noopener noreferrer">
+          <NuxtLink
+            href="https://www.cerave.cz/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img
               src="/images/example/dermatology.png"
               alt="Doporučováno Dermatology"
               class="h-16 w-16 object-contain sm:h-20 sm:w-20"
             >
           </NuxtLink>
-          
         </motion.div>
       </header>
 
-      <!-- Vertical section swiper — same transform transition for arrows, dots, wheel -->
       <div
-        ref="stackViewport"
+        ref="viewport"
         class="relative my-8 min-h-0 flex-1 lg:my-4 lg:overflow-hidden lg:pr-12"
       >
         <div
           class="flex flex-col gap-12 lg:h-full lg:gap-0 lg:transition-transform lg:duration-500 lg:ease-[cubic-bezier(0.22,1,0.36,1)]"
-          :style="stackStyle"
-          @transitionend="onStackTransitionEnd"
+          :style="shift"
+          @transitionend="onSlideEnd"
         >
           <div
-            v-for="slide in stackSlides"
-            :id="`stack-${slide.id}`"
-            :key="slide.id"
+            v-for="item in slides"
+            :id="`slide-${item.id}`"
+            :key="item.id"
             class="flex min-h-0 flex-col justify-center lg:h-full lg:shrink-0"
           >
             <AnimatePresence mode="wait">
-              <!-- Slide: nadpis + popis + tlačítka -->
               <motion.div
-                v-if="slide.id === 'hero'"
+                v-if="item.id === 'hero'"
                 :key="`hero-${current.id}`"
                 class="max-w-xl"
-                :variants="heroGroup"
+                :variants="stagger"
                 initial="hidden"
-                :animate="show"
+                :animate="phase"
                 exit="exit"
               >
                 <motion.p
                   class="mb-3 text-sm font-medium text-neutral-500"
-                  :variants="fadeUp"
+                  :variants="fade"
                 >
                   {{ current.eyebrow }}
                 </motion.p>
 
                 <motion.h1
                   class="line-clamp-2 min-h-[2.2em] text-3xl font-extrabold leading-[1.1] tracking-tight text-neutral-950 sm:text-4xl xl:text-5xl"
-                  :variants="fadeUp"
+                  :variants="fade"
                 >
                   {{ current.title }}
                 </motion.h1>
 
                 <motion.p
                   class="mt-5 line-clamp-3 min-h-[4.875em] max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base"
-                  :variants="fadeUp"
+                  :variants="fade"
                 >
                   {{ current.lead }}
                 </motion.p>
 
                 <motion.div
                   class="mt-8 flex flex-nowrap items-center gap-3 overflow-x-auto hide-scroll"
-                  :variants="fadeUp"
+                  :variants="fade"
                 >
                   <motion.button
                     type="button"
                     class="shrink-0 rounded-2xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-white"
                     :whileHover="{ scale: 1.03, backgroundColor: '#262626' }"
                     :whilePress="{ scale: 0.97 }"
-                    :transition="softSpring"
-                    @click="goNext"
+                    :transition="spring"
+                    @click="advance"
                   >
                     {{ current.cta }}
                   </motion.button>
@@ -593,7 +588,7 @@ onUnmounted(() => {
                     class="shrink-0 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-neutral-800 ring-1 ring-black/8"
                     :whileHover="{ scale: 1.03, backgroundColor: '#fafafa' }"
                     :whilePress="{ scale: 0.97 }"
-                    :transition="softSpring"
+                    :transition="spring"
                   >
                     340 Kč · 473 ml
                   </motion.a>
@@ -602,23 +597,22 @@ onUnmounted(() => {
                 <motion.button
                   type="button"
                   class="mt-6 hidden text-sm font-semibold text-neutral-900 underline decoration-neutral-900/35 underline-offset-4 lg:inline-flex"
-                  :variants="fadeUp"
+                  :variants="fade"
                   :whileHover="{ opacity: 0.7 }"
-                  @click="goStack(1)"
+                  @click="goSlide(1)"
                 >
                   Klíčové vlastnosti a varianty
                 </motion.button>
               </motion.div>
 
-              <!-- Slide: vlastnosti + varianty -->
               <motion.div
-                v-else-if="slide.id === 'offers'"
+                v-else-if="item.id === 'offers'"
                 :key="`offers-${current.id}`"
                 class="flex max-w-xl flex-col gap-8"
                 :initial="{ opacity: 0, y: 20 }"
                 :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }"
                 :exit="{ opacity: 0, y: -12 }"
-                :transition="{ duration: 0.4, ease: easeOut }"
+                :transition="{ duration: 0.4, ease }"
               >
                 <div>
                   <div class="mb-2.5 flex items-center justify-between gap-3">
@@ -629,8 +623,8 @@ onUnmounted(() => {
                       <button
                         type="button"
                         class="flex size-8 items-center justify-center rounded-full transition"
-                        :class="arrowClass(pointsNav.canPrev)"
-                        :disabled="!pointsNav.canPrev"
+                        :class="arrowTone(pointsEdge.prev)"
+                        :disabled="!pointsEdge.prev"
                         aria-label="Předchozí vlastnost"
                         @click="scrollPoints(-1)"
                       >
@@ -648,8 +642,8 @@ onUnmounted(() => {
                       <button
                         type="button"
                         class="flex size-8 items-center justify-center rounded-full transition"
-                        :class="arrowClass(pointsNav.canNext)"
-                        :disabled="!pointsNav.canNext"
+                        :class="arrowTone(pointsEdge.next)"
+                        :disabled="!pointsEdge.next"
                         aria-label="Další vlastnost"
                         @click="scrollPoints(1)"
                       >
@@ -668,12 +662,12 @@ onUnmounted(() => {
                   </div>
 
                   <ul
-                    data-points-track
+                    data-points-row
                     class="hide-scroll flex gap-3 overflow-x-auto snap-x snap-mandatory pb-1"
                     role="region"
                     aria-roledescription="carousel"
                     aria-label="Klíčové vlastnosti"
-                    @scroll.passive="onTrackScroll"
+                    @scroll.passive="onRowScroll"
                   >
                     <motion.li
                       v-for="(point, index) in current.points"
@@ -682,7 +676,7 @@ onUnmounted(() => {
                       class="flex w-[78%] shrink-0 snap-start items-start gap-3 rounded-2xl bg-white/70 px-4 py-3.5 text-sm text-neutral-700 ring-1 ring-black/5 sm:w-[58%] lg:w-[calc((100%-1.5rem)/2.5)]"
                       :initial="{ opacity: 0, y: 14 }"
                       :animate="{ opacity: 1, y: 0 }"
-                      :transition="{ duration: 0.4, delay: index * 0.05, ease: easeOut }"
+                      :transition="{ duration: 0.4, delay: index * 0.05, ease }"
                       :whileHover="{ y: -2, backgroundColor: 'rgba(255,255,255,0.92)' }"
                     >
                       <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#0070ce]/15 text-sm font-bold text-[#0070ce]">
@@ -702,10 +696,10 @@ onUnmounted(() => {
                       <button
                         type="button"
                         class="flex size-8 items-center justify-center rounded-full transition"
-                        :class="arrowClass(variantsNav.canPrev)"
-                        :disabled="!variantsNav.canPrev"
+                        :class="arrowTone(previewEdge.prev)"
+                        :disabled="!previewEdge.prev"
                         aria-label="Předchozí"
-                        @click="scrollBy(-1)"
+                        @click="scrollPreviews(-1)"
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -721,10 +715,10 @@ onUnmounted(() => {
                       <button
                         type="button"
                         class="flex size-8 items-center justify-center rounded-full transition"
-                        :class="arrowClass(variantsNav.canNext)"
-                        :disabled="!variantsNav.canNext"
+                        :class="arrowTone(previewEdge.next)"
+                        :disabled="!previewEdge.next"
                         aria-label="Další"
-                        @click="scrollBy(1)"
+                        @click="scrollPreviews(1)"
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -741,40 +735,40 @@ onUnmounted(() => {
                   </div>
 
                   <div
-                    data-variants-track
+                    data-previews-row
                     class="hide-scroll flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory"
                     role="region"
                     aria-roledescription="carousel"
                     aria-label="Náhledy produktu"
-                    @scroll.passive="onTrackScroll"
+                    @scroll.passive="onRowScroll"
                   >
                     <motion.button
-                      v-for="(item, index) in variants"
-                      :key="item.id"
+                      v-for="(card, index) in previews"
+                      :key="card.id"
                       type="button"
-                      data-card
+                      data-preview
                       class="group relative h-36 w-[9.5rem] shrink-0 snap-start overflow-hidden rounded-2xl text-left shadow-sm ring-1 ring-black/5 sm:h-40 sm:w-40"
-                      :class="active === item.section ? 'ring-2 ring-[#0070ce]' : ''"
+                      :class="active === card.section ? 'ring-2 ring-[#0070ce]' : ''"
                       :initial="{ opacity: 0, scale: 0.94 }"
                       :animate="{ opacity: 1, scale: 1 }"
-                      :transition="{ duration: 0.4, delay: 0.08 + index * 0.05, ease: easeOut }"
+                      :transition="{ duration: 0.4, delay: 0.08 + index * 0.05, ease }"
                       :whileHover="{ y: -4 }"
                       :whilePress="{ scale: 0.97 }"
-                      @click="select(item.section)"
+                      @click="open(card.section)"
                     >
                       <img
-                        :src="item.image"
-                        :alt="item.label"
+                        :src="card.image"
+                        :alt="card.label"
                         class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105"
                       >
                       <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
                       <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">
                         <div>
                           <p class="text-sm font-semibold text-white">
-                            {{ item.label }}
+                            {{ card.label }}
                           </p>
                           <p class="text-[11px] text-white/80">
-                            {{ item.price }}
+                            {{ card.price }}
                           </p>
                         </div>
                         <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-neutral-900 shadow-md">
@@ -803,20 +797,20 @@ onUnmounted(() => {
           aria-label="Navigace panelů"
           :initial="{ opacity: 0, x: 12 }"
           :animate="ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }"
-          :transition="{ duration: 0.45, delay: ready ? 0.2 : 0, ease: easeOut }"
+          :transition="{ duration: 0.45, delay: ready ? 0.2 : 0, ease }"
         >
           <motion.button
             type="button"
             class="flex size-7 items-center justify-center rounded-full text-neutral-800"
-            :class="canPrev
+            :class="hasPrev
               ? 'bg-white ring-1 ring-black/8'
               : 'cursor-not-allowed bg-white/50 text-neutral-400 opacity-35 ring-1 ring-black/5'"
-            :disabled="!canPrev"
+            :disabled="!hasPrev"
             aria-label="Předchozí panel"
-            :whileHover="canPrev ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
-            :whilePress="canPrev ? { scale: 0.94 } : undefined"
-            :transition="softSpring"
-            @click="stepStack(-1)"
+            :whileHover="hasPrev ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
+            :whilePress="hasPrev ? { scale: 0.94 } : undefined"
+            :transition="spring"
+            @click="stepSlide(-1)"
           >
             <svg
               viewBox="0 0 24 24"
@@ -832,17 +826,17 @@ onUnmounted(() => {
 
           <div class="relative flex flex-col items-center gap-2 py-1">
             <button
-              v-for="(slide, index) in stackSlides"
-              :key="slide.id"
+              v-for="(item, index) in slides"
+              :key="item.id"
               type="button"
               class="relative z-10 size-2 rounded-full"
-              :class="stackPage === index ? 'bg-transparent' : 'bg-neutral-300 hover:bg-neutral-500'"
-              :aria-label="slide.label"
-              @click="goStack(index)"
+              :class="slide === index ? 'bg-transparent' : 'bg-neutral-300 hover:bg-neutral-500'"
+              :aria-label="item.label"
+              @click="goSlide(index)"
             >
               <motion.span
-                v-if="stackPage === index"
-                layoutId="stack-dot"
+                v-if="slide === index"
+                layoutId="slide-dot"
                 class="absolute inset-0 rounded-full bg-neutral-900"
                 :transition="{ type: 'spring', stiffness: 420, damping: 30 }"
               />
@@ -852,15 +846,15 @@ onUnmounted(() => {
           <motion.button
             type="button"
             class="flex size-7 items-center justify-center rounded-full text-neutral-800"
-            :class="canNext
+            :class="hasNext
               ? 'bg-white ring-1 ring-black/8'
               : 'cursor-not-allowed bg-white/50 text-neutral-400 opacity-35 ring-1 ring-black/5'"
-            :disabled="!canNext"
+            :disabled="!hasNext"
             aria-label="Další panel"
-            :whileHover="canNext ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
-            :whilePress="canNext ? { scale: 0.94 } : undefined"
-            :transition="softSpring"
-            @click="stepStack(1)"
+            :whileHover="hasNext ? { scale: 1.08, backgroundColor: '#fafafa' } : undefined"
+            :whilePress="hasNext ? { scale: 0.94 } : undefined"
+            :transition="spring"
+            @click="stepSlide(1)"
           >
             <svg
               viewBox="0 0 24 24"
@@ -881,7 +875,7 @@ onUnmounted(() => {
         aria-label="Sekce produktu"
         :initial="{ opacity: 0, y: 14 }"
         :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }"
-        :transition="{ duration: 0.45, delay: ready ? 0.15 : 0, ease: easeOut }"
+        :transition="{ duration: 0.45, delay: ready ? 0.15 : 0, ease }"
       >
         <motion.button
           v-for="(section, index) in sections"
@@ -893,10 +887,10 @@ onUnmounted(() => {
             : 'bg-white/80 text-neutral-600 ring-1 ring-black/5'"
           :initial="{ opacity: 0, y: 10 }"
           :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }"
-          :transition="{ duration: 0.4, delay: ready ? 0.18 + index * 0.05 : 0, ease: easeOut }"
+          :transition="{ duration: 0.4, delay: ready ? 0.18 + index * 0.05 : 0, ease }"
           :whileHover="active === section.id ? undefined : { scale: 1.04, backgroundColor: '#ffffff' }"
           :whilePress="{ scale: 0.96 }"
-          @click="select(section.id)"
+          @click="open(section.id)"
         >
           <motion.span
             v-if="active === section.id"
@@ -909,12 +903,11 @@ onUnmounted(() => {
       </motion.nav>
     </section>
 
-    <!-- Visual panel — first on mobile, right on desktop -->
     <motion.section
       class="landing-stage relative order-1 min-h-[420px] flex-1 lg:order-2 lg:min-h-0"
       :initial="{ opacity: 0 }"
       :animate="ready ? { opacity: 1 } : { opacity: 0 }"
-      :transition="{ duration: 0.65, ease: easeOut }"
+      :transition="{ duration: 0.65, ease }"
     >
       <div class="landing-panel absolute inset-0 bg-[#deded9]">
         <motion.div
@@ -927,7 +920,7 @@ onUnmounted(() => {
           :animate="active === section.id
             ? { opacity: 1, scale: 1 }
             : { opacity: 0, scale: 1.045 }"
-          :transition="{ duration: 0.75, ease: easeOut }"
+          :transition="{ duration: 0.75, ease }"
         />
 
         <div
@@ -940,7 +933,7 @@ onUnmounted(() => {
           class="absolute bottom-5 left-5 z-10 rounded-[30px] bg-white/95 px-4 py-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6 lg:px-6"
           :initial="{ opacity: 0, y: 24 }"
           :animate="ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }"
-          :transition="{ duration: 0.55, delay: ready ? 0.2 : 0, ease: easeOut }"
+          :transition="{ duration: 0.55, delay: ready ? 0.2 : 0, ease }"
         >
           <p class="text-sm font-bold text-neutral-900">
             Hodnocení produktu
@@ -969,7 +962,7 @@ onUnmounted(() => {
         aria-label="Sociální sítě"
         :initial="{ opacity: 0 }"
         :animate="ready ? { opacity: 1 } : { opacity: 0 }"
-        :transition="{ duration: 0.5, delay: ready ? 0.28 : 0, ease: easeOut }"
+        :transition="{ duration: 0.5, delay: ready ? 0.28 : 0, ease }"
       >
         <motion.a
           v-for="item in socials"
@@ -979,8 +972,8 @@ onUnmounted(() => {
           class="relative z-[1] flex size-11 items-center justify-center rounded-xl bg-[#85c369] text-white"
           target="_blank"
           rel="noopener noreferrer"
-          :whileHover="{ scale: 1.06, backgroundColor: '#262626', transition: softSpring }"
-          :whilePress="{ scale: 0.96, transition: softSpring }"
+          :whileHover="{ scale: 1.06, backgroundColor: '#262626', transition: spring }"
+          :whilePress="{ scale: 0.96, transition: spring }"
         >
           <svg
             viewBox="0 0 24 24"
@@ -1005,7 +998,7 @@ onUnmounted(() => {
         class="landing-cutout landing-cutout--br"
         :initial="{ opacity: 0 }"
         :animate="ready ? { opacity: 1 } : { opacity: 0 }"
-        :transition="{ duration: 0.5, delay: ready ? 0.32 : 0, ease: easeOut }"
+        :transition="{ duration: 0.5, delay: ready ? 0.32 : 0, ease }"
       >
         <motion.a
           :href="productUrl"
@@ -1013,8 +1006,8 @@ onUnmounted(() => {
           rel="noopener noreferrer"
           class="relative z-[1] rounded-xl bg-[#0070ce] px-6 py-3.5 text-sm font-bold text-white sm:rounded-full"
           aria-label="Zobrazit produkt"
-          :whileHover="{ scale: 1.03, backgroundColor: '#005bab', transition: softSpring }"
-          :whilePress="{ scale: 0.97, transition: softSpring }"
+          :whileHover="{ scale: 1.03, backgroundColor: '#005bab', transition: spring }"
+          :whilePress="{ scale: 0.97, transition: spring }"
         >
           <span class="hidden sm:inline">Zobrazit produkt&nbsp;</span>
           <span aria-hidden="true">&#x21e2;</span>
